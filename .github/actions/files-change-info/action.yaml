@@ -1,0 +1,26 @@
+name: Files Changes Info
+description: Get files changes info
+inputs:
+  terraform-root-directory:
+    description: Terraform root directory
+    required: true
+    default: infrastructure
+outputs:
+  terraform-changes:
+    description: Did Terraform change?
+    value: ${{ steps.terraform--changes.outputs.any_modified }}
+  last-author:
+    description: get the last commit author
+    value: ${{ steps.last-author.outputs.value }}
+runs:
+  using: "composite"
+  steps:
+    - name: check terraform changes
+      id: terraform-changes
+      uses: tj-actions/changed-files@v13
+      with:
+        files: ${{ inputs.terraform-root-directory }}/**
+    - name: get last author
+      id: last-author
+      run: echo "::set-output name=value::$(git log -1 --pretty=format:'%an')"
+      shell: bash
