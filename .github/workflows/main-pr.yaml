@@ -16,12 +16,12 @@ jobs:
         run: git fetch origin ${GITHUB_HEAD_REF} && git checkout ${GITHUB_HEAD_REF}
       - name: Get Files Changes Info
         id: info
-        uses: ./.github/actions/files-changes-info
+        uses: ./.github/actions/files-change-info
     outputs:
       terraform-changes: ${{ steps.info.outputs.terraform-changes }}
 
   terraform-plan-nonprod:
-    name: Terragrunt Plan NONPROD
+    name: Terraform Plan NONPROD
     runs-on: ubuntu-20.04
     needs:
       - init
