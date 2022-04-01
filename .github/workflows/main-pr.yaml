@@ -40,4 +40,4 @@ jobs:
           gcp-service-account-key: ${{ secrets.GCP_NONPROD_CREDENTIALS }}
           terraform-version: 1.1.7
           tf-api-token: ${{ secrets.TF_API_TOKEN }}
-          environment: video-nonprod
+          environment: nonprod

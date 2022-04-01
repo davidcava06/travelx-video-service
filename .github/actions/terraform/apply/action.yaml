@@ -36,7 +36,7 @@ runs:
       env:
         TF_WORKSPACE: ${{ inputs.environment }}
       run: |
-        terraform init
+        TF_WORKSPACE="$TF_WORKSPACE" terraform init
         terraform workspace select $TF_WORKSPACE
         terraform apply
       shell: bash
