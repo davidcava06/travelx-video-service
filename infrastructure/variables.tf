@@ -6,20 +6,20 @@ variable "project_names" {
   type = map(any)
   default = {
     nonprod = "fiebel-video-nonprod"
-    prod = "fiebel-video-prod"
+    prod    = "fiebel-video-prod"
   }
 }
 
 variable "location" {
-  type = string
+  type    = string
   default = "EU"
 }
 
 variable "gcs_regions" {
   type = map(any)
   default = {
-    nonprod    = "europe-west2"
-    prod = "europe-west2"
+    nonprod = "europe-west2"
+    prod    = "europe-west2"
   }
 }
 
@@ -29,6 +29,6 @@ variable "gcs_zone" {
 }
 
 locals {
-  project_name    = lookup(var.project_names, var.workspace)
-  gcs_region      = lookup(var.gcs_regions, var.workspace)
+  project_name = lookup(var.project_names, var.workspace)
+  gcs_region   = lookup(var.gcs_regions, var.workspace)
 }
