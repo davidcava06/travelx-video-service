@@ -1,0 +1,43 @@
+name: Validate
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  init:
+    name: Initialize
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2.4.0
+        with:
+          fetch-depth: 0
+      - name: fetch last version of the PR branch
+        run: git fetch origin ${GITHUB_HEAD_REF} && git checkout ${GITHUB_HEAD_REF}
+      - name: Get Files Changes Info
+        id: info
+        uses: ./.github/actions/files-change-info
+    outputs:
+      terraform-changes: ${{ steps.info.outputs.terraform-changes }}
+
+  terraform-plan-nonprod:
+    name: Terraform Plan NONPROD
+    runs-on: ubuntu-20.04
+    needs:
+      - init
+    if: |
+      always()
+      && needs.init.outputs.terraform-changes == 'true'
+      && needs.init.outputs.last-author != 'fiebel-cicd'
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2.4.0
+      - name: fetch branch
+        run: git fetch origin ${GITHUB_HEAD_REF} && git checkout ${GITHUB_HEAD_REF}
+      - name: terraform plan
+        uses: ./.github/actions/terraform/plan
+        with:
+          gcp-service-account-key: ${{ secrets.GCP_NONPROD_CREDENTIALS }}
+          terraform-version: 1.1.7
+          tf-api-token: ${{ secrets.TF_API_TOKEN }}
+          environment: nonprod
