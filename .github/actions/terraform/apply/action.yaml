@@ -43,10 +43,6 @@ runs:
         environment: ${{ inputs.environment }}
       run: terraform workspace select $environment
       shell: bash
-    - name: Terraform Validate
-      working-directory: ${{ inputs.working-directory }}
-      run: terraform validate
-      shell: bash
     - name: Terraform Apply
       working-directory: ${{ inputs.working-directory }}
       run: terraform apply -auto-approve
