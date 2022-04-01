@@ -31,5 +31,4 @@ variable "gcs_zone" {
 locals {
   project_name    = lookup(var.project_names, var.workspace)
   gcs_region      = lookup(var.gcs_regions, var.workspace)
-  resource_prefix = "${var.app_name}-${var.workspace}"
 }

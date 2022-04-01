@@ -1,5 +1,5 @@
 resource "google_storage_bucket" "videos" {
-  name          = "raw-videos"
+  name          = "${var.workspace}-raw-videos"
   location      = var.location
   force_destroy = false
   storage_class = "STANDARD"
