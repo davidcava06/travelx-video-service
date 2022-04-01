@@ -3,7 +3,7 @@ resource "google_storage_bucket" "videos" {
   location      = var.location
   force_destroy = false
   storage_class = "STANDARD"
-  project       = var.project
+  project       = local.project_name
   versioning {
     enabled = false
   }
