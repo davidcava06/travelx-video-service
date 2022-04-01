@@ -34,7 +34,7 @@ runs:
     - name: Terraform Apply
       working-directory: ${{ inputs.working-directory }}
       env:
-        TF_WORKSPACE: ${{ inputs.evironment }}
+        TF_WORKSPACE: ${{ inputs.environment }}
       run: |
         terraform init
         terraform workspace select $TF_WORKSPACE

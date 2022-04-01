@@ -34,7 +34,7 @@ runs:
     - name: Terraform Validate
       working-directory: ${{ inputs.working-directory }}
       env:
-        TF_WORKSPACE: ${{ inputs.evironment }}
+        TF_WORKSPACE: ${{ inputs.environment }}
       run: |
         terraform init
         terraform workspace select $TF_WORKSPACE
@@ -43,7 +43,7 @@ runs:
     - name: Terraform Validate
       working-directory: ${{ inputs.working-directory }}
       env:
-        TF_WORKSPACE: ${{ inputs.evironment }}
+        TF_WORKSPACE: ${{ inputs.environment }}
       run: |
         terraform init
         terraform workspace select $TF_WORKSPACE
