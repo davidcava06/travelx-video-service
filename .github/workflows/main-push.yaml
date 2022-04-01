@@ -22,14 +22,14 @@ jobs:
 
   terragrunt-apply-nonprod:
     runs-on: ubuntu-20.04
-    name: Terragrunt Apply NONPROD
+    name: Terraform Apply NONPROD
     needs:
       - init
     if: always() && needs.init.outputs.terraform-changes == 'true'
     steps:
       - name: checkout
         uses: actions/checkout@v2.4.0
-      - name: terragrunt apply
+      - name: terraform apply
         uses: ./.github/actions/terraform/apply
         with:
           gcp-service-account-key: ${{ secrets.GCP_NONPROD_CREDENTIALS }}

@@ -37,7 +37,7 @@ runs:
         TF_WORKSPACE: ${{ inputs.evironment }}
       run: |
         terraform init
-        terraform workspace select ${{ inputs.evironment }}
+        terraform workspace select $TF_WORKSPACE
         terraform validate
       shell: bash
     - name: Terraform Validate
@@ -46,6 +46,6 @@ runs:
         TF_WORKSPACE: ${{ inputs.evironment }}
       run: |
         terraform init
-        terraform workspace select ${{ inputs.evironment }}
+        terraform workspace select $TF_WORKSPACE
         terraform plan
       shell: bash
