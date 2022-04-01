@@ -36,14 +36,18 @@ runs:
       env:
         TF_WORKSPACE: ${{ inputs.environment }}
       run: terraform init
+      shell: bash
     - name: Terraform Select Workspace
       working-directory: ${{ inputs.working-directory }}
       env:
         environment: ${{ inputs.environment }}
       run: terraform workspace select $environment
+      shell: bash
     - name: Terraform Validate
       working-directory: ${{ inputs.working-directory }}
       run: terraform validate
+      shell: bash
     - name: Terraform Plan
       working-directory: ${{ inputs.working-directory }}
       run: terraform plan
+      shell: bash
