@@ -17,6 +17,9 @@ inputs:
     description: Location of terraform root folder
     required: true
     default: infrastructure
+  slack-secret:
+    description: Slack bot secret
+    required: true
 runs:
   using: "composite"
   steps:
@@ -45,5 +48,7 @@ runs:
       shell: bash
     - name: Terraform Apply
       working-directory: ${{ inputs.working-directory }}
+      env:
+        TF_VAR_slack_secret: ${{ inputs.slack-secret }}
       run: terraform apply -auto-approve
       shell: bash

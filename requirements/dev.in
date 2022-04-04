@@ -1,0 +1,6 @@
+black
+isort
+pip-tools
+pytest==7.1.
+flake8==4.0.1
+pytest-structlog==0.4

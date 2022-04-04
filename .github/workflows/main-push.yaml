@@ -41,3 +41,4 @@ jobs:
           terraform-version: 1.1.7
           tf-api-token: ${{ secrets.TF_API_TOKEN }}
           environment: nonprod
+          slack-secret: ${{ secrets.SLACK_SECRET }}
