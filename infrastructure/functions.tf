@@ -23,6 +23,7 @@ resource "google_cloudfunctions_function" "insta_downloader" {
 
   source_archive_bucket = google_storage_bucket.deployer.name
   source_archive_object = google_storage_bucket_object.insta_downloader.name
+  service_account_email = google_service_account.cloud_function_invoker_account.email
 
   environment_variables = {
     BUCKET_NAME = google_storage_bucket.raw_videos.name
@@ -56,6 +57,7 @@ resource "google_cloudfunctions_function" "pusher" {
 
   source_archive_bucket = google_storage_bucket.deployer.name
   source_archive_object = google_storage_bucket_object.pusher.name
+  service_account_email = google_service_account.cloud_function_invoker_account.email
 
   environment_variables = {
     SLACK_SECRET = var.slack_secret
