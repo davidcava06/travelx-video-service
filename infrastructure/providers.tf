@@ -33,6 +33,7 @@ resource "google_project_service" "service" {
     "cloudresourcemanager.googleapis.com",
     "cloudbuild.googleapis.com",
     "cloudkms.googleapis.com",
+    "appengine.googleapis.com",
     "transcoder.googleapis.com",
     "cloudfunctions.googleapis.com",
     "pubsub.googleapis.com",

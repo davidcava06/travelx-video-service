@@ -162,3 +162,4 @@ override.tf.json
 *creds.json
 .DS_Store
 functions/*.zip
+insta_test/
