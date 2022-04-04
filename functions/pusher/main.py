@@ -8,6 +8,7 @@ from slack_sdk.signature import SignatureVerifier
 
 PROJECT_ID = os.environ["PROJECT_ID"]
 TOPIC_ID = os.environ["TOPIC_ID"]
+SLACK_SECRET = os.environ["SLACK_SECRET"]
 
 logger = structlog.get_logger()
 publisher = pubsub_v1.PublisherClient()
@@ -22,7 +23,7 @@ class Status(Enum):
 def verify_signature(request):
     request.get_data()  # Decodes received requests into request.data
 
-    verifier = SignatureVerifier(os.environ["SLACK_SECRET"])
+    verifier = SignatureVerifier(SLACK_SECRET)
 
     if not verifier.is_valid_request(request.data, request.headers):
         raise ValueError("Invalid request/credentials.")

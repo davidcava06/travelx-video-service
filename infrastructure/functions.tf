@@ -11,10 +11,10 @@ resource "google_storage_bucket_object" "insta_downloader" {
 }
 
 resource "google_cloudfunctions_function" "insta_downloader" {
-  name         = "insta_downloader"
-  runtime      = "python38"
-  entry_point  = "insta_downloader"
-  region       = local.gcs_region
+  name        = "insta_downloader"
+  runtime     = "python38"
+  entry_point = "insta_downloader"
+  region      = local.gcs_region
 
   event_trigger {
     event_type = "google.pubsub.topic.publish"
@@ -25,11 +25,9 @@ resource "google_cloudfunctions_function" "insta_downloader" {
   source_archive_object = google_storage_bucket_object.insta_downloader.name
 
   environment_variables = {
-    GCP_REGION   = local.gcs_region
-    BUCKET_NAME  = google_storage_bucket.raw_videos.name
-    SLACK_URL    = var.slack_insta_url
-    ENVIRONMENT  = var.workspace
-    SLACK_SECRET = var.slack_secret
+    BUCKET_NAME = google_storage_bucket.raw_videos.name
+    SLACK_URL   = var.slack_insta_url
+    PROJECT_ID  = local.project_name
   }
 
   depends_on = [google_storage_bucket.raw_videos, google_service_account.cloud_function_invoker_account]
@@ -60,9 +58,6 @@ resource "google_cloudfunctions_function" "pusher" {
   source_archive_object = google_storage_bucket_object.pusher.name
 
   environment_variables = {
-    GCP_REGION   = local.gcs_region
-    SLACK_URL    = var.slack_insta_url
-    ENVIRONMENT  = var.workspace
     SLACK_SECRET = var.slack_secret
     PROJECT_ID   = local.project_name
     TOPIC_ID     = google_pubsub_topic.insta_download_jobs.name
