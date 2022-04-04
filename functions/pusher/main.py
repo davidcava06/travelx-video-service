@@ -50,11 +50,6 @@ def format_slack_message(
 
 
 def pusher(request):
-# def pusher(
-#     command="/ig",
-#     text="https://www.instagram.com/reel/CU73RfAAsDG/?utm_medium=copy_link",
-#     response_url="",
-# ):
     if request.method != "POST":
         return "😒 Only POST requests are accepted", 405
     verify_signature(request)
@@ -69,18 +64,11 @@ def pusher(request):
         # Trigger PubSub topic to download insta url contents as temp files
         publisher = pubsub_v1.PublisherClient()
         topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
-        permissions_to_check = ["pubsub.topics.publish", "pubsub.topics.update"]
-        allowed_permissions = publisher.test_iam_permissions(
-            request={"resource": topic_path, "permissions": permissions_to_check}
-        )
-        print(
-            "Allowed permissions for topic {}: {}".format(topic_path, allowed_permissions)
-        )
         publish_future = publisher.publish(
             topic_path,
             text.encode("utf-8"),
-            # command=command,
-            # response_url=response_url,  # NOQA
+            command=command,
+            response_url=response_url,  # NOQA
         )
         print(publish_future.result())
         msg = f"🤓 {command} {text} job has begun..."
@@ -89,6 +77,3 @@ def pusher(request):
     # Notify Slack
     pusher_response = format_slack_message(msg, status, "in_channel")
     return jsonify(pusher_response)
-
-
-# pusher()

@@ -2,7 +2,7 @@
 ![validate staging](https://github.com/davidcava06/travelx-video-service/actions/workflows/main-pr.yaml/badge.svg?branch=main)
 ![deploy staging](https://github.com/davidcava06/travelx-video-service/actions/workflows/main-push.yaml/badge.svg?branch=main)
 
-
+![Cloud infrastructure for the Fiebel Video Service](/static/infra_diagram.jpg)
 Infrastructure to:
 1. Upload raw video to Cloud Storage
 2. Trigger an encoding job to HSL
