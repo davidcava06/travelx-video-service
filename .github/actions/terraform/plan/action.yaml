@@ -37,6 +37,9 @@ runs:
         TF_WORKSPACE: ${{ inputs.environment }}
       run: terraform init
       shell: bash
+    - name: Distribute Functions
+      run: make dist_functions
+      shell: bash
     - name: Terraform Select Workspace
       working-directory: ${{ inputs.working-directory }}
       env:

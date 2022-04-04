@@ -15,9 +15,12 @@ develop: setup update-deps install
 
 add: update-deps install
 
+dist_functions: update-deps
+	bash scripts/zip_functions.sh -xe
+
 lint:
 	isort functions/
 	black functions/
 	flake8 functions/
 
-.PHONY: update-deps install develop lint
+.PHONY: update-deps install develop lint dist_functions
