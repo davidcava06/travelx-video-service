@@ -67,7 +67,6 @@ def pusher(request):
         status = Status.failed
     else:
         # Trigger PubSub topic to download insta url contents as temp files
-        print(topic_path)
         publisher = pubsub_v1.PublisherClient()
         topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
         permissions_to_check = ["pubsub.topics.publish", "pubsub.topics.update"]
