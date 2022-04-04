@@ -160,3 +160,4 @@ override.tf.json
 # example: *tfplan*
 
 *creds.json
+.DS_Store

@@ -1,1 +1,1 @@
-/Users/davidcava/Desktop/travelx/repos/travelx-video-service/requirements/main.in
+requirements/main.txt
