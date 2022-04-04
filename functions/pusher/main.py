@@ -52,6 +52,7 @@ def format_slack_message(
 
 
 def pusher(request):
+# def pusher(command="/ig", text="", response_url="https://www.instagram.com/reel/CbsGxa4OBTp/?utm_medium=share_sheet"):
     if request.method != "POST":
         return "😒 Only POST requests are accepted", 405
     verify_signature(request)
@@ -64,7 +65,6 @@ def pusher(request):
         status = Status.failed
     else:
         # Trigger PubSub topic to download insta url contents as temp files
-        logger.info(topic_path)
         publish_future = publisher.publish(
             topic_path,
             text.encode("utf-8"),
@@ -78,3 +78,4 @@ def pusher(request):
     # Notify Slack
     pusher_response = format_slack_message(msg, status, "in_channel")
     return jsonify(pusher_response)
+# pusher()

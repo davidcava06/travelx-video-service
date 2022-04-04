@@ -50,6 +50,7 @@ def validate_insta_url(url: str) -> Optional[str]:
 def parse_insta_url(url: str) -> Optional[Tuple[str, Status]]:
     """Parse and return insta id"""
     raw_insta_id = validate_insta_url(url)
+    print(raw_insta_id)
     if raw_insta_id is None:
         return None, Status.failed
     insta_id = raw_insta_id.split("/")[-2]
@@ -128,6 +129,8 @@ def insta_downloader(event, context):
         insta_url = base64.b64decode(event["data"]).decode("utf-8")
     if "attributes" in event:
         response_url = event["attributes"]["response_url"]
+    print(insta_url)
+    print(response_url)
     insta_id = parse_insta_url(insta_url)
 
     # Download payload from Instagram post
