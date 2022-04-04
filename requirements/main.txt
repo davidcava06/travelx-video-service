@@ -77,7 +77,9 @@ aiohttp==3.8.1 \
     --hash=sha256:f5315a2eb0239185af1bddb1abf472d877fede3cc8d143c6cddad37678293237 \
     --hash=sha256:fa0ffcace9b3aa34d205d8130f7873fcfefcb6a4dd3dd705b0dab69af6712642 \
     --hash=sha256:fc5471e1a54de15ef71c1bc6ebe80d4dc681ea600e68bfd1cbce40427f0b7578
-    # via gcsfs
+    # via
+    #   -r requirements/main.in
+    #   gcsfs
 aiosignal==1.2.0 \
     --hash=sha256:26e62109036cd181df6e6ad646f91f0dcfd05fe16d0cb924138ff2ab75d64e3a \
     --hash=sha256:78ed67db6c7b7ced4f98e495e572106d5c432a93e1ddd1bf475e1dc05f5b7df2
@@ -591,8 +593,9 @@ six==1.16.0 \
     # via
     #   google-auth
     #   grpcio
-slack==0.0.2 \
-    --hash=sha256:e0b0cd3ba730e81aa82eef0973a7970652b99f6445cb71a6dde1d29e6d13b051
+slack-sdk==3.15.2 \
+    --hash=sha256:128f3bb0b5b91454a3d5f140a61f3db370a0e1b50ffe0a8d9e9ebe0e894faed7 \
+    --hash=sha256:e1fa26786169176e707676decc287fd9d3d547bbc43c0a1a4f99eb373b07da94
     # via -r requirements/main.in
 structlog==21.5.0 \
     --hash=sha256:68c4c29c003714fe86834f347cb107452847ba52414390a7ee583472bde00fc9 \

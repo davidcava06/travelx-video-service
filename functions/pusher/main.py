@@ -1,7 +1,7 @@
 import os
 
 from flask import jsonify
-from slack.signature import SignatureVerifier
+from slack_sdk.signature import SignatureVerifier
 from google.cloud import pubsub_v1
 
 PROJECT_ID = os.environ["PROJECT_ID"]
