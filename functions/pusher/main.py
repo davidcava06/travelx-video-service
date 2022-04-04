@@ -29,9 +29,11 @@ def verify_signature(request):
         raise ValueError("Invalid request/credentials.")
 
 
-def format_slack_message(msg: str, status: Status) -> str:
+def format_slack_message(
+    msg: str, status: Status, response_type: str = "in_channel"
+) -> str:
     message = {
-        "response_type": "in_channel",
+        "response_type": response_type,
         "text": msg,
         "attachments": [],
     }
@@ -51,29 +53,32 @@ def format_slack_message(msg: str, status: Status) -> str:
 
 def pusher(request):
     if request.method != "POST":
-        return "Only POST requests are accepted", 405
+        return "😒 Only POST requests are accepted", 405
     verify_signature(request)
     command = request.form["command"]
     text = request.form["text"]
-    request_json = request.get_json(silent=True)
-    logger.info(request_json)
-    if command != "ig":
-        msg = "Command not supported."
+    response_url = request.form["response_url"]
+
+    if command != "/ig":
+        msg = "🥺 Command not supported."
         status = Status.failed
     else:
         # Trigger PubSub topic to download insta url contents as temp files
         publish_future = publisher.publish(
-            topic_path, text.encode("utf-8"), command=command, response_url=""
+            topic_path,
+            text.encode("utf-8"),
+            command=command,
+            response_url=response_url,  # NOQA
         )
         try:
             logger.info(publish_future.result())
-            msg = f"{command} {text} job has begun..."
+            msg = f"🤓 {command} {text} job has begun..."
             status = Status.success
         except Exception as e:
-            msg = f"Publishing {command} {text} errored: {e}"
+            msg = f"🥺 Publishing {command} {text} errored: {e}"
             status = Status.failed
             logger.warning(msg)
 
     # Notify Slack
-    pusher_response = format_slack_message(msg, status)
+    pusher_response = format_slack_message(msg, status, "ephemeral")
     return jsonify(pusher_response)
