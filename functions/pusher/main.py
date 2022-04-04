@@ -1,4 +1,5 @@
 import os
+from enum import Enum
 
 import structlog
 from flask import jsonify
@@ -13,6 +14,11 @@ publisher = pubsub_v1.PublisherClient()
 topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
 
 
+class Status(Enum):
+    success = "SUCCESS"
+    failed = "FAILED"
+
+
 def verify_signature(request):
     request.get_data()  # Decodes received requests into request.data
 
@@ -22,7 +28,7 @@ def verify_signature(request):
         raise ValueError("Invalid request/credentials.")
 
 
-def format_slack_message(msg: str, status: str = None) -> str:
+def format_slack_message(msg: str, status: Status) -> str:
     message = {
         "response_type": "in_channel",
         "text": msg,
@@ -30,7 +36,7 @@ def format_slack_message(msg: str, status: str = None) -> str:
     }
 
     attachment = {}
-    if status == "FAILED":
+    if status == Status.failed:
         attachment["color"] = "#EA4435"
     # attachment["title_link"] = url
     # attachment["title"] = name
@@ -48,18 +54,24 @@ def pusher(request):
     verify_signature(request)
     command = request.form["command"]
     text = request.form["text"]
-    # Trigger PubSub topic to download insta url contents as temp files
-    publish_future = publisher.publish(
-        topic_path, text.encode("utf-8"), command=command
-    )
-    try:
-        logger.info(publish_future.result())
-        msg = f"{command} {text} job has begun..."
-        status = "GOOD"
-    except Exception as e:
-        msg = f"Publishing {command} {text} errored: {e}"
-        status = "FAILED"
-        logger.warning(msg)
+    request_json = request.get_json(silent=True)
+    logger.info(request_json)
+    if command != "ig":
+        msg = "Command not supported."
+        status = Status.failed
+    else:
+        # Trigger PubSub topic to download insta url contents as temp files
+        publish_future = publisher.publish(
+            topic_path, text.encode("utf-8"), command=command, response_url=""
+        )
+        try:
+            logger.info(publish_future.result())
+            msg = f"{command} {text} job has begun..."
+            status = Status.success
+        except Exception as e:
+            msg = f"Publishing {command} {text} errored: {e}"
+            status = Status.failed
+            logger.warning(msg)
 
     # Notify Slack
     pusher_response = format_slack_message(msg, status)

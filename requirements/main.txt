@@ -92,6 +92,10 @@ attrs==21.4.0 \
     --hash=sha256:2d27e3784d7a565d36ab851fe94887c5eccd6a463168875832a1be79c82828b4 \
     --hash=sha256:626ba8234211db98e869df76230a137c4c40a12d72445c45d5f5b716f076e2fd
     # via aiohttp
+cachecontrol==0.12.10 \
+    --hash=sha256:b0d43d8f71948ef5ebdee5fe236b86c6ffc7799370453dccb0e894c20dfa487c \
+    --hash=sha256:d8aca75b82eec92d84b5d6eb8c8f66ea16f09d2adb09dbca27fe2d5fc8d3732d
+    # via firebase-admin
 cachetools==5.0.0 \
     --hash=sha256:486471dfa8799eb7ec503a8059e263db000cdda20075ce5e48903087f79d5fd6 \
     --hash=sha256:8fecd4203a38af17928be7b90689d8083603073622229ca7077b72d8e5a976e4
@@ -114,6 +118,10 @@ decorator==5.1.1 \
     --hash=sha256:637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330 \
     --hash=sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186
     # via gcsfs
+firebase-admin==5.2.0 \
+    --hash=sha256:cd1a47ff43e5d83cf8d6e2c478387860c363876d9b9149b5034a13b81f8b4bda \
+    --hash=sha256:e6d69fb055b1c1e4dc048e0192772c978f9c826a9912d566e5a924eea449bdc1
+    # via -r requirements/main.in
 flask==2.1.1 \
     --hash=sha256:8a4cf32d904cf5621db9f0c9fbcd7efabf3003f22a04e4d0ce790c7137ec5264 \
     --hash=sha256:a8c9bd3e558ec99646d177a9739c41df1ded0629480b4c8d2975412f3c9519c8
@@ -195,22 +203,35 @@ google-api-core[grpc]==2.7.1 \
     --hash=sha256:6be1fc59e2a7ba9f66808bbc22f976f81e4c3e7ab20fa0620ce42686288787d0 \
     --hash=sha256:b0fa577e512f0c8e063386b974718b8614586a798c5894ed34bedf256d9dae24
     # via
+    #   firebase-admin
+    #   google-api-python-client
     #   google-cloud-appengine-logging
     #   google-cloud-core
     #   google-cloud-error-reporting
+    #   google-cloud-firestore
     #   google-cloud-logging
     #   google-cloud-pubsub
     #   google-cloud-storage
     #   google-cloud-video-transcoder
+google-api-python-client==2.42.0 \
+    --hash=sha256:303f5e7005b26e5ca4d2f04489545cdc482ca558e8932e528217e11127c17cd8 \
+    --hash=sha256:7bf58b665b635d06adb47797a9a4f73482e739e02ed036cd960dc7c183361f67
+    # via firebase-admin
 google-auth==2.6.2 \
     --hash=sha256:3ba4d63cb29c1e6d5ffcc1c0623c03cf02ede6240a072f213084749574e691ab \
     --hash=sha256:60d449f8142c742db760f4c0be39121bc8d9be855555d784c252deaca1ced3f5
     # via
     #   gcsfs
     #   google-api-core
+    #   google-api-python-client
+    #   google-auth-httplib2
     #   google-auth-oauthlib
     #   google-cloud-core
     #   google-cloud-storage
+google-auth-httplib2==0.1.0 \
+    --hash=sha256:31e49c36c6b5643b57e82617cb3e021e3e1d2df9da63af67252c02fa9c1f4a10 \
+    --hash=sha256:a07c39fd632becacd3f07718dfd6021bf396978f03ad3ce4321d060015cc30ac
+    # via google-api-python-client
 google-auth-oauthlib==0.5.1 \
     --hash=sha256:24f67735513c4c7134dbde2f1dee5a1deb6acc8dfcb577d7bff30d213a28e7b0 \
     --hash=sha256:30596b824fc6808fdaca2f048e4998cc40fb4b3599eaea66d28dc7085b36c5b8
@@ -228,12 +249,17 @@ google-cloud-core==2.2.3 \
     --hash=sha256:a423852f4c36622376c8f0be509b67533690e061062368b763b92694c4ee06a7
     # via
     #   -r requirements/main.in
+    #   google-cloud-firestore
     #   google-cloud-logging
     #   google-cloud-storage
 google-cloud-error-reporting==1.5.1 \
     --hash=sha256:edbb688a6b489e2b3c067f2c49b0c54a0c0d50627d0c0acb35acb41fc2b0f3a7 \
     --hash=sha256:ee0169bc5c6d6277800715b698ec16d55d84ee4a1b9a3d32cd5d29c5a461b3c7
     # via -r requirements/main.in
+google-cloud-firestore==2.4.0 \
+    --hash=sha256:86d961dbf83c00862935e9f90b9e3ff20bcf07f8600f7c070a556251fe904bc7 \
+    --hash=sha256:f7e7ac7a3c128ad7d81240f4dcab0f89320ac666214714eb81fcb740aa8820ee
+    # via firebase-admin
 google-cloud-logging==3.0.0 \
     --hash=sha256:452e361e1dcbc28f2208c0805c1a7cbac030764556703d97656d05218b933708 \
     --hash=sha256:8c8154c590ca750fe18ec8194f9450932c2188ad3a51340063e116d37b46bf5d
@@ -247,6 +273,7 @@ google-cloud-storage==2.2.1 \
     --hash=sha256:abdf0fadf26516172e804e00b9c24819a3b3f7351cd32f35ca249bbfac965494
     # via
     #   -r requirements/main.in
+    #   firebase-admin
     #   gcsfs
 google-cloud-video-transcoder==1.3.1 \
     --hash=sha256:143816f08aa5f7bbd3315c1bc2b6a5d44312614e5a944ba0eb7f1c5918769a9d \
@@ -381,6 +408,12 @@ grpcio-status==1.45.0 \
     # via
     #   google-api-core
     #   google-cloud-pubsub
+httplib2==0.20.4 \
+    --hash=sha256:58a98e45b4b1a48273073f905d2961666ecf0fbac4250ea5b47aef259eb5c585 \
+    --hash=sha256:8b6a905cb1c79eefd03f8669fd993c36dc341f7c558f056cb5a33b5c2f458543
+    # via
+    #   google-api-python-client
+    #   google-auth-httplib2
 idna==3.3 \
     --hash=sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff \
     --hash=sha256:9d643ff0a55b762d5cdb124b8eaa99c66322e2157b69160bc32796e824360e6d
@@ -444,6 +477,42 @@ markupsafe==2.1.1 \
     --hash=sha256:f121a1420d4e173a5d96e47e9a0c0dcff965afdf1626d28de1460815f7c4ee7a \
     --hash=sha256:fc7b548b17d238737688817ab67deebb30e8073c95749d55538ed473130ec0c7
     # via jinja2
+msgpack==1.0.3 \
+    --hash=sha256:0d8c332f53ffff01953ad25131272506500b14750c1d0ce8614b17d098252fbc \
+    --hash=sha256:1c58cdec1cb5fcea8c2f1771d7b5fec79307d056874f746690bd2bdd609ab147 \
+    --hash=sha256:2c3ca57c96c8e69c1a0d2926a6acf2d9a522b41dc4253a8945c4c6cd4981a4e3 \
+    --hash=sha256:2f30dd0dc4dfe6231ad253b6f9f7128ac3202ae49edd3f10d311adc358772dba \
+    --hash=sha256:2f97c0f35b3b096a330bb4a1a9247d0bd7e1f3a2eba7ab69795501504b1c2c39 \
+    --hash=sha256:36a64a10b16c2ab31dcd5f32d9787ed41fe68ab23dd66957ca2826c7f10d0b85 \
+    --hash=sha256:3d875631ecab42f65f9dce6f55ce6d736696ced240f2634633188de2f5f21af9 \
+    --hash=sha256:40fb89b4625d12d6027a19f4df18a4de5c64f6f3314325049f219683e07e678a \
+    --hash=sha256:47d733a15ade190540c703de209ffbc42a3367600421b62ac0c09fde594da6ec \
+    --hash=sha256:494471d65b25a8751d19c83f1a482fd411d7ca7a3b9e17d25980a74075ba0e88 \
+    --hash=sha256:51fdc7fb93615286428ee7758cecc2f374d5ff363bdd884c7ea622a7a327a81e \
+    --hash=sha256:6eef0cf8db3857b2b556213d97dd82de76e28a6524853a9beb3264983391dc1a \
+    --hash=sha256:6f4c22717c74d44bcd7af353024ce71c6b55346dad5e2cc1ddc17ce8c4507c6b \
+    --hash=sha256:73a80bd6eb6bcb338c1ec0da273f87420829c266379c8c82fa14c23fb586cfa1 \
+    --hash=sha256:89908aea5f46ee1474cc37fbc146677f8529ac99201bc2faf4ef8edc023c2bf3 \
+    --hash=sha256:8a3a5c4b16e9d0edb823fe54b59b5660cc8d4782d7bf2c214cb4b91a1940a8ef \
+    --hash=sha256:96acc674bb9c9be63fa8b6dabc3248fdc575c4adc005c440ad02f87ca7edd079 \
+    --hash=sha256:973ad69fd7e31159eae8f580f3f707b718b61141838321c6fa4d891c4a2cca52 \
+    --hash=sha256:9b6f2d714c506e79cbead331de9aae6837c8dd36190d02da74cb409b36162e8a \
+    --hash=sha256:9c0903bd93cbd34653dd63bbfcb99d7539c372795201f39d16fdfde4418de43a \
+    --hash=sha256:9fce00156e79af37bb6db4e7587b30d11e7ac6a02cb5bac387f023808cd7d7f4 \
+    --hash=sha256:a598d0685e4ae07a0672b59792d2cc767d09d7a7f39fd9bd37ff84e060b1a996 \
+    --hash=sha256:b0a792c091bac433dfe0a70ac17fc2087d4595ab835b47b89defc8bbabcf5c73 \
+    --hash=sha256:bb87f23ae7d14b7b3c21009c4b1705ec107cb21ee71975992f6aca571fb4a42a \
+    --hash=sha256:bf1e6bfed4860d72106f4e0a1ab519546982b45689937b40257cfd820650b920 \
+    --hash=sha256:c1ba333b4024c17c7591f0f372e2daa3c31db495a9b2af3cf664aef3c14354f7 \
+    --hash=sha256:c2140cf7a3ec475ef0938edb6eb363fa704159e0bf71dde15d953bacc1cf9d7d \
+    --hash=sha256:c7e03b06f2982aa98d4ddd082a210c3db200471da523f9ac197f2828e80e7770 \
+    --hash=sha256:d02cea2252abc3756b2ac31f781f7a98e89ff9759b2e7450a1c7a0d13302ff50 \
+    --hash=sha256:da24375ab4c50e5b7486c115a3198d207954fe10aaa5708f7b65105df09109b2 \
+    --hash=sha256:e4c309a68cb5d6bbd0c50d5c71a25ae81f268c2dc675c6f4ea8ab2feec2ac4e2 \
+    --hash=sha256:f01b26c2290cbd74316990ba84a14ac3d599af9cebefc543d241a66e785cf17d \
+    --hash=sha256:f201d34dc89342fabb2a10ed7c9a9aaaed9b7af0f16a5923f1ae562b31258dea \
+    --hash=sha256:f74da1e5fcf20ade12c6bf1baa17a2dc3604958922de8dc83cbe3eff22e8b611
+    # via cachecontrol
 multidict==6.0.2 \
     --hash=sha256:0327292e745a880459ef71be14e709aaea2f783f3537588fb4ed09b6c01bca60 \
     --hash=sha256:041b81a5f6b38244b34dc18c7b6aba91f9cdaf854d9a39e5ff0b58e2b5773b9c \
@@ -521,6 +590,7 @@ proto-plus==1.20.3 \
     # via
     #   google-cloud-appengine-logging
     #   google-cloud-error-reporting
+    #   google-cloud-firestore
     #   google-cloud-logging
     #   google-cloud-pubsub
     #   google-cloud-video-transcoder
@@ -569,11 +639,14 @@ pyasn1-modules==0.2.8 \
 pyparsing==3.0.7 \
     --hash=sha256:18ee9022775d270c55187733956460083db60b37d0d0fb357445f3094eed3eea \
     --hash=sha256:a6c06a88f252e6c322f65faf8f418b16213b51bdfaece0524c1c1bc30c63c484
-    # via packaging
+    # via
+    #   httplib2
+    #   packaging
 requests==2.27.1 \
     --hash=sha256:68d7c56fd5a8999887728ef304a6d12edc7be74f1cfa47714fc8b414525c9a61 \
     --hash=sha256:f22fa1e554c9ddfd16e6e41ac79759e17be9e492b3587efa038054674760e72d
     # via
+    #   cachecontrol
     #   gcsfs
     #   google-api-core
     #   google-cloud-storage
@@ -592,6 +665,7 @@ six==1.16.0 \
     --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
     # via
     #   google-auth
+    #   google-auth-httplib2
     #   grpcio
 slack-sdk==3.15.2 \
     --hash=sha256:128f3bb0b5b91454a3d5f140a61f3db370a0e1b50ffe0a8d9e9ebe0e894faed7 \
@@ -601,6 +675,10 @@ structlog==21.5.0 \
     --hash=sha256:68c4c29c003714fe86834f347cb107452847ba52414390a7ee583472bde00fc9 \
     --hash=sha256:fd7922e195262b337da85c2a91c84be94ccab1f8fd1957bd6986f6904e3761c8
     # via -r requirements/main.in
+uritemplate==4.1.1 \
+    --hash=sha256:4346edfc5c3b79f694bccd6d6099a322bbeb628dbf2cd86eea55a456ce5124f0 \
+    --hash=sha256:830c08b8d99bdd312ea4ead05994a38e8936266f84b9a7878232db50b044e02e
+    # via google-api-python-client
 urllib3==1.26.9 \
     --hash=sha256:44ece4d53fb1706f667c9bd1c648f5469a2ec925fcf3a776667042d645472c14 \
     --hash=sha256:aabaf16477806a5e1dd19aa41f8c2b7950dd3c746362d7e3223dbe6de6ac448e
