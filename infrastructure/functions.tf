@@ -44,12 +44,13 @@ resource "google_storage_bucket_object" "pusher" {
 }
 
 resource "google_cloudfunctions_function" "pusher" {
-  name         = "pusher"
-  runtime      = "python38"
-  entry_point  = "pusher"
-  trigger_http = true
-  timeout      = 540
-  region       = local.gcs_region
+  name                = "pusher"
+  runtime             = "python38"
+  entry_point         = "pusher"
+  trigger_http        = true
+  ingress_settings    = "ALLOW_ALL"
+  available_memory_mb = 128
+  region              = local.gcs_region
 
   source_archive_bucket = google_storage_bucket.deployer.name
   source_archive_object = google_storage_bucket_object.pusher.name

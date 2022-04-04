@@ -34,7 +34,7 @@ variable "slack_insta_url" {
 }
 
 variable "slack_secret" {
-  type    = string
+  type = string
 }
 
 locals {
