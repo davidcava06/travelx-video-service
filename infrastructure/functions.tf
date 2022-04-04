@@ -14,6 +14,7 @@ resource "google_cloudfunctions_function" "insta_downloader" {
   name        = "insta_downloader"
   runtime     = "python38"
   entry_point = "insta_downloader"
+  available_memory_mb = 512
   region      = local.gcs_region
 
   event_trigger {
