@@ -33,6 +33,10 @@ variable "slack_insta_url" {
   default = "https://hooks.slack.com/services/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"
 }
 
+variable "slack_secret" {
+  type    = string
+}
+
 locals {
   project_name = lookup(var.project_names, var.workspace)
   gcs_region   = lookup(var.gcs_regions, var.workspace)
