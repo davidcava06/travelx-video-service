@@ -11,8 +11,6 @@ TOPIC_ID = os.environ["TOPIC_ID"]
 SLACK_SECRET = os.environ["SLACK_SECRET"]
 
 logger = structlog.get_logger()
-publisher = pubsub_v1.PublisherClient()
-topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
 
 
 class Status(Enum):
@@ -70,6 +68,8 @@ def pusher(request):
     else:
         # Trigger PubSub topic to download insta url contents as temp files
         print(topic_path)
+        publisher = pubsub_v1.PublisherClient()
+        topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
         permissions_to_check = ["pubsub.topics.publish", "pubsub.topics.update"]
         allowed_permissions = publisher.test_iam_permissions(
             request={"resource": topic_path, "permissions": permissions_to_check}
