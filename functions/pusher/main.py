@@ -71,15 +71,11 @@ def pusher(request):
             command=command,
             response_url=response_url,  # NOQA
         )
-        try:
-            logger.info(publish_future.result())
-            msg = f"🤓 {command} {text} job has begun..."
-            status = Status.success
-        except Exception as e:
-            msg = f"🥺 Publishing {command} {text} errored: {e}"
-            status = Status.failed
-            logger.warning(msg)
+        msg = f"🤓 {command} {text} job has begun..."
+        status = Status.success
+        print("Publish future sent")
+        logger.info(publish_future.result())
 
     # Notify Slack
-    pusher_response = format_slack_message(msg, status, "ephemeral")
+    pusher_response = format_slack_message(msg, status, "in_channel")
     return jsonify(pusher_response)
