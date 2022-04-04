@@ -35,7 +35,7 @@ jobs:
       - name: fetch branch
         run: git fetch origin ${GITHUB_HEAD_REF} && git checkout ${GITHUB_HEAD_REF}
       - name: Distribute functions
-        run: bash scripts/zp_functions.sh -xe
+        run: bash scripts/zip_functions.sh -xe
         shell: bash
       - name: terraform plan
         uses: ./.github/actions/terraform/plan
