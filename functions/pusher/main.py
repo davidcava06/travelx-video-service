@@ -1,12 +1,14 @@
 import os
 
+import structlog
 from flask import jsonify
-from slack_sdk.signature import SignatureVerifier
 from google.cloud import pubsub_v1
+from slack_sdk.signature import SignatureVerifier
 
 PROJECT_ID = os.environ["PROJECT_ID"]
 TOPIC_ID = os.environ["TOPIC_ID"]
 
+logger = structlog.get_logger()
 publisher = pubsub_v1.PublisherClient()
 topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
 
@@ -20,15 +22,16 @@ def verify_signature(request):
         raise ValueError("Invalid request/credentials.")
 
 
-def format_slack_message(query: str) -> str:
+def format_slack_message(msg: str, status: str = None) -> str:
     message = {
         "response_type": "in_channel",
-        "text": "Task: {} has begun...".format(query),
+        "text": msg,
         "attachments": [],
     }
 
     attachment = {}
-    # attachment["color"] = "#3367d6"
+    if status == "FAILED":
+        attachment["color"] = "#EA4435"
     # attachment["title_link"] = url
     # attachment["title"] = name
     # attachment["title_link"] = url
@@ -43,8 +46,21 @@ def pusher(request):
     if request.method != "POST":
         return "Only POST requests are accepted", 405
     verify_signature(request)
-    # Parse insta url
+    command = request.form["command"]
+    text = request.form["text"]
     # Trigger PubSub topic to download insta url contents as temp files
+    publish_future = publisher.publish(
+        topic_path, text.encode("utf-8"), command=command
+    )
+    try:
+        logger.info(publish_future.result())
+        msg = f"{command} {text} job has begun..."
+        status = "GOOD"
+    except Exception as e:
+        msg = f"Publishing {command} {text} errored: {e}"
+        status = "FAILED"
+        logger.warning(msg)
+
     # Notify Slack
-    pusher_response = format_slack_message(request.form["text"])
+    pusher_response = format_slack_message(msg, status)
     return jsonify(pusher_response)
