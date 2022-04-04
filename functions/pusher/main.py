@@ -73,8 +73,7 @@ def pusher(request):
         )
         msg = f"🤓 {command} {text} job has begun..."
         status = Status.success
-        print("Publish future sent")
-        logger.info(publish_future.result())
+        print(publish_future.result())
 
     # Notify Slack
     pusher_response = format_slack_message(msg, status, "in_channel")
