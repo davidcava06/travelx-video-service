@@ -42,6 +42,8 @@ def validate_insta_url(url: str) -> Optional[str]:
     """Check for valid url"""
     pattern = re.compile(r"\/((p)|(reel)|(tv))\/[a-zA-Z0-9]+\/")
     object = pattern.search(url)
+    print("we are in validate")
+    print(object)
     if object is None:
         return None
     return object.group()
@@ -50,6 +52,7 @@ def validate_insta_url(url: str) -> Optional[str]:
 def parse_insta_url(url: str) -> Optional[Tuple[str, Status]]:
     """Parse and return insta id"""
     raw_insta_id = validate_insta_url(url)
+    print("we are in parse")
     print(raw_insta_id)
     if raw_insta_id is None:
         return None, Status.failed

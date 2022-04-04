@@ -65,6 +65,7 @@ def pusher(request):
         status = Status.failed
     else:
         # Trigger PubSub topic to download insta url contents as temp files
+        print(topic_path)
         publish_future = publisher.publish(
             topic_path,
             text.encode("utf-8"),
@@ -73,7 +74,10 @@ def pusher(request):
         )
         msg = f"🤓 {command} {text} job has begun..."
         status = Status.success
-        print(publish_future.result())
+        try:
+            print(publish_future.result())
+        except Exception as e:
+            print(e)
 
     # Notify Slack
     pusher_response = format_slack_message(msg, status, "in_channel")
