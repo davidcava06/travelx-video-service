@@ -59,7 +59,7 @@ resource "google_cloudfunctions_function" "pusher" {
     SLACK_URL    = var.slack_insta_url
     ENVIRONMENT  = var.workspace
     SLACK_SECRET = var.slack_secret
-    PROJECT_ID   = var.project_name
+    PROJECT_ID   = local.project_name
     TOPIC_ID     = google_pubsub_topic.insta_download_jobs.name
   }
   depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.insta_download_jobs]
