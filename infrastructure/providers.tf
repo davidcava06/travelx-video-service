@@ -31,6 +31,7 @@ resource "google_project_service" "service" {
   for_each = toset([
     "iam.googleapis.com",
     "cloudresourcemanager.googleapis.com",
+    "cloudbuild.googleapis.com",
     "cloudkms.googleapis.com",
     "transcoder.googleapis.com",
     "cloudfunctions.googleapis.com",
