@@ -28,7 +28,7 @@ resource "google_cloudfunctions_function" "insta_downloader" {
     ENVIRONMENT  = var.workspace
     SLACK_SECRET = var.slack_secret
   }
-  depends_on = [google_storage_bucket_object.raw_videos, google_service_account.cloud_function_invoker_account]
+  depends_on = [google_storage_bucket.raw_videos, google_service_account.cloud_function_invoker_account]
 }
 
 # Function: Push task to PubSub
