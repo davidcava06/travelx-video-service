@@ -54,7 +54,7 @@ def format_slack_message(
 def pusher(request):
 # def pusher(
 #     command="/ig",
-#     text="https://www.instagram.com/reel/CbsGxa4OBTp/?utm_medium=share_sheet",
+#     text="https://www.instagram.com/reel/CU73RfAAsDG/?utm_medium=copy_link",
 #     response_url="",
 # ):
     if request.method != "POST":
@@ -70,18 +70,22 @@ def pusher(request):
     else:
         # Trigger PubSub topic to download insta url contents as temp files
         print(topic_path)
+        permissions_to_check = ["pubsub.topics.publish", "pubsub.topics.update"]
+        allowed_permissions = publisher.test_iam_permissions(
+            request={"resource": topic_path, "permissions": permissions_to_check}
+        )
+        print(
+            "Allowed permissions for topic {}: {}".format(topic_path, allowed_permissions)
+        )
         publish_future = publisher.publish(
             topic_path,
             text.encode("utf-8"),
-            command=command,
-            response_url=response_url,  # NOQA
+            # command=command,
+            # response_url=response_url,  # NOQA
         )
+        print(publish_future.result())
         msg = f"🤓 {command} {text} job has begun..."
         status = Status.success
-        try:
-            print(publish_future.result())
-        except Exception as e:
-            print(e)
 
     # Notify Slack
     pusher_response = format_slack_message(msg, status, "in_channel")
