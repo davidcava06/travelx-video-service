@@ -28,10 +28,6 @@ variable "gcs_zone" {
   default = "c"
 }
 
-variable "slack_secret" {
-  type = string
-}
-
 variable "slack_insta_url" {
   type    = string
   default = "https://hooks.slack.com/services/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"
