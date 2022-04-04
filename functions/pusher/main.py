@@ -64,6 +64,7 @@ def pusher(request):
         status = Status.failed
     else:
         # Trigger PubSub topic to download insta url contents as temp files
+        logger.info(topic_path)
         publish_future = publisher.publish(
             topic_path,
             text.encode("utf-8"),

@@ -40,7 +40,7 @@ class Status(Enum):
 
 def validate_insta_url(url: str) -> Optional[str]:
     """Check for valid url"""
-    pattern = re.compile(r"\/((p)|(\breel\b))\/[a-zA-Z0-9]+\/")
+    pattern = re.compile(r"\/((p)|(reel)|(tv))\/[a-zA-Z0-9]+\/")
     object = pattern.search(url)
     if object is None:
         return None
@@ -131,6 +131,7 @@ def insta_downloader(event, context):
     insta_id = parse_insta_url(insta_url)
 
     # Download payload from Instagram post
+    logger.info(insta_id)
     target_directory, status = download_post(insta_id)
 
     # Store payload
