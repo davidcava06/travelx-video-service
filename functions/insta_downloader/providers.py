@@ -3,9 +3,12 @@ from enum import Enum
 from typing import Any, Optional, Tuple
 
 import requests
+import structlog
+import wget
 from instagrapi import Client
 from instaloader import Instaloader
 
+logger = structlog.get_logger(__name__)
 DATALAMA_KEY = os.environ["DATALAMA_KEY"]
 
 
@@ -58,20 +61,21 @@ class InstaClient:
         if self._client_type == Provider.datalama:
             return self.client.get_media_data_by_code(insta_id)
 
-    # TODO: Finish developing for datalama
-    def download_post(self, insta_id: str) -> Tuple[str, Status]:
-        target_directory = f"/tmp/{insta_id}"
-        if self._client_type == Provider.datalama:
-            self.download_metadata(insta_id)
-        if self._client_type == Provider.loader:
-            post = self.client.Post.from_shortcode(self.client.context, insta_id)
-            download_ind = self.client.download_post(post, target_directory)
-            if not download_ind:
-                return "🤷 Error downloading {} from instagram.", Status.failed
-        if self._client_type == Provider.api:
-            media_pk = self.client.media_pk_from_code(insta_id)
-            media = self.client.media_info_a1(media_pk)
-            if not media:
-                return "🤷 Error downloading {} from instagram.", Status.failed
-            print(media)
-        return target_directory, Status.success
+    def download_media_files(
+        self, insta_object: dict
+    ) -> Tuple[Optional[str], Optional[str], Status]:
+        insta_id = insta_object["code"]
+        thumbnail_url = insta_object["thumbnail_url"]
+        video_url = insta_object["video_url"]
+
+        tmp_thumbnail_path = None
+        tmp_video_path = None
+        try:
+            if thumbnail_url is not None:
+                tmp_thumbnail_path = wget.download(thumbnail_url, f"tmp/{insta_id}.jpg")
+            if video_url is not None:
+                tmp_video_path = wget.download(video_url, f"tmp/{insta_id}.mp4")
+        except Exception as e:
+            logger.error(f"🤷 Error downloading {insta_id}: {e}.")
+            return None, None, Status.failed
+        return tmp_thumbnail_path, tmp_video_path, Status.success

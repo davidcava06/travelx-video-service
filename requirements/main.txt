@@ -806,6 +806,9 @@ werkzeug==2.1.1 \
     --hash=sha256:3c5493ece8268fecdcdc9c0b112211acd006354723b280d643ec732b6d4063d6 \
     --hash=sha256:f8e89a20aeabbe8a893c24a461d3ee5dad2123b05cc6abd73ceed01d39c3ae74
     # via flask
+wget==3.2 \
+    --hash=sha256:35e630eca2aa50ce998b9b1a127bb26b30dfee573702782aa982f875e3f16061
+    # via -r requirements/main.in
 yarl==1.7.2 \
     --hash=sha256:044daf3012e43d4b3538562da94a88fb12a6490652dbc29fb19adfa02cf72eac \
     --hash=sha256:0cba38120db72123db7c58322fa69e3c0efa933040ffb586c3a87c063ec7cae8 \

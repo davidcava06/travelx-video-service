@@ -16,7 +16,7 @@ PROJECT_ID = os.environ["PROJECT_ID"]
 BUCKET_NAME = os.environ["BUCKET_NAME"]
 INSTA_PROVIDER = Provider.datalama
 
-logger = structlog.get_logger()
+logger = structlog.get_logger(__name__)
 root = os.path.dirname(os.path.abspath(__file__))
 storage_client = storage.Client()
 
@@ -81,6 +81,7 @@ def format_slack_message(
     response_type: str = "in_channel",
     title: str = None,
     title_link: str = None,
+    thumb_url: str = None,
 ) -> str:
     message = {
         "response_type": response_type,
@@ -92,16 +93,18 @@ def format_slack_message(
     attachment["color"] = "#EA4435" if status == Status.failed else "#36A64F"
     attachment["title_link"] = title_link
     attachment["title"] = title
-    # attachment["text"] = text
-    # attachment["image_url"] = image_url
-    message["attachments"].append(attachment)
+    attachment["thumb_url"] = thumb_url
 
+    message["attachments"].append(attachment)
     return message
 
 
 def insta_downloader(event, context):
+    # Initialise Slack Message
     title = None
     title_link = None
+    thumb_url = None
+
     # Parse event content
     if "data" in event:
         insta_url = base64.b64decode(event["data"]).decode("utf-8")
@@ -120,9 +123,28 @@ def insta_downloader(event, context):
         try:
             logger.info(f"Storing data for {insta_id}...")
             upload_document_to_firestore(insta_object, insta_id)
+
+            logger.info(f"Downloading media for {insta_id}...")
+            (
+                tmp_thumbnail_path,
+                tmp_video_path,
+                status,
+            ) = insta_client.download_media_files(insta_object)
+
+            logger.info(f"Storing media for {insta_id}...")
+            media_type = insta_object["media_type"]
+            upload_file_to_cloudstorage(
+                media_type, tmp_thumbnail_path, f"{insta_id}/thumbnail.jpg"
+            )
+            upload_file_to_cloudstorage(
+                media_type, tmp_video_path, f"{insta_id}/video.mp4"
+            )
+
+            # Send message to Slack
             msg = f"🔫 {insta_id}: Ready pa fusilarlo"
             title = insta_id
             title_link = insta_url
+            thumb_url = insta_object["thumbnail_url"]
             status = Status.success
         except Exception as e:
             msg = f"🤷 Storage error: {e}"
@@ -132,6 +154,8 @@ def insta_downloader(event, context):
     # Notify Slack
     logger.info(f"Notifying Slack at {response_url}...")
     webhook = WebhookClient(response_url)
-    response = format_slack_message(msg, status, title=title, title_link=title_link)
+    response = format_slack_message(
+        msg, status, title=title, title_link=title_link, thumb_url=thumb_url
+    )
     webhook.send(**response)
     return jsonify(response)

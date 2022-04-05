@@ -29,11 +29,12 @@ provider "google-beta" {
 
 resource "google_project_service" "service" {
   for_each = toset([
-    "iam.googleapis.com",
+    "appengine.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "cloudbuild.googleapis.com",
     "cloudkms.googleapis.com",
-    "appengine.googleapis.com",
+    "firestore.googleapis.com",
+    "iam.googleapis.com",
     "transcoder.googleapis.com",
     "cloudfunctions.googleapis.com",
     "pubsub.googleapis.com",
