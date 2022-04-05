@@ -3,8 +3,8 @@ resource "google_storage_bucket" "deployer" {
   location = "EU"
 }
 
-resource "google_storage_bucket" "raw_videos" {
-  name          = "${var.workspace}-raw-videos"
+resource "google_storage_bucket" "raw_media" {
+  name          = "${var.workspace}-raw-media"
   location      = var.location
   force_destroy = false
   storage_class = "STANDARD"

@@ -27,13 +27,13 @@ resource "google_cloudfunctions_function" "insta_downloader" {
   service_account_email = google_service_account.cloud_function_invoker_account.email
 
   environment_variables = {
-    BUCKET_NAME  = google_storage_bucket.raw_videos.name
+    BUCKET_NAME  = google_storage_bucket.raw_media.name
     SLACK_URL    = var.slack_insta_url
     PROJECT_ID   = local.project_name
     DATALAMA_KEY = var.datalama_key
   }
 
-  depends_on = [google_storage_bucket.raw_videos, google_service_account.cloud_function_invoker_account]
+  depends_on = [google_storage_bucket.raw_media, google_service_account.cloud_function_invoker_account]
 }
 
 # Function: Push task to PubSub
