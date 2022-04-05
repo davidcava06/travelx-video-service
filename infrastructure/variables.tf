@@ -37,11 +37,7 @@ variable "slack_secret" {
   type = string
 }
 
-variable "insta_user" {
-  type = string
-}
-
-variable "insta_password" {
+variable "datalama_key" {
   type = string
 }
 

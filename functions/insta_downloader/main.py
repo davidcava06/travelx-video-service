@@ -1,10 +1,7 @@
 import base64
 import fnmatch
-import json
-import lzma
 import os
 import re
-from enum import Enum
 from typing import Optional, Tuple
 
 import firebase_admin
@@ -12,15 +9,12 @@ import structlog
 from firebase_admin import credentials, firestore
 from flask import jsonify
 from google.cloud import storage
+from providers import InstaClient, Provider, Status
 from slack_sdk.webhook import WebhookClient
-
-from providers import InstaClient, Status, Provider
 
 PROJECT_ID = os.environ["PROJECT_ID"]
 BUCKET_NAME = os.environ["BUCKET_NAME"]
-USER = os.environ["USER"]
-PASSWORD = os.environ["PASSWORD"]
-INSTA_PROVIDER = Provider.api
+INSTA_PROVIDER = Provider.datalama
 
 logger = structlog.get_logger()
 root = os.path.dirname(os.path.abspath(__file__))
@@ -58,22 +52,6 @@ def parse_insta_url(url: str) -> Optional[Tuple[str, Status]]:
     return insta_id, Status.success
 
 
-def download_post(insta_id: str) -> Optional[Tuple[str, Status]]:
-    target_directory = f"/tmp/{insta_id}"
-    insta_client = InstaClient(client_type=INSTA_PROVIDER)
-    print(insta_id)
-    target_directory, status = insta_client.download_post(insta_id)
-    return target_directory, status
-
-
-def parse_insta_object(file_name) -> dict:
-    """Takes a tarfile json and outputs a python object"""
-    file_path = os.path.join(root, file_name)
-    bytes_value = lzma.open(file_path).read()
-    insta_json = bytes_value.decode("utf8")
-    return json.loads(insta_json)
-
-
 def upload_file_to_cloudstorage(prefix, temp_file_name, file_name):
     bucket = storage_client.get_bucket(BUCKET_NAME)
     file_path = os.path.join(root, temp_file_name)
@@ -98,7 +76,11 @@ def find(pattern, path):
 
 
 def format_slack_message(
-    msg: str, status: Status, response_type: str = "in_channel"
+    msg: str,
+    status: Status,
+    response_type: str = "in_channel",
+    title: str = None,
+    title_link: str = None,
 ) -> str:
     message = {
         "response_type": response_type,
@@ -107,12 +89,10 @@ def format_slack_message(
     }
 
     attachment = {}
-    if status == Status.failed:
-        attachment["color"] = "#EA4435"
-    # attachment["title_link"] = url
-    # attachment["title"] = name
-    # attachment["title_link"] = url
-    # attachment["text"] = article
+    attachment["color"] = "#EA4435" if status == Status.failed else "#36A64F"
+    attachment["title_link"] = title_link
+    attachment["title"] = title
+    # attachment["text"] = text
     # attachment["image_url"] = image_url
     message["attachments"].append(attachment)
 
@@ -120,42 +100,38 @@ def format_slack_message(
 
 
 def insta_downloader(event, context):
+    title = None
+    title_link = None
     # Parse event content
     if "data" in event:
         insta_url = base64.b64decode(event["data"]).decode("utf-8")
+        logger.info(f"Processing {insta_url}...")
     if "attributes" in event:
         response_url = event["attributes"]["response_url"]
+        logger.info(f"Responding at {response_url}...")
     insta_id, status = parse_insta_url(insta_url)
 
     # Download payload from Instagram post
-    logger.info(insta_id)
-    target_directory, status = download_post(insta_id)
-
-    # Store payload
-    try:
-        thumbnail_paths = find("*.jpg", target_directory)
-        if len(thumbnail_paths) > 0:
-            upload_file_to_cloudstorage(
-                insta_id, thumbnail_paths[0], "thumbnail.jpg"
-            )  # MVP
-
-        video_paths = find("*.mp4", target_directory)
-        if len(video_paths) > 0:
-            upload_file_to_cloudstorage(insta_id, video_paths[0], "video.mp4")
-
-        insta_object_paths = find("*.json.xz", target_directory)
-        if len(insta_object_paths) > 0:
-            insta_object = parse_insta_object(insta_object_paths[0])  # MVP
+    insta_client = InstaClient(INSTA_PROVIDER)
+    logger.info(f"Downloading data for {insta_id}...")
+    insta_object, msg, status = insta_client.download_metadata(insta_id)
+    if status == Status.success:
+        # Store payload
+        try:
+            logger.info(f"Storing data for {insta_id}...")
             upload_document_to_firestore(insta_object, insta_id)
-        msg = f"🔫 {insta_id}: Ready pa fusilarlo"
-        status = Status.success
-    except Exception as e:
-        msg = f"🤷 Storage error: {e}"
-        status = Status.failed
-        logger.error(msg)
+            msg = f"🔫 {insta_id}: Ready pa fusilarlo"
+            title = insta_id
+            title_link = insta_url
+            status = Status.success
+        except Exception as e:
+            msg = f"🤷 Storage error: {e}"
+            status = Status.failed
+            logger.error(msg)
 
     # Notify Slack
+    logger.info(f"Notifying Slack at {response_url}...")
     webhook = WebhookClient(response_url)
-    response = format_slack_message(msg, status)
+    response = format_slack_message(msg, status, title=title, title_link=title_link)
     webhook.send(**response)
     return jsonify(response)
