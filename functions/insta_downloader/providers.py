@@ -72,9 +72,9 @@ class InstaClient:
         tmp_video_path = None
         try:
             if thumbnail_url is not None:
-                tmp_thumbnail_path = wget.download(thumbnail_url, f"/tmp/{insta_id}.jpg")
+                tmp_thumbnail_path = wget.download(thumbnail_url)
             if video_url is not None:
-                tmp_video_path = wget.download(video_url, f"/tmp/{insta_id}.mp4")
+                tmp_video_path = wget.download(video_url)
         except Exception as e:
             logger.error(f"🤷 Error downloading {insta_id}: {e}.")
             return None, None, Status.failed

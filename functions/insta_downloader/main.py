@@ -52,13 +52,13 @@ def parse_insta_url(url: str) -> Optional[Tuple[str, Status]]:
     return insta_id, Status.success
 
 
-def upload_file_to_cloudstorage(prefix, temp_file_name, file_name):
+def upload_file_to_cloudstorage(prefix, temp_file_name, file_name, content_type=None):
     bucket = storage_client.get_bucket(BUCKET_NAME)
     file_path = os.path.join(root, temp_file_name)
     if not bucket.exists():
         logger.error("🤷 Failed upload: Bucket does not exist.")
     blob = bucket.blob(f"{prefix}/{file_name}")
-    return blob.upload_from_filename(file_path)
+    return blob.upload_from_filename(file_path, content_type=content_type)
 
 
 def upload_document_to_firestore(object: dict, insta_id: str):
@@ -134,10 +134,10 @@ def insta_downloader(event, context):
             logger.info(f"Storing media for {insta_id}...")
             media_type = insta_object["media_type"]
             upload_file_to_cloudstorage(
-                media_type, tmp_thumbnail_path, f"{insta_id}/thumbnail.jpg"
+                media_type, tmp_thumbnail_path, f"{insta_id}/thumbnail.jpg", content_type="image/jpeg"
             )
             upload_file_to_cloudstorage(
-                media_type, tmp_video_path, f"{insta_id}/video.mp4"
+                media_type, tmp_video_path, f"{insta_id}/video.mp4", content_type="video/mp4"
             )
 
             # Send message to Slack
