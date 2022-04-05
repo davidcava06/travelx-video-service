@@ -30,6 +30,8 @@ resource "google_cloudfunctions_function" "insta_downloader" {
     BUCKET_NAME = google_storage_bucket.raw_videos.name
     SLACK_URL   = var.slack_insta_url
     PROJECT_ID  = local.project_name
+    USER        = var.insta_user
+    PASSWORD    = var.insta_password
   }
 
   depends_on = [google_storage_bucket.raw_videos, google_service_account.cloud_function_invoker_account]

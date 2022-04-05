@@ -37,6 +37,14 @@ variable "slack_secret" {
   type = string
 }
 
+variable "insta_user" {
+  type = string
+}
+
+variable "insta_password" {
+  type = string
+}
+
 locals {
   project_name = lookup(var.project_names, var.workspace)
   gcs_region   = lookup(var.gcs_regions, var.workspace)

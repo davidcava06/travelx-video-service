@@ -17,10 +17,13 @@ from slack_sdk.webhook import WebhookClient
 
 PROJECT_ID = os.environ["PROJECT_ID"]
 BUCKET_NAME = os.environ["BUCKET_NAME"]
+USER = os.environ["USER"]
+PASSWORD = os.environ["PASSWORD"]
 
 logger = structlog.get_logger()
 root = os.path.dirname(os.path.abspath(__file__))
 insta_loader = instaloader.Instaloader(quiet=True)
+insta_loader.login(USER, PASSWORD)
 storage_client = storage.Client()
 
 cred = credentials.ApplicationDefault()
