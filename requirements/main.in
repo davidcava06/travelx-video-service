@@ -11,3 +11,5 @@ aiohttp
 instaloader
 slack_sdk
 flask
+Pillow
+instagrapi

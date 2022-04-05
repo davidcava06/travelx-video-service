@@ -8,17 +8,19 @@ from enum import Enum
 from typing import Optional, Tuple
 
 import firebase_admin
-import instaloader
 import structlog
 from firebase_admin import credentials, firestore
 from flask import jsonify
 from google.cloud import storage
 from slack_sdk.webhook import WebhookClient
 
+from .providers import InstaClient, Status, Provider
+
 PROJECT_ID = os.environ["PROJECT_ID"]
 BUCKET_NAME = os.environ["BUCKET_NAME"]
 USER = os.environ["USER"]
 PASSWORD = os.environ["PASSWORD"]
+INSTA_PROVIDER = Provider.api
 
 logger = structlog.get_logger()
 root = os.path.dirname(os.path.abspath(__file__))
@@ -32,11 +34,6 @@ firebase_admin.initialize_app(
     },
 )
 db = firestore.client()
-
-
-class Status(Enum):
-    success = "SUCCESS"
-    failed = "FAILED"
 
 
 def validate_insta_url(url: str) -> Optional[str]:
@@ -63,13 +60,10 @@ def parse_insta_url(url: str) -> Optional[Tuple[str, Status]]:
 
 def download_post(insta_id: str) -> Optional[Tuple[str, Status]]:
     target_directory = f"/tmp/{insta_id}"
-    insta_loader = instaloader.Instaloader(quiet=True)
-    insta_loader.login(USER, PASSWORD)
-    post = instaloader.Post.from_shortcode(insta_loader.context, insta_id)
-    download_ind = insta_loader.download_post(post, target_directory)
-    if not download_ind:
-        return "🤷 Error downloading {} from instagram.", Status.failed
-    return target_directory, Status.success
+    insta_client = InstaClient(client_type=INSTA_PROVIDER)
+    print(insta_id)
+    target_directory, status = insta_client.download_post(insta_id)
+    return target_directory, status
 
 
 def parse_insta_object(file_name) -> dict:
