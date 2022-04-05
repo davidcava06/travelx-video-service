@@ -134,10 +134,16 @@ def insta_downloader(event, context):
             logger.info(f"Storing media for {insta_id}...")
             media_type = insta_object["media_type"]
             upload_file_to_cloudstorage(
-                media_type, tmp_thumbnail_path, f"{insta_id}/thumbnail.jpg", content_type="image/jpeg"
+                media_type,
+                tmp_thumbnail_path,
+                f"{insta_id}/thumbnail.jpg",
+                content_type="image/jpeg",
             )
             upload_file_to_cloudstorage(
-                media_type, tmp_video_path, f"{insta_id}/video.mp4", content_type="video/mp4"
+                media_type,
+                tmp_video_path,
+                f"{insta_id}/video.mp4",
+                content_type="video/mp4",
             )
 
             # Send message to Slack

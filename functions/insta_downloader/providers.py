@@ -68,14 +68,19 @@ class InstaClient:
         thumbnail_url = insta_object["thumbnail_url"]
         video_url = insta_object["video_url"]
 
-        tmp_thumbnail_path = None
-        tmp_video_path = None
+        tmp_thumbnail_path_f = None
+        tmp_video_path_f = None
+        root = os.path.dirname(os.path.abspath(__file__))
         try:
             if thumbnail_url is not None:
-                tmp_thumbnail_path = wget.download(thumbnail_url)
+                tmp_thumbnail_path = "/tmp/" + f"{insta_id}.jpg"
+                tmp_thumbnail_path_f = os.path.join(root, tmp_thumbnail_path)
+                wget.download(thumbnail_url, tmp_thumbnail_path_f)
             if video_url is not None:
-                tmp_video_path = wget.download(video_url)
+                tmp_video_path = "/tmp/" + f"{insta_id}.jpg"
+                tmp_video_path_f = os.path.join(root, tmp_video_path)
+                wget.download(video_url, tmp_video_path_f)
         except Exception as e:
             logger.error(f"🤷 Error downloading {insta_id}: {e}.")
             return None, None, Status.failed
-        return tmp_thumbnail_path, tmp_video_path, Status.success
+        return tmp_thumbnail_path_f, tmp_video_path_f, Status.success
