@@ -32,7 +32,7 @@ db = firestore.client()
 
 def validate_insta_url(url: str) -> Optional[str]:
     """Check for valid url"""
-    pattern = re.compile(r"\/((p)|(reel)|(tv))\/[a-zA-Z0-9]+\/")
+    pattern = re.compile(r"\/((p)|(reel)|(tv))\/[a-zA-Z0-9!@#$&()-_]+\/")
     object = pattern.search(url)
     if object is None:
         return None
@@ -82,6 +82,7 @@ def format_slack_message(
     title: str = None,
     title_link: str = None,
     thumb_url: str = None,
+    text: str = None,
 ) -> str:
     message = {
         "response_type": response_type,
@@ -90,9 +91,11 @@ def format_slack_message(
     }
 
     attachment = {}
+    attachment["author_name"] = "Fiebel"
     attachment["color"] = "#EA4435" if status == Status.failed else "#36A64F"
     attachment["title_link"] = title_link
     attachment["title"] = title
+    attachment["text"] = text
     attachment["thumb_url"] = thumb_url
 
     message["attachments"].append(attachment)
@@ -104,6 +107,7 @@ def insta_downloader(event, context):
     title = None
     title_link = None
     thumb_url = None
+    text = None
 
     # Parse event content
     if "data" in event:
@@ -133,24 +137,28 @@ def insta_downloader(event, context):
 
             logger.info(f"Storing media for {insta_id}...")
             media_type = insta_object["media_type"]
-            upload_file_to_cloudstorage(
-                media_type,
-                tmp_thumbnail_path,
-                f"{insta_id}/thumbnail.jpg",
-                content_type="image/jpeg",
-            )
-            upload_file_to_cloudstorage(
-                media_type,
-                tmp_video_path,
-                f"{insta_id}/video.mp4",
-                content_type="video/mp4",
-            )
+
+            if tmp_thumbnail_path is not None:
+                upload_file_to_cloudstorage(
+                    media_type,
+                    tmp_thumbnail_path,
+                    f"{insta_id}/thumbnail.jpg",
+                    content_type="image/jpeg",
+                )
+            if tmp_video_path is not None:
+                upload_file_to_cloudstorage(
+                    media_type,
+                    tmp_video_path,
+                    f"{insta_id}/video.mp4",
+                    content_type="video/mp4",
+                )
 
             # Send message to Slack
             msg = f"🔫 {insta_id}: Ready pa fusilarlo"
             title = insta_id
             title_link = insta_url
             thumb_url = insta_object["thumbnail_url"]
+            text = insta_object["caption_text"]
             status = Status.success
         except Exception as e:
             msg = f"🤷 Storage error: {e}"
@@ -161,7 +169,7 @@ def insta_downloader(event, context):
     logger.info(f"Notifying Slack at {response_url}...")
     webhook = WebhookClient(response_url)
     response = format_slack_message(
-        msg, status, title=title, title_link=title_link, thumb_url=thumb_url
+        msg, status, title=title, title_link=title_link, thumb_url=thumb_url, text=text
     )
     webhook.send(**response)
     return jsonify(response)
