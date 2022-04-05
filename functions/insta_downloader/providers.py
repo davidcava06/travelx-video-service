@@ -36,9 +36,9 @@ class DataLamaClient:
         response = requests.get(
             f"{self.base_url}/v1/media/by/code", params=params, headers=headers
         )
-        if response.status == 200:
-            return response.json(), response.status, Status.success
-        return None, response.status, Status.failed
+        if response.status_code == 200:
+            return response.json(), response.status_code, Status.success
+        return None, response.status_code, Status.failed
 
 
 class InstaClient:
