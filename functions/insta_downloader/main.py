@@ -14,7 +14,7 @@ from flask import jsonify
 from google.cloud import storage
 from slack_sdk.webhook import WebhookClient
 
-from .providers import InstaClient, Status, Provider
+from providers import InstaClient, Status, Provider
 
 PROJECT_ID = os.environ["PROJECT_ID"]
 BUCKET_NAME = os.environ["BUCKET_NAME"]
