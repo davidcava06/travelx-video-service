@@ -39,3 +39,10 @@ jobs:
           tf-api-token: ${{ secrets.TF_API_TOKEN }}
           environment: nonprod
           slack-secret: ${{ secrets.SLACK_SECRET }}
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,eventName,workflow
+        env:
+          SLACK_ENG_WEBHOOK_URL: ${{ secrets.SLACK_ENG_WEBHOOK_URL }}
+        if: always()
