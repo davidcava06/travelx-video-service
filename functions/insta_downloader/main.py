@@ -22,8 +22,6 @@ PASSWORD = os.environ["PASSWORD"]
 
 logger = structlog.get_logger()
 root = os.path.dirname(os.path.abspath(__file__))
-insta_loader = instaloader.Instaloader(quiet=True)
-insta_loader.login(USER, PASSWORD)
 storage_client = storage.Client()
 
 cred = credentials.ApplicationDefault()
@@ -65,6 +63,8 @@ def parse_insta_url(url: str) -> Optional[Tuple[str, Status]]:
 
 def download_post(insta_id: str) -> Optional[Tuple[str, Status]]:
     target_directory = f"/tmp/{insta_id}"
+    insta_loader = instaloader.Instaloader(quiet=True)
+    insta_loader.login(USER, PASSWORD)
     post = instaloader.Post.from_shortcode(insta_loader.context, insta_id)
     download_ind = insta_loader.download_post(post, target_directory)
     if not download_ind:
