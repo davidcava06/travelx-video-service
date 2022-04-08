@@ -5,7 +5,7 @@
 #   template {
 #     spec {
 #       containers {
-#         image = "eu.gcr.io/${local.project_name}/tiktok-api:latest"
+#         image = "europe-docker.pkg.dev/${google_artifact_registry_repository.app_registry.project}/${google_artifact_registry_repository.app_registry.repository_id}/tiktok-api:latest"
 #         resources {
 #           limits = {
 #             "cpu"    = "1000m"  //explicit

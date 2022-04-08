@@ -19,6 +19,8 @@ jobs:
         uses: ./.github/actions/files-change-info
     outputs:
       terraform-changes: ${{ steps.info.outputs.terraform-changes }}
+      apps-changes: ${{ steps.info.outputs.apps-changes }}
+      app-matrix: ${{ steps.info.outputs.app-list-changes}}
 
   terraform-plan-nonprod:
     name: Terraform Plan NONPROD
@@ -49,3 +51,39 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_ENG_WEBHOOK_URL }}
         if: always()
+
+  build-and-push-image-nonprod:
+    name: Build and Push Image NonProd
+    runs-on: ubuntu-20.04
+    needs:
+      - init
+      - terraform-plan-nonprod
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.init.outputs.app-matrix) }}
+      max-parallel: 1
+    if: |
+      always() 
+      && needs.init.outputs.apps-changes == 'true'
+      && needs.terraform-plan-nonprod.result != 'failure'
+      && needs.init.outputs.last-author != 'ki-cicd'
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2.4.0
+      - name: fetch branch
+        run: git fetch origin ${GITHUB_HEAD_REF} && git checkout ${GITHUB_HEAD_REF}
+      - name: generate image tag
+        id: tag
+        run: | 
+          SHA="${{ github.event.pull_request.head.sha }}"
+          TAG="$(date '+%Y-%m-%d')_${GITHUB_RUN_NUMBER}_${SHA:0:7}"
+          echo "::set-output name=value::$TAG"
+      - name: push image
+        uses: ./.github/actions/docker/push
+        with:
+          gcp-service-account-key: ${{ secrets.GCP_NONPROD_CREDENTIALS }}
+          image-tag: ${{ steps.tag.outputs.value }}
+          image-name: ${{ matrix.app }}
+          registry-project: fiebel-video-nonprod
+          registry-artifact: nonprod-app-registry
+          working-directory: apps/${{ matrix.app }}

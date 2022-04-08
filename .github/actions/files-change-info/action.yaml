@@ -5,10 +5,20 @@ inputs:
     description: Terraform root directory
     required: true
     default: infrastructure
+  apps-root-directory:
+    description: Apps root directory
+    required: true
+    default: apps
 outputs:
   terraform-changes:
     description: Did Terraform change?
     value: ${{ steps.terraform-changes.outputs.any_modified }}
+  apps-changes:
+    description: Did any apps change?
+    value: ${{ steps.apps-changes.outputs.any_modified }}
+  app-list-changes:
+    description: List of app that changed (JSON FORMAT)
+    value: ${{ steps.app-list-changes.outputs.value }}
   last-author:
     description: get the last commit author
     value: ${{ steps.last-author.outputs.value }}
@@ -20,6 +30,26 @@ runs:
       uses: tj-actions/changed-files@v13
       with:
         files: ${{ inputs.terraform-root-directory }}/**
+    - name: check any apps changes
+      id: apps-changes
+      uses: tj-actions/changed-files@v13
+      with:
+        files: ${{ inputs.apps-root-directory }}/**
+    - name: get list of apps that changed
+      id: app-list-changes
+      run: |
+        while IFS= read -r change; do
+          echo $change | cut -d '/' -f2 >> /tmp/list
+        done <<< $(echo "${{ steps.apps-changes.outputs.all_changed_and_modified_files }}" | tr " " "\n")
+        FOLDER_LIST='{ "app": [ '
+        while IFS= read -r app; do
+          if [[ ! -z "$app" ]]; then
+            FOLDER_LIST="${FOLDER_LIST} \"${app}\","
+          fi
+        done <<< "$(cat /tmp/list | uniq)"
+        FOLDER_LIST="${FOLDER_LIST:0:-1} ] }"
+        FOLDER_LIST=$(echo $FOLDER_LIST | jq -c .)
+        echo "::set-output name=value::${FOLDER_LIST}"
     - name: get last author
       id: last-author
       run: echo "::set-output name=value::$(git log -1 --pretty=format:'%an')"
