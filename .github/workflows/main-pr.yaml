@@ -44,13 +44,6 @@ jobs:
           tf-api-token: ${{ secrets.TF_API_TOKEN }}
           environment: nonprod
           slack-secret: ${{ secrets.SLACK_SECRET }}
-      - uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: repo,message,commit,author,eventName,workflow
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_ENG_WEBHOOK_URL }}
-        if: always()
 
   build-and-push-image-nonprod:
     name: Build and Push Image NonProd
@@ -94,3 +87,23 @@ jobs:
           image-tag: ${{ steps.tag.outputs.value }}
           image-name: ${{ matrix.app }}
           environment: nonprod
+  slack-notify:
+    name: Notify Slack
+    runs-on: ubuntu-20.04
+    needs:
+      - init
+      - terraform-plan-nonprod
+      - build-and-push-image-nonprod
+    if: |
+      always() 
+      && needs.init.result != 'failure'
+      && needs.terraform-plan-nonprod.result != 'failure'
+      && needs.build-and-push-image-nonprod.result != 'failure'
+    steps:
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,eventName,workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_ENG_WEBHOOK_URL }}
+        if: always()
