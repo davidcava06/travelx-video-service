@@ -14,8 +14,8 @@ inputs:
     description: Path of the folder containing the Dockerfile
     required: true
     default: apps
-  registry-artifact:
-    description: Artifact registry name
+  repository-name:
+    description: Artifact registry repository name
     required: true
   registry-project:
     description: GCP Project of the artifact registry
@@ -24,7 +24,7 @@ inputs:
   registry-name:
     description: Registry DNS name
     required: true
-    default: europe-docker.pkg.dev
+    default: europe-west2-docker.pkg.dev
 runs:
   using: "composite"
   steps:
@@ -34,13 +34,13 @@ runs:
       uses: docker/login-action@v1.10.0
       with:
         registry: ${{ inputs.registry-name }}
-        username: _json_key
+        username: _json_key_base64
         password: ${{ inputs.gcp-service-account-key }}
     - name: Docker build
       working-directory: ${{ inputs.working-directory }}
-      run: docker build . -t ${{ inputs.registry-name }}/${{ inputs.registry-project }}/${{ inputs.registry-artifact }}/${{ inputs.image-name }}:${{ inputs.image-tag }}
+      run: docker build . -t ${{ inputs.registry-name }}/${{ inputs.registry-project }}/${{ inputs.repository-name }}/${{ inputs.image-name }}:${{ inputs.image-tag }}
       shell: bash
     - name: Push Image
       working-directory: ${{ inputs.working-directory }}
-      run: docker push ${{ inputs.registry-name }}/${{ inputs.registry-project }}/${{ inputs.registry-artifact }}/${{ inputs.image-name }}:${{ inputs.image-tag }}
+      run: docker push ${{ inputs.registry-name }}/${{ inputs.registry-project }}/${{ inputs.repository-name }}/${{ inputs.image-name }}:${{ inputs.image-tag }}
       shell: bash

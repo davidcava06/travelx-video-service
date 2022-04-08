@@ -1,14 +1,18 @@
 SHELL = /bin/bash
 
-lint:
-	isort src tests
-	black src tests
-	flake8 src tests
+update-deps:
+	pip-compile --allow-unsafe --build-isolation --output-file requirements/main.txt requirements/main.in
+	pip-compile --allow-unsafe --build-isolation --output-file requirements/dev.txt requirements/dev.in
 
 install:
-	poetry install --no-dev
+	pip install --upgrade -r requirements/main.txt
+	pip install --upgrade -r requirements/dev.txt
 
-install-dev:
-	poetry install
+add: update-deps install
 
-.PHONY: lint
+lint:
+	isort src
+	black src
+	flake8 src
+
+.PHONY: lint install

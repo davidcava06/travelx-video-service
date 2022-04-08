@@ -1,0 +1,39 @@
+name: Update Cloudrun image tags
+description: Update Tags of cloudrun apps
+inputs:
+  environment:
+    description: "Project Environment: nonprod, prod"
+    required: true
+  push:
+    description: Do you want to push the changes?
+    required: true
+    default: false
+  working-directory:
+    description: Location of terraform root folder
+    required: true
+    default: infrastructure
+  image-name:
+    description: image to be updated
+    required: true
+  image-tag:
+    description: new image tag to update cloudrun apps with
+runs:
+  using: "composite"
+  steps:
+    - name: Bump up image versions
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        TAG: ${{ inputs.image-tag }}
+        NAME: ${{ inputs.image-name }}
+      run: |
+        sed -i "s/\/$NAME:.*/\/$NAME:$TAG/g" cloudrun.tf
+      shell: bash
+    - name: commit versions
+      run: |
+        git config --global user.name "fiebel-cicd"
+        git commit -am ':robot: auto bump cloudrun apps version tag in ${{ inputs.environment }}'
+      shell: bash
+    - name: push
+      if: inputs.push == 'true'
+      run: git push
+      shell: bash

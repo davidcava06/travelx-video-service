@@ -1,16 +1,21 @@
 FROM python:3.9.10-slim
+ENV PYTHONFAULTHANDLER=1 \
+    PYTHONHASHSEED=random \
+    PYTHONUNBUFFERED=1
 WORKDIR /usr/app
 
+ENV PIP_DEFAULT_TIMEOUT=100 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1
+
 RUN apt-get update
-RUN apt-get install -y build-essential
+RUN apt-get install -y build-essential libpq-dev --no-install-recommends
+RUN python -m venv /venv
 
-COPY pyproject.toml poetry.lock Makefile ./
-RUN pip install poetry==1.1.13
-RUN poetry config virtualenvs.create false
+COPY requirements/main.txt requirements.txt
+RUN /venv/bin/pip install -r requirements.txt
 
-RUN make install
-
-ENV ENVIRONMENT
+ENV ENVIRONMENT=nonprod
 
 COPY src src
 
