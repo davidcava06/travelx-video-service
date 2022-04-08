@@ -1,6 +1,8 @@
-resource "google_container_registry" "registry" {
-  project  = local.project_name
-  location = "EU"
+resource "google_artifact_registry_repository" "app_registry" {
+  provider = google-beta
 
-  depends_on = [google_project_service.service]
+  project       = local.project_name
+  location      = local.gcs_region
+  repository_id = "${var.workspace}-app-repository"
+  format        = "DOCKER"
 }

@@ -10,8 +10,7 @@ RUN poetry config virtualenvs.create false
 
 RUN make install
 
-ARG ENVIRONMENT=""
-ENV ENVIRONMENT=${ENVIRONMENT}
+ENV ENVIRONMENT
 
 COPY src src
 
