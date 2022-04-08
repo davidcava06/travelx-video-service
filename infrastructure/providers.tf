@@ -37,7 +37,9 @@ resource "google_project_service" "service" {
     "iam.googleapis.com",
     "transcoder.googleapis.com",
     "cloudfunctions.googleapis.com",
+    "containerregistry.googleapis.com",
     "pubsub.googleapis.com",
+    "run.googleapis.com",
   ])
 
   service = each.key

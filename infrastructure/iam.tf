@@ -16,16 +16,8 @@ resource "google_cloudfunctions_function_iam_member" "insta_downloader_invoker_m
   member         = "serviceAccount:${google_service_account.cloud_function_invoker_account.email}"
 }
 
-# resource "google_pubsub_topic_iam_member" "insta_download_publisher_member" {
-#   project = google_pubsub_topic.insta_download_jobs.project
-#   topic   = google_pubsub_topic.insta_download_jobs.name
-#   role    = "roles/pubsub.publisher"
-#   member  = "serviceAccount:${google_service_account.cloud_function_invoker_account.email}"
-# }
-
-# resource "google_pubsub_topic_iam_member" "insta_download_subscriber_member" {
-#   project = google_pubsub_topic.insta_download_jobs.project
-#   topic   = google_pubsub_topic.insta_download_jobs.name
-#   role    = "roles/pubsub.subscriber"
-#   member  = "serviceAccount:${google_service_account.cloud_function_invoker_account.email}"
-# }
+resource "google_project_iam_member" "tiktok_api_storage" {
+  project = local.project_name
+  role    = "roles/storage.admin"
+  member  = "serviceAccount:${google_service_account.tiktok_api.email}"
+}
