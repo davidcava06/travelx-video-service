@@ -10,10 +10,6 @@ aiosignal==1.2.0
     # via aiohttp
 anyio==3.5.0
     # via httpcore
-apispec==3.3.2
-    # via apispec-starlette
-apispec-starlette==0.0.3
-    # via -r requirements/main.in
 asgiref==3.5.0
     # via uvicorn
 async-timeout==4.0.2
@@ -111,7 +107,6 @@ grpc-google-iam-v1==0.12.4
 grpcio==1.44.0
     # via
     #   google-api-core
-    #   googleapis-common-protos
     #   grpc-google-iam-v1
     #   grpcio-status
 grpcio-status==1.44.0
@@ -136,6 +131,8 @@ idna==3.3
     #   requests
     #   rfc3986
     #   yarl
+marshmallow==3.15.0
+    # via -r requirements/main.in
 msgpack==1.0.3
     # via cachecontrol
 multidict==6.0.2
@@ -145,7 +142,9 @@ multidict==6.0.2
 oauthlib==3.2.0
     # via requests-oauthlib
 packaging==21.3
-    # via google-cloud-appengine-logging
+    # via
+    #   google-cloud-appengine-logging
+    #   marshmallow
 proto-plus==1.20.3
     # via
     #   google-cloud-appengine-logging
@@ -170,8 +169,6 @@ pyparsing==3.0.7
     # via
     #   httplib2
     #   packaging
-pyyaml==5.4.1
-    # via apispec-starlette
 requests==2.27.1
     # via
     #   cachecontrol
@@ -198,9 +195,7 @@ sniffio==1.2.0
     #   httpcore
     #   httpx
 starlette==0.13.8
-    # via
-    #   -r requirements/main.in
-    #   apispec-starlette
+    # via -r requirements/main.in
 uritemplate==4.1.1
     # via google-api-python-client
 urllib3==1.26.9

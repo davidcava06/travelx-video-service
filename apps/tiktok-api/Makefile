@@ -15,4 +15,8 @@ lint:
 	black src
 	flake8 src
 
+
+api:
+	uvicorn --port 8082 --no-access-log main:application --reload
+
 .PHONY: lint install

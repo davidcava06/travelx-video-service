@@ -5,9 +5,9 @@ firebase-admin
 fsspec
 gcsfs
 starlette
-apispec-starlette
 uvloop
 uvicorn
 gunicorn
+marshmallow
 httpx
 slack_sdk
