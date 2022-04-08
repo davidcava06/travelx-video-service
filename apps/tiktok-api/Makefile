@@ -11,4 +11,4 @@ install:
 install-dev:
 	poetry install
 
-.PHONY: lint
+.PHONY: lint install
