@@ -14,8 +14,8 @@ inputs:
     description: Path of the folder containing the Dockerfile
     required: true
     default: apps
-  registry-artifact:
-    description: Artifact registry name
+  repository-name:
+    description: Artifact registry repository name
     required: true
   registry-project:
     description: GCP Project of the artifact registry

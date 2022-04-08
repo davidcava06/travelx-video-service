@@ -85,7 +85,7 @@ jobs:
           image-tag: ${{ steps.tag.outputs.value }}
           image-name: ${{ matrix.app }}
           registry-project: fiebel-video-nonprod
-          registry-artifact: nonprod-app-registry
+          repository-name: nonprod-app-repository
           registry-name: europe-west2-docker.pkg.dev
           working-directory: apps/${{ matrix.app }}
       - name: update api images
