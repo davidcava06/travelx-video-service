@@ -26,7 +26,7 @@ runs:
         TAG: ${{ inputs.image-tag }}
         NAME: ${{ inputs.image-name }}
       run: |
-        sed -i 's/\/${NAME}:.*/\/${NAME}:${TAG}"/g' cloudrun.tf
+        sed -i 's/\/'${NAME}'':.*/\/'${NAME}'':'${TAG}'"/g' cloudrun.tf
       shell: bash
     - name: commit versions
       run: |
