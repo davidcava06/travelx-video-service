@@ -10,7 +10,7 @@ RUN poetry config virtualenvs.create false
 
 RUN make install
 
-ENV ENVIRONMENT
+ENV ENVIRONMENT=nonprod
 
 COPY src src
 
