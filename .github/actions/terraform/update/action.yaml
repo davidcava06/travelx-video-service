@@ -27,6 +27,7 @@ runs:
         image-name: ${{ inputs.image-name }}
       run: |
         sed -i 's/\/'${image-name}':.*/\/'${image-name}':'${image-tag}'/g' cloudrun.tf
+      shell: bash
     - name: commit versions
       run: |
         git config --global user.name "fiebel-cicd"
