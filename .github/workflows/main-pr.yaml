@@ -87,6 +87,7 @@ jobs:
           image-tag: ${{ steps.tag.outputs.value }}
           image-name: ${{ matrix.app }}
           environment: nonprod
+          push: true
   slack-notify:
     name: Notify Slack
     runs-on: ubuntu-20.04
