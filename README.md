@@ -19,3 +19,7 @@ The terraform state is saved in `terraform.io`. Credentials for GCP must set up 
 6. Activate a virtualenv (using `source .venv/bin/activate` or `pyenv activate investment-cloud`)
 7. `make develop` to install any dev dependencies
 8. #ship it
+
+
+## TikTokAPI
+This library needs `playwright` to work. In order to install it the Docker Image has been taken from [here](https://github.com/danofun/docker-playwright-python/blob/main/Dockerfile).

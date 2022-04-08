@@ -9,7 +9,7 @@ resource "google_cloud_run_service" "api" {
         resources {
           limits = {
             "cpu"    = "1000m"  //explicit
-            "memory" = "1024Mi" //explicit
+            "memory" = "3072Mi" //explicit
           }
         }
         env {
