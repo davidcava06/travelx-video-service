@@ -1,11 +1,10 @@
 import json
 from typing import Any, Optional, Type, Union
 
+from api import exceptions, logging
 from marshmallow import Schema
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-
-from api import exceptions, config, logging
 
 log = logging.get_logger(__name__)
 

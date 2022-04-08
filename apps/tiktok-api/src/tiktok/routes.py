@@ -1,8 +1,9 @@
+from src import http, logging
 from starlette.requests import Request
 from starlette.routing import Route
+
 # from TikTokApi import TikTokApi
 
-from src import logging
 
 log = logging.get_logger(__name__)
 
@@ -27,6 +28,7 @@ async def get_video(request: Request):
 
     #     with open("out.mp4", "wb") as out_file:
     #         out_file.write(video_data)
-    return None
+    return http.APIResponse(content={"status": "It's coming..."}, status_code=200)
+
 
 routes = [Route("/", get_video, methods=["GET"])]

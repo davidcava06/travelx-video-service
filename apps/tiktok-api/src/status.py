@@ -1,8 +1,7 @@
-from starlette.responses import JSONResponse
-from starlette.routing import Route
-
 from api.config import ENVIRONMENT
 from api.exceptions import NotFound
+from starlette.responses import JSONResponse
+from starlette.routing import Route
 
 
 async def ok(request):
@@ -13,9 +12,7 @@ async def ok(request):
         200:
             description: Returns OK
     """
-    return JSONResponse(
-        {"status": "ok", "environment": ENVIRONMENT}
-    )
+    return JSONResponse({"status": "ok", "environment": ENVIRONMENT})
 
 
 async def not_found(request):

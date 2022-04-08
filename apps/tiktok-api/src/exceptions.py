@@ -1,7 +1,5 @@
-from starlette.exceptions import HTTPException
-
-
 from api import logging
+from starlette.exceptions import HTTPException
 
 log = logging.get_logger(__name__)
 

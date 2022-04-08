@@ -1,16 +1,13 @@
+from api import config, logging
+from src.status import routes as status_routes
+from src.tiktok import routes as tiktok_routes
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
-
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-from starlette.routing import Route, Mount
+from starlette.routing import Mount, Route
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
-
-from api import config, logging
-
-from src.tiktok import routes as tiktok_routes
-from src.status import routes as status_routes
 
 log = logging.get_logger(__name__)
 
@@ -29,7 +26,7 @@ async def root(request: Request):
 
 CORS_PARAMS_BY_ENVIRONMENT = {
     "prod": {"allow_origins": "*"},
-    "nonprod": {"allow_origins": "*"}
+    "nonprod": {"allow_origins": "*"},
 }
 
 
