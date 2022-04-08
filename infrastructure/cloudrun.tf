@@ -20,7 +20,7 @@ resource "google_cloud_run_service" "api" {
           name  = "ENVIRONMENT"
           value = var.workspace
         }
-        command = ["/venv/bin/gunicorn"]
+        command = ["gunicorn"]
         args    = ["-c", "gunicorn.py", "-k", "uvicorn.workers.UvicornWorker", "main"]
       }
       timeout_seconds      = "30"

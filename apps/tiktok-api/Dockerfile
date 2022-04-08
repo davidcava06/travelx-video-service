@@ -81,13 +81,8 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1
 
-# RUN apt-get update
-# RUN apt-get install -y build-essential libpq-dev --no-install-recommends
-# RUN python -m venv /venv
-
 COPY requirements/main.txt requirements.txt
 RUN pip install -r requirements.txt
-# RUN /venv/bin/pip install -r requirements.txt
 
 ENV ENVIRONMENT=nonprod
 
@@ -102,4 +97,3 @@ COPY src ./src
 EXPOSE 8000
 
 CMD ["gunicorn", "-c", "gunicorn.py", "-k", "uvicorn.workers.UvicornWorker", "main"]
-# CMD ["/venv/bin/gunicorn", "-c", "gunicorn.py", "-k", "uvicorn.workers.UvicornWorker", "main"]
