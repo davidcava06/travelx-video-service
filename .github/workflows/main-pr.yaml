@@ -86,6 +86,7 @@ jobs:
           image-name: ${{ matrix.app }}
           registry-project: fiebel-video-nonprod
           registry-artifact: nonprod-app-registry
+          registry-name: europe-west2-docker.pkg.dev
           working-directory: apps/${{ matrix.app }}
       - name: update api images
         uses: ./.github/actions/terraform/update

@@ -34,7 +34,7 @@ runs:
       uses: docker/login-action@v1.10.0
       with:
         registry: ${{ inputs.registry-name }}
-        username: _json_key
+        username: _json_key_base64
         password: ${{ inputs.gcp-service-account-key }}
     - name: Docker build
       working-directory: ${{ inputs.working-directory }}
