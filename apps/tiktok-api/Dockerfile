@@ -14,6 +14,7 @@ RUN python -m venv /venv
 
 COPY requirements/main.txt requirements.txt
 RUN /venv/bin/pip install -r requirements.txt
+RUN python -m playwright install
 
 ENV ENVIRONMENT=nonprod
 
