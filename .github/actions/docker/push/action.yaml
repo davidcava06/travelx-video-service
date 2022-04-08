@@ -24,7 +24,7 @@ inputs:
   registry-name:
     description: Registry DNS name
     required: true
-    default: europe-docker.pkg.dev
+    default: europe-west2-docker.pkg.dev
 runs:
   using: "composite"
   steps:
