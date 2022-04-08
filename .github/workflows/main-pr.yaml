@@ -78,12 +78,12 @@ jobs:
           SHA="${{ github.event.pull_request.head.sha }}"
           TAG="$(date '+%Y-%m-%d')_${GITHUB_RUN_NUMBER}_${SHA:0:7}"
           echo "::set-output name=value::$TAG"
-      - name: push image
-        uses: ./.github/actions/docker/push
-        with:
-          gcp-service-account-key: ${{ secrets.GCP_NONPROD_CREDENTIALS }}
-          image-tag: ${{ steps.tag.outputs.value }}
-          image-name: ${{ matrix.app }}
-          registry-project: fiebel-video-nonprod
-          registry-artifact: nonprod-app-registry
-          working-directory: apps/${{ matrix.app }}
+      # - name: push image
+      #   uses: ./.github/actions/docker/push
+      #   with:
+      #     gcp-service-account-key: ${{ secrets.GCP_NONPROD_CREDENTIALS }}
+      #     image-tag: ${{ steps.tag.outputs.value }}
+      #     image-name: ${{ matrix.app }}
+      #     registry-project: fiebel-video-nonprod
+      #     registry-artifact: nonprod-app-registry
+      #     working-directory: apps/${{ matrix.app }}
