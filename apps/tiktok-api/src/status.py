@@ -1,7 +1,8 @@
-from api.config import ENVIRONMENT
-from api.exceptions import NotFound
 from starlette.responses import JSONResponse
 from starlette.routing import Route
+
+from src.config import ENVIRONMENT
+from src.exceptions import NotFound
 
 
 async def ok(request):
