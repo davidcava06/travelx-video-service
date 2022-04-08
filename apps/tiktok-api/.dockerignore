@@ -1,0 +1,6 @@
+*
+!src
+!requirements
+!gunicorn.py
+!main.py
+!Makefile

@@ -11,3 +11,5 @@ gunicorn
 marshmallow
 httpx
 slack_sdk
+playwright
+TikTokApi
