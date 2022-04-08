@@ -50,6 +50,7 @@ runs:
         FOLDER_LIST="${FOLDER_LIST:0:-1} ] }"
         FOLDER_LIST=$(echo $FOLDER_LIST | jq -c .)
         echo "::set-output name=value::${FOLDER_LIST}"
+      shell: bash
     - name: get last author
       id: last-author
       run: echo "::set-output name=value::$(git log -1 --pretty=format:'%an')"
