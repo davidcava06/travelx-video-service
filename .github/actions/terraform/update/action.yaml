@@ -23,11 +23,10 @@ runs:
     - name: Bump up image versions
       working-directory: ${{ inputs.working-directory }}
       env:
-        image_tag: ${{ inputs.image-tag }}
-        image_name: ${{ inputs.image-name }}
+        image-tag: ${{ inputs.image-tag }}
+        image-name: ${{ inputs.image-name }}
       run: |
-        sed -i 's|\/'${image-name}':.*|\/'${image-name}':'${image_tag}'"|g' cloudrun.tf
-      shell: bash
+        sed -i 's/\/'${image-name}':.*/\/'${image-name}':'${image-tag}'/g' cloudrun.tf
     - name: commit versions
       run: |
         git config --global user.name "fiebel-cicd"
