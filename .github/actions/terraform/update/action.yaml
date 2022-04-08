@@ -21,7 +21,7 @@ runs:
   using: "composite"
   steps:
     - name: Bump up image versions
-      working-directory: ${{ inputs.working_directory }}
+      working-directory: ${{ inputs.working-directory }}
       env:
         image_tag: ${{ inputs.image-tag }}
         image_name: ${{ inputs.image-name }}
