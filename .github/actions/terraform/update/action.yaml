@@ -21,10 +21,10 @@ runs:
   using: "composite"
   steps:
     - name: Bump up image versions
-      working_directory: ${{ inputs.working_directory }}
+      working-directory: ${{ inputs.working_directory }}
       env:
-        image_tag: ${{ input.image-tag }}
-        image_name: ${{ input.image-name }}
+        image_tag: ${{ inputs.image-tag }}
+        image_name: ${{ inputs.image-name }}
       run: |
         sed -i 's|\/'${image-name}':.*|\/'${image-name}':'${image_tag}'"|g' cloudrun.tf
       shell: bash
