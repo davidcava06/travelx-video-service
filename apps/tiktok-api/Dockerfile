@@ -94,6 +94,6 @@ RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /usr/lib/ssl/openssl.cnf
 COPY gunicorn.py ./
 COPY main.py ./
 COPY src ./src
-EXPOSE 8080
+EXPOSE 8000
 
-CMD ["gunicorn", "--bind", ":8080", "--workers", "1" "--threads" "8" "--timeout" "0" "main:app"]
+CMD ["gunicorn", "--bind", ":8000", "--workers", "1" "--threads" "8" "--timeout" "0" "main:app"]
