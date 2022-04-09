@@ -1,12 +1,31 @@
 import os
 
-from starlette.config import Config
-
 BASE_DIR = os.path.dirname(__file__)
+ENVIRONMENT: str = os.environ.get("ENVIRONMENT", "local")
 
-config = Config(".env")
+
+class Config:
+    LOG_LEVEL: str = os.environ.get("LOG_LEVEL", "INFO")
+    GCP_PROJECT: str = os.environ.get("GCP_PROJECT", "fiebel-video-nonprod")
+    GCP_REGION: str = os.environ.get("GCP_REGION", "europe-west2")
+    GCP_BUCKET: str = os.environ.get("GCP_BUCKET", "nonprod-raw-media")
 
 
-ENVIRONMENT: str = config("ENVIRONMENT", cast=str, default="local")
-LOG_LEVEL: str = config("LOG_LEVEL", cast=str, default="INFO")
-DEBUG: bool = config("DEBUG", cast=bool, default=False)
+class DevelopmentConfig(Config):
+    DEBUG: str = True
+
+
+class NonProductionConfig(Config):
+    DEBUG: str = True
+
+
+class ProductionConfig(Config):
+    DEBUG: str = False
+
+
+config = {
+    "nonprod": NonProductionConfig,
+    "prod": ProductionConfig,
+    "default": DevelopmentConfig,
+    "local": DevelopmentConfig,
+}
