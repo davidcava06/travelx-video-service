@@ -87,6 +87,7 @@ jobs:
           gcp-service-account-key: ${{ secrets.GCP_NONPROD_CREDENTIALS }}
           image-tag: ${{ steps.tag.outputs.value }}
           image-name: ${{ matrix.app }}
+          repository-name: nonprod-app-repository
           registry-name: europe-west2-docker.pkg.dev
           environment: nonprod
           project: fiebel-video-nonprod

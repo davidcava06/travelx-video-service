@@ -23,6 +23,9 @@ inputs:
   registry-name:
     description: Registry DNS name
     default: europe-west2-docker.pkg.dev
+  repository-name:
+    description: Artifact registry repository name
+    required: true
   project:
     description: GCP Project of the artifact registry
     required: true
@@ -49,11 +52,12 @@ runs:
         NAME: ${{ inputs.image-name }}
         TAG: ${{ inputs.image-tag }}
         REGISTRY: ${{ inputs.registry-name }}
+        REPOSITORY: ${{ inputs.repository-name }}
         ENVIRONMENT: ${{ inputs.environment }}
         PROJECT: ${{ inputs.project }}
       run: |
         set -e
-        gcloud run deploy $ENVIRONMENT-$NAME --platform managed --region europe-west2 --project $PROJECT --image $REGISTRY/$PROJECT/$NAME:$TAG
+        gcloud run deploy $ENVIRONMENT-$NAME --platform managed --region europe-west2 --project $PROJECT --image $REGISTRY/$PROJECT/$REPOSITORY/$NAME:$TAG
       shell: bash
     - name: commit versions
       run: |
