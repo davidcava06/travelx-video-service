@@ -29,3 +29,9 @@ resource "google_project_iam_member" "api_storage" {
   role    = "roles/storage.admin"
   member  = "serviceAccount:${google_service_account.tiktok_api.email}"
 }
+
+resource "google_project_iam_member" "api_datastore" {
+  project = local.project_name
+  role    = "roles/datastore.user"
+  member  = "serviceAccount:${google_service_account.tiktok_api.email}"
+}
