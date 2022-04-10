@@ -23,3 +23,9 @@ resource "google_cloud_run_service_iam_member" "generate_invoker" {
   role     = "roles/run.invoker"
   member   = "serviceAccount:${google_service_account.cloudrun_invoker_account.email}"
 }
+
+resource "google_project_iam_member" "api_storage" {
+  project = local.project_name
+  role    = "roles/storage.admin"
+  member  = "serviceAccount:${google_service_account.tiktok_api.email}"
+}
