@@ -17,6 +17,9 @@ inputs:
     required: true
   image-tag:
     description: new image tag to update cloudrun apps with
+  registry-name:
+    description: Registry DNS name
+    default: europe-west2-docker.pkg.dev
 runs:
   using: "composite"
   steps:
@@ -27,6 +30,16 @@ runs:
         NAME: ${{ inputs.image-name }}
       run: |
         sed -i 's/\/'${NAME}':.*/\/'${NAME}':'${TAG}'"/g' cloudrun.tf
+      shell: bash
+    - name: Update cloudrun apps
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        NAME: ${{ inputs.image-name }}
+        TAG: ${{ inputs.image-tag }}
+        REGISTRY: ${{ inputs.registry-name }}
+      run: |
+        set -e
+        gcloud run deploy --platform managed --region $REGION --project $PROJECT --image $REGISTRY/$PROJECT_ID/$NAME:$TAG
       shell: bash
     - name: commit versions
       run: |
