@@ -17,9 +17,9 @@ resource "google_cloudfunctions_function_iam_member" "insta_downloader_invoker_m
 }
 
 resource "google_cloud_run_service_iam_member" "generate_invoker" {
-  project  = google_cloud_run_service.api.0.project
-  location = google_cloud_run_service.api.0.location
-  service  = google_cloud_run_service.api.0.name
+  project  = google_cloud_run_service.api.project
+  location = google_cloud_run_service.api.location
+  service  = google_cloud_run_service.api.name
   role     = "roles/run.invoker"
   member   = "serviceAccount:${google_service_account.cloudrun_invoker_account.email}"
 }
