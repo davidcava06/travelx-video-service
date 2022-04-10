@@ -57,7 +57,7 @@ def pusher(request):
     text = request.form["text"]
     response_url = request.form["response_url"]
 
-    if command != "/ig":
+    if command not in ["/ig", "/tik"]:
         msg = "🥺 Command not supported."
         status = Status.failed
     else:

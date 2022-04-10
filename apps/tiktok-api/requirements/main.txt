@@ -231,6 +231,8 @@ werkzeug==2.1.1
     # via
     #   -r requirements/main.in
     #   flask
+wget==3.2
+    # via -r requirements/main.in
 yarl==1.7.2
     # via aiohttp
 zipp==3.8.0
