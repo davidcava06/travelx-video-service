@@ -53,13 +53,8 @@ def after_request(response):
     return response
 
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["GET", "POST"])
 def root():
-    return jsonify({"status": 200})
-
-
-@app.route("/", methods=["POST"])
-def video():
     """Get Video from TikTok
     ---
     description: Given a TikTok URL, return the video
@@ -71,44 +66,47 @@ def video():
         403:
             description: Forbidden
     """
-    # Initialise Slack Message
-    slack_message = SlackMessage()
-    tiktok_object = None
+    if request.method == "GET":
+        return jsonify({"status": 200})
+    else:
+        # Initialise Slack Message
+        slack_message = SlackMessage()
+        tiktok_object = None
 
-    try:
-        json_data = request.get_json()
-        if not json_data:
-            return jsonify({"message": "Nothing to do here"}), 200
+        try:
+            json_data = request.get_json()
+            if not json_data:
+                return jsonify({"message": "Nothing to do here"}), 200
 
-        # Parse event content
-        if "data" in json_data:
-            video_url = base64.b64decode(json_data["data"]).decode("utf-8")
-            logger.info(f"Processing {video_url}...")
-        if "attributes" in json_data:
-            response_url = json_data["attributes"]["response_url"]
-            logger.info(f"Responding at {response_url}...")
+            # Parse event content
+            if "data" in json_data:
+                video_url = base64.b64decode(json_data["data"]).decode("utf-8")
+                logger.info(f"Processing {video_url}...")
+            if "attributes" in json_data:
+                response_url = json_data["attributes"]["response_url"]
+                logger.info(f"Responding at {response_url}...")
 
-        logger.info("get_video", video_url=video_url)
+            logger.info("get_video", video_url=video_url)
 
-        # Initialise TikTokApi
-        nest_asyncio.apply()
-        asyncio.new_event_loop()
-        api = TikTokApi()
+            # Initialise TikTokApi
+            nest_asyncio.apply()
+            asyncio.new_event_loop()
+            api = TikTokApi()
 
-        tiktok_object = get_video_from_url(api, video_url)
-        status = Status.success
+            tiktok_object = get_video_from_url(api, video_url)
+            status = Status.success
 
-    except Exception as e:
-        msg = f"🤷 Storage error: {e}"
-        status = Status.failed
-        logger.error(msg)
+        except Exception as e:
+            msg = f"🤷 Storage error: {e}"
+            status = Status.failed
+            logger.error(msg)
 
-    # Notify Slack
-    logger.info(f"Notifying Slack at {response_url}...")
-    slack_message.get_message_from_video(status, tiktok_object)
-    print(slack_message.message)
-    slack_message.webhook_send(response_url)
-    return jsonify({"content": tiktok_object, "status": 200})
+        # Notify Slack
+        logger.info(f"Notifying Slack at {response_url}...")
+        slack_message.get_message_from_video(status, tiktok_object)
+        print(slack_message.message)
+        slack_message.webhook_send(response_url)
+        return jsonify({"content": tiktok_object, "status": 200})
 
 
 if __name__ == "__main__":
