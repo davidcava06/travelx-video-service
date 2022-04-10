@@ -59,7 +59,7 @@ def root():
 
 
 @app.route("/", methods=["POST"])
-async def video():
+def video():
     """Get Video from TikTok
     ---
     description: Given a TikTok URL, return the video
