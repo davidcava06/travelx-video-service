@@ -82,7 +82,8 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
 
 COPY requirements/main.txt requirements.txt
 RUN pip install -r requirements.txt
-RUN PLAYWRIGHT_BROWSERS_PATH=$HOME/.cache/ms-playwright playwright install --with-deps
+ENV PLAYWRIGHT_BROWSERS_PATH=/home/.cache/ms-playwright
+RUN playwright install --with-deps
 
 ENV ENVIRONMENT=nonprod
 
