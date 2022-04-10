@@ -23,6 +23,10 @@ inputs:
   registry-name:
     description: Registry DNS name
     default: europe-west2-docker.pkg.dev
+  project:
+    description: GCP Project of the artifact registry
+    required: true
+    default: fiebel-video-nonprod
 runs:
   using: "composite"
   steps:
@@ -46,6 +50,7 @@ runs:
         TAG: ${{ inputs.image-tag }}
         REGISTRY: ${{ inputs.registry-name }}
         ENVIRONMENT: ${{ inputs.environment }}
+        PROJECT: ${{ inputs.project }}
       run: |
         set -e
         gcloud run deploy $ENVIRONMENT-$NAME --platform managed --region europe-west2 --project $PROJECT --image $REGISTRY/$PROJECT_ID/$NAME:$TAG

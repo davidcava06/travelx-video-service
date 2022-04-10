@@ -89,6 +89,7 @@ jobs:
           image-name: ${{ matrix.app }}
           registry-name: europe-west2-docker.pkg.dev
           environment: nonprod
+          project: fiebel-video-nonprod
           push: true
   slack-notify:
     name: Notify Slack
