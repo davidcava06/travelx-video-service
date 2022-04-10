@@ -69,7 +69,7 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
     && echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
 
 #10. Install playwright and pip dependencies
-RUN pip install playwright pyodbc PyPDF2 requests bs4 pycryptodome pandas lxml
+RUN pip install pyodbc PyPDF2 requests bs4 pycryptodome pandas lxml
 
 ENV PYTHONFAULTHANDLER=1 \
     PYTHONHASHSEED=random \
@@ -82,8 +82,7 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
 
 COPY requirements/main.txt requirements.txt
 RUN pip install -r requirements.txt
-RUN python3 -m playwright install
-RUN playwright install --with-deps
+RUN PLAYWRIGHT_BROWSERS_PATH=$HOME/.cache/ms-playwright playwright install --with-deps
 
 ENV ENVIRONMENT=nonprod
 
