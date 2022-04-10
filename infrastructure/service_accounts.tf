@@ -11,6 +11,6 @@ resource "google_service_account" "tiktok_api" {
 
 resource "google_service_account" "cloudrun_invoker_account" {
   project      = local.project_name
-  account_id   = "${var.workpace}-cri-acc"
+  account_id   = "${var.workspace}-cri-acc"
   display_name = "CloudRun Invoker"
 }
