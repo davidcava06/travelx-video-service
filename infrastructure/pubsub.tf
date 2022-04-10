@@ -27,11 +27,11 @@ resource "google_pubsub_subscription" "tiktok_subscription" {
   retain_acked_messages      = true
 
   push_config {
-    push_endpoint = "${google_cloud_run_service.api.url}/video"
+    push_endpoint = "${google_cloud_run_service.api.status.url}/video"
   }
 
   oidc_token {
-    audience              = google_cloud_run_service.api.0.status.0.url
+    audience              = google_cloud_run_service.api.status.url
     service_account_email = google_service_account.cloudrun_invoker_account.email
   }
 
@@ -41,6 +41,6 @@ resource "google_pubsub_subscription" "tiktok_subscription" {
   }
 
   depends_on = [
-    google_cloud_run_service_iam_member.generate_invoker,
+    google_cloud_run_service.api, google_cloud_run_service_iam_member.generate_invoker
   ]
 }
