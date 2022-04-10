@@ -1,6 +1,6 @@
 # Fiebel Video Service
-![validate staging](https://github.com/davidcava06/travelx-video-service/actions/workflows/main-pr.yaml/badge.svg?branch=main)
-![deploy staging](https://github.com/davidcava06/travelx-video-service/actions/workflows/main-push.yaml/badge.svg)
+![validate staging](https://github.com/davidcava06/travelx-video-service/actions/workflows/main-pr.yaml/badge.svg)
+![deploy staging](https://github.com/davidcava06/travelx-video-service/actions/workflows/main-push.yaml/badge.svg?branch=main)
 
 ![Cloud infrastructure for the Fiebel Video Service](/static/infra_diagram.jpg)
 Infrastructure to:
