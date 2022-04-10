@@ -62,9 +62,10 @@ resource "google_cloudfunctions_function" "pusher" {
   service_account_email = google_service_account.cloud_function_invoker_account.email
 
   environment_variables = {
-    SLACK_SECRET = var.slack_secret
-    PROJECT_ID   = local.project_name
-    TOPIC_ID     = google_pubsub_topic.insta_download_jobs.name
+    SLACK_SECRET    = var.slack_secret
+    PROJECT_ID      = local.project_name
+    INSTA_TOPIC_ID  = google_pubsub_topic.insta_download_jobs.name
+    TIKTOK_TOPIC_ID = google_pubsub_topic.tiktok_download_jobs.name
   }
   depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.insta_download_jobs]
 }

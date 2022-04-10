@@ -1,5 +1,4 @@
 from slack_sdk.webhook import WebhookClient
-
 from src.status import Status
 
 
