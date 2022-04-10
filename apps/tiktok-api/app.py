@@ -27,7 +27,7 @@ app.config.from_object(config[ENVIRONMENT])
 # logging
 logging.setup(app)
 
-# extensions
+# extension
 init_extensions(app)
 errors.init_app(app)
 
