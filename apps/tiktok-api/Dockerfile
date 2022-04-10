@@ -69,8 +69,9 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
     && echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
 
 #10. Install playwright and pip dependencies
-RUN pip install playwright pyodbc PyPDF2 requests bs4 pycryptodome pandas lxml \
-    && playwright install
+RUN pip install playwright pyodbc PyPDF2 requests bs4 pycryptodome pandas lxml
+RUN python3 -m playwright install
+RUN playwright install-deps
 
 ENV PYTHONFAULTHANDLER=1 \
     PYTHONHASHSEED=random \
@@ -86,14 +87,9 @@ RUN pip install -r requirements.txt
 
 ENV ENVIRONMENT=nonprod
 
-COPY src src
-
-RUN apt-get update && apt-get install -qq -y bash ca-certificates openssl --no-install-recommends
-RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf
-RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /usr/lib/ssl/openssl.cnf
-COPY gunicorn.py ./
 COPY app.py ./
 COPY src ./src
+
 EXPOSE 8080
 
 CMD ["gunicorn", "--bind", ":8080", "--workers", "1", "--threads", "8", "--timeout", "0", "app:app"]

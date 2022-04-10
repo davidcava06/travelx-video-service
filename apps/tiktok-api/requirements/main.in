@@ -11,7 +11,6 @@ flask[async]
 nest_asyncio
 gunicorn
 marshmallow
-httpx
 slack_sdk
 playwright
 TikTokApi

@@ -29,6 +29,9 @@ The terraform state is saved in `terraform.io`. Credentials for GCP must set up 
 6. `python -m playwright install`
 7. #ship it
 
+8. `docker build . -t tiktok`
+9. `docker run -it -p 8000:8080 tiktok`
+
 
 ## TikTokAPI
 This library needs `playwright` to work. In order to install it the Docker Image has been taken from [here](https://github.com/danofun/docker-playwright-python/blob/main/Dockerfile).
