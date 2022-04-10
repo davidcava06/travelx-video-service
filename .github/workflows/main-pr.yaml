@@ -86,6 +86,7 @@ jobs:
         with:
           image-tag: ${{ steps.tag.outputs.value }}
           image-name: ${{ matrix.app }}
+          registry-name: europe-west2-docker.pkg.dev
           environment: nonprod
           push: true
   slack-notify:
