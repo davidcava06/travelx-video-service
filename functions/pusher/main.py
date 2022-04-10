@@ -7,7 +7,8 @@ from google.cloud import pubsub_v1
 from slack_sdk.signature import SignatureVerifier
 
 PROJECT_ID = os.environ["PROJECT_ID"]
-TOPIC_ID = os.environ["TOPIC_ID"]
+INSTA_TOPIC_ID = os.environ["INSTA_TOPIC_ID"]
+TIKTOK_TOPIC_ID = os.environ["TIKTOK_TOPIC_ID"]
 SLACK_SECRET = os.environ["SLACK_SECRET"]
 
 logger = structlog.get_logger()
@@ -39,13 +40,7 @@ def format_slack_message(
     attachment = {}
     if status == Status.failed:
         attachment["color"] = "#EA4435"
-    # attachment["title_link"] = url
-    # attachment["title"] = name
-    # attachment["title_link"] = url
-    # attachment["text"] = article
-    # attachment["image_url"] = image_url
     message["attachments"].append(attachment)
-
     return message
 
 
@@ -62,15 +57,15 @@ def pusher(request):
         status = Status.failed
     else:
         # Trigger PubSub topic to download insta url contents as temp files
+        TOPIC_ID = INSTA_TOPIC_ID if command == "/ig" else TIKTOK_TOPIC_ID
         publisher = pubsub_v1.PublisherClient()
         topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
-        publish_future = publisher.publish(
+        publisher.publish(
             topic_path,
             text.encode("utf-8"),
             command=command,
             response_url=response_url,  # NOQA
         )
-        print(publish_future.result())
         msg = f"🤓 {command} {text} job has begun..."
         status = Status.success
 
