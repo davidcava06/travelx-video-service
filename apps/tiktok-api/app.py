@@ -53,12 +53,12 @@ def after_request(response):
     return response
 
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def root():
     return jsonify({"status": 200})
 
 
-@app.route("/video", methods=["POST"])
+@app.route("/", methods=["POST"])
 async def video():
     """Get Video from TikTok
     ---
@@ -106,9 +106,10 @@ async def video():
     # Notify Slack
     logger.info(f"Notifying Slack at {response_url}...")
     slack_message.get_message_from_video(status, tiktok_object)
+    print(slack_message.message)
     slack_message.webhook_send(response_url)
     return jsonify({"content": tiktok_object, "status": 200})
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))

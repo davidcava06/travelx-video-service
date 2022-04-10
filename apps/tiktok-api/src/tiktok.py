@@ -2,8 +2,9 @@ import os
 
 import structlog
 import wget
-from src.extensions import storage as storage_client
 from TikTokApi import TikTokApi
+
+from src.extensions import storage as storage_client
 
 logger = structlog.get_logger(__name__)
 

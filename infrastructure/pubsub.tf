@@ -27,10 +27,9 @@ resource "google_pubsub_subscription" "tiktok_subscription" {
   retain_acked_messages      = true
 
   push_config {
-    push_endpoint = "${google_cloud_run_service.api.status.0.url}/video"
+    push_endpoint = "${google_cloud_run_service.api.status.0.url}/"
 
     oidc_token {
-      audience              = google_cloud_run_service.api.status.0.url
       service_account_email = google_service_account.cloudrun_invoker_account.email
     }
   }
