@@ -1,6 +1,9 @@
 name: Update Cloudrun image tags
 description: Update Tags of cloudrun apps
 inputs:
+  gcp-service-account-key:
+    description: GCP Service Account Key (JSON format)
+    required: true
   environment:
     description: "Project Environment: nonprod, prod"
     required: true
@@ -17,9 +20,24 @@ inputs:
     required: true
   image-tag:
     description: new image tag to update cloudrun apps with
+  registry-name:
+    description: Registry DNS name
+    default: europe-west2-docker.pkg.dev
+  repository-name:
+    description: Artifact registry repository name
+    required: true
+  project:
+    description: GCP Project of the artifact registry
+    required: true
+    default: fiebel-video-nonprod
 runs:
   using: "composite"
   steps:
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0.6.0
+      with:
+        service_account_key: ${{ inputs.gcp-service-account-key }}
+        export_default_credentials: true
     - name: Bump up image versions
       working-directory: ${{ inputs.working-directory }}
       env:
@@ -27,6 +45,19 @@ runs:
         NAME: ${{ inputs.image-name }}
       run: |
         sed -i 's/\/'${NAME}':.*/\/'${NAME}':'${TAG}'"/g' cloudrun.tf
+      shell: bash
+    - name: Update cloudrun apps
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        NAME: ${{ inputs.image-name }}
+        TAG: ${{ inputs.image-tag }}
+        REGISTRY: ${{ inputs.registry-name }}
+        REPOSITORY: ${{ inputs.repository-name }}
+        ENVIRONMENT: ${{ inputs.environment }}
+        PROJECT: ${{ inputs.project }}
+      run: |
+        set -e
+        gcloud run deploy $ENVIRONMENT-$NAME --platform managed --region europe-west2 --project $PROJECT --image $REGISTRY/$PROJECT/$REPOSITORY/$NAME:$TAG
       shell: bash
     - name: commit versions
       run: |

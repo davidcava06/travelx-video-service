@@ -84,9 +84,13 @@ jobs:
       - name: update api images
         uses: ./.github/actions/terraform/update
         with:
+          gcp-service-account-key: ${{ secrets.GCP_NONPROD_CREDENTIALS }}
           image-tag: ${{ steps.tag.outputs.value }}
           image-name: ${{ matrix.app }}
+          repository-name: nonprod-app-repository
+          registry-name: europe-west2-docker.pkg.dev
           environment: nonprod
+          project: fiebel-video-nonprod
           push: true
   slack-notify:
     name: Notify Slack
