@@ -17,6 +17,6 @@ lint:
 
 
 api:
-	uvicorn --port 8082 --no-access-log main:application --reload
+	FLASK_ENV=development flask run
 
 .PHONY: lint install

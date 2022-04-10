@@ -92,8 +92,8 @@ RUN apt-get update && apt-get install -qq -y bash ca-certificates openssl --no-i
 RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf
 RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /usr/lib/ssl/openssl.cnf
 COPY gunicorn.py ./
-COPY main.py ./
+COPY app.py ./
 COPY src ./src
 EXPOSE 8000
 
-CMD ["gunicorn", "-c", "gunicorn.py", "-k", "uvicorn.workers.UvicornWorker", "main"]
+CMD ["gunicorn", "--bind", ":8000", "--workers", "1" "--threads" "8" "--timeout" "0" "app:app"]
