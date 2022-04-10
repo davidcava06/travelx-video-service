@@ -13,11 +13,6 @@ resource "google_pubsub_topic" "insta_download_jobs" {
   name    = "${var.workspace}-insta-jobs"
 }
 
-resource "google_pubsub_topic" "dead_letter_topic" {
-  project = local.project_name
-  name    = "${var.workspace}-dead-letter"
-}
-
 resource "google_pubsub_topic" "tiktok_download_jobs" {
   project = local.project_name
   name    = "${var.workspace}-tiktok-jobs"
@@ -27,7 +22,7 @@ resource "google_pubsub_subscription" "tiktok_subscription" {
   name  = "${var.workspace}-tiktok-subscription"
   topic = google_pubsub_topic.tiktok_download_jobs.name
 
-  ack_deadline_seconds = 10
+  ack_deadline_seconds       = 10
   message_retention_duration = "604800s"
   retain_acked_messages      = true
 
