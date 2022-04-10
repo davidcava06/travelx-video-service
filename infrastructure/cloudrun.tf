@@ -21,7 +21,7 @@ resource "google_cloud_run_service" "api" {
           value = var.workspace
         }
         command = ["gunicorn"]
-        args    = ["-c", "gunicorn.py", "-k", "uvicorn.workers.UvicornWorker", "main"]
+        args    = [“--bind", ":8000", "--workers", "1" "--threads" "8" "--timeout" "0" "app:app"]
       }
       timeout_seconds      = "30"
       service_account_name = google_service_account.tiktok_api.email
