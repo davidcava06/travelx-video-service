@@ -28,11 +28,11 @@ resource "google_pubsub_subscription" "tiktok_subscription" {
 
   push_config {
     push_endpoint = "${google_cloud_run_service.api.status.0.url}/video"
-  }
 
-  oidc_token {
-    audience              = google_cloud_run_service.api.status.0.url
-    service_account_email = google_service_account.cloudrun_invoker_account.email
+    oidc_token {
+      audience              = google_cloud_run_service.api.status.0.url
+      service_account_email = google_service_account.cloudrun_invoker_account.email
+    }
   }
 
   dead_letter_policy {
