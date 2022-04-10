@@ -19,7 +19,7 @@ def get_video_from_url(api: TikTokApi, url: str) -> dict:
     # Get video
     video_bytes = video.bytes()
     download_video(video_data, video_bytes)
-    download_thumbnail(video_data, video_bytes)
+    download_thumbnail(video_data)
 
     return video_data
 
