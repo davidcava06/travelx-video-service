@@ -96,4 +96,4 @@ COPY app.py ./
 COPY src ./src
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", ":8000", "--workers", "1" "--threads" "8" "--timeout" "0" "app:app"]
+CMD ["gunicorn", "--bind", ":8000", "--workers", "1", "--threads", "8", "--timeout", "0", "app:app"]
