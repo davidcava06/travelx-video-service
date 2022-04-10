@@ -47,7 +47,7 @@ runs:
         REGISTRY: ${{ inputs.registry-name }}
       run: |
         set -e
-        gcloud run deploy --platform managed --region $REGION --project $PROJECT --image $REGISTRY/$PROJECT_ID/$NAME:$TAG
+        gcloud run deploy --platform managed --region europe-west2 --project $PROJECT --image $REGISTRY/$PROJECT_ID/$NAME:$TAG
       shell: bash
     - name: commit versions
       run: |
