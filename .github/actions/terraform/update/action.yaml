@@ -45,9 +45,10 @@ runs:
         NAME: ${{ inputs.image-name }}
         TAG: ${{ inputs.image-tag }}
         REGISTRY: ${{ inputs.registry-name }}
+        ENVIRONMENT: ${{ inputs.environment }}
       run: |
         set -e
-        gcloud run deploy --platform managed --region europe-west2 --project $PROJECT --image $REGISTRY/$PROJECT_ID/$NAME:$TAG
+        gcloud run deploy $ENVIRONMENT-$NAME --platform managed --region europe-west2 --project $PROJECT --image $REGISTRY/$PROJECT_ID/$NAME:$TAG
       shell: bash
     - name: commit versions
       run: |
