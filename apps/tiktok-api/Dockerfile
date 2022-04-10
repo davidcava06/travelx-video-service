@@ -71,7 +71,7 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
 #10. Install playwright and pip dependencies
 RUN pip install playwright pyodbc PyPDF2 requests bs4 pycryptodome pandas lxml
 RUN python3 -m playwright install
-RUN playwright install-deps
+RUN playwright install --with-deps
 
 ENV PYTHONFAULTHANDLER=1 \
     PYTHONHASHSEED=random \
