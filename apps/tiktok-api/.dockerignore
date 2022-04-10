@@ -2,5 +2,5 @@
 !src
 !requirements
 !gunicorn.py
-!main.py
+!app.py
 !Makefile
