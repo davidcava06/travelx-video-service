@@ -73,6 +73,7 @@ async def video():
     """
     # Initialise Slack Message
     slack_message = SlackMessage()
+    msg = None
     tiktok_object = None
 
     try:
@@ -106,7 +107,7 @@ async def video():
 
     # Notify Slack
     logger.info(f"Notifying Slack at {response_url}...")
-    slack_message.get_message_from_video(status, tiktok_object)
+    slack_message.get_message_from_video(status, tiktok_object, msg)
     print(slack_message.message)
     slack_message.webhook_send(response_url)
     return jsonify({"content": tiktok_object, "status": 200})
