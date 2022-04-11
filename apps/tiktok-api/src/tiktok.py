@@ -26,14 +26,21 @@ def get_video_from_url(api: TikTokApi, url: str) -> dict:
 
 def download_thumbnail(video_data: dict):
     tmp_path_f = None
+    print("Gone into thumbnail")
     video_id = video_data["itemInfo"]["itemStruct"]["id"]
+    print(video_id)
     thumb_url = video_data["itemInfo"]["itemStruct"]["video"]["cover"]
-
+    print(thumb_url)
     root = os.path.dirname(os.path.abspath(__file__))
+    print(root)
     tmp_path = "/tmp/" + f"{video_id}.jpg"
+    print(tmp_path)
     tmp_path_f = os.path.join(root, tmp_path)
-
-    wget.download(thumb_url, tmp_path_f)
+    print(tmp_path_f)
+    try:
+        wget.download(thumb_url, tmp_path_f)
+    except Exception as e:
+        logger.error(e)
 
     file_name = f"tiktok/{video_id}/thumbnail.jpg"
     storage_client._upload_sync(tmp_path_f, file_name)
