@@ -5,7 +5,7 @@ resource "google_cloud_run_service" "api" {
   template {
     spec {
       containers {
-        image = "europe-west2-docker.pkg.dev/${google_artifact_registry_repository.app_registry.project}/${google_artifact_registry_repository.app_registry.repository_id}/tiktok-api:2022-04-11_81_aab23c9"
+        image = "europe-west2-docker.pkg.dev/${google_artifact_registry_repository.app_registry.project}/${google_artifact_registry_repository.app_registry.repository_id}/tiktok-api:2022-04-11_82_e53b4a8"
         resources {
           limits = {
             "cpu"    = "1000m"  //explicit
