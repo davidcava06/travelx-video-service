@@ -80,12 +80,13 @@ async def video():
         if not json_data:
             return jsonify({"message": "Nothing to do here"}), 200
 
+        pubsub_message = json_data["message"]
         # Parse event content
-        if "data" in json_data:
-            video_url = base64.b64decode(json_data["data"]).decode("utf-8")
+        if "data" in pubsub_message:
+            video_url = base64.b64decode(pubsub_message["data"]).decode("utf-8").strip()
             logger.info(f"Processing {video_url}...")
-        if "attributes" in json_data:
-            response_url = json_data["attributes"]["response_url"]
+        if "attributes" in pubsub_message:
+            response_url = pubsub_message["attributes"]["response_url"]
             logger.info(f"Responding at {response_url}...")
 
         logger.info("get_video", video_url=video_url)
