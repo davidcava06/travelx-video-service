@@ -73,6 +73,7 @@ async def video():
     """
     # Initialise Slack Message
     slack_message = SlackMessage()
+    msg = None
     tiktok_object = None
 
     try:
@@ -80,12 +81,13 @@ async def video():
         if not json_data:
             return jsonify({"message": "Nothing to do here"}), 200
 
+        pubsub_message = json_data["message"]
         # Parse event content
-        if "data" in json_data:
-            video_url = base64.b64decode(json_data["data"]).decode("utf-8")
+        if "data" in pubsub_message:
+            video_url = base64.b64decode(pubsub_message["data"]).decode("utf-8").strip()
             logger.info(f"Processing {video_url}...")
-        if "attributes" in json_data:
-            response_url = json_data["attributes"]["response_url"]
+        if "attributes" in pubsub_message:
+            response_url = pubsub_message["attributes"]["response_url"]
             logger.info(f"Responding at {response_url}...")
 
         logger.info("get_video", video_url=video_url)
@@ -105,7 +107,7 @@ async def video():
 
     # Notify Slack
     logger.info(f"Notifying Slack at {response_url}...")
-    slack_message.get_message_from_video(status, tiktok_object)
+    slack_message.get_message_from_video(status, tiktok_object, msg)
     print(slack_message.message)
     slack_message.webhook_send(response_url)
     return jsonify({"content": tiktok_object, "status": 200})

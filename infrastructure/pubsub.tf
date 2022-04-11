@@ -22,8 +22,8 @@ resource "google_pubsub_subscription" "tiktok_subscription" {
   name  = "${var.workspace}-tiktok-subscription"
   topic = google_pubsub_topic.tiktok_download_jobs.name
 
-  ack_deadline_seconds       = 20
-  message_retention_duration = "604800s"
+  ack_deadline_seconds       = 600
+  message_retention_duration = "900s"
   retain_acked_messages      = true
 
   push_config {
@@ -36,7 +36,11 @@ resource "google_pubsub_subscription" "tiktok_subscription" {
 
   dead_letter_policy {
     dead_letter_topic     = google_pubsub_topic.dead_letter_topic.id
-    max_delivery_attempts = 10
+    max_delivery_attempts = 1
+  }
+
+  retry_policy {
+    minimum_backoff = "100s"
   }
 
   depends_on = [
