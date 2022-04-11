@@ -77,7 +77,7 @@ class InstaClient:
                 tmp_thumbnail_path_f = os.path.join(root, tmp_thumbnail_path)
                 wget.download(thumbnail_url, tmp_thumbnail_path_f)
             if video_url is not None:
-                tmp_video_path = "/tmp/" + f"{insta_id}.jpg"
+                tmp_video_path = "/tmp/" + f"{insta_id}.mp4"
                 tmp_video_path_f = os.path.join(root, tmp_video_path)
                 wget.download(video_url, tmp_video_path_f)
         except Exception as e:
