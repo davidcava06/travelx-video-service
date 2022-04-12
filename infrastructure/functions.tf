@@ -69,3 +69,37 @@ resource "google_cloudfunctions_function" "pusher" {
   }
   depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.insta_download_jobs]
 }
+
+# Function: Create transcode Jobs
+#
+data "local_file" "transcoder" {
+  filename = "functions/transcoder.zip"
+}
+
+resource "google_storage_bucket_object" "transcoder" {
+  name   = format("transcoder.zip#%s", md5(data.local_file.transcoder.content))
+  bucket = google_storage_bucket.deployer.name
+  source = data.local_file.transcoder.filename
+}
+resource "google_cloudfunctions_function" "transcoder" {
+  name                = "transcoder"
+  runtime             = "python38"
+  entry_point         = "transcoder"
+  trigger_http        = true
+  ingress_settings    = "ALLOW_ALL"
+  available_memory_mb = 256
+  region              = local.gcs_region
+
+  source_archive_bucket = google_storage_bucket.deployer.name
+  source_archive_object = google_storage_bucket_object.transcoder.name
+  service_account_email = google_service_account.cloud_function_invoker_account.email
+
+  environment_variables = {
+    ENVIRONMENT        = var.workspace
+    PROJECT_ID         = local.project_name
+    LOCATION           = local.gcs_region
+    INPUT_BUCKET_NAME  = google_storage_bucket.raw_media.name
+    OUTPUT_BUCKET_NAME = google_storage_bucket.transcoded_media.name
+  }
+  depends_on = [google_storage_bucket.raw_media, google_storage_bucket.transcoded_media, google_service_account.cloud_function_invoker_account]
+}

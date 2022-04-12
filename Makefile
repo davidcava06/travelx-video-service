@@ -19,8 +19,8 @@ dist_functions: update-deps
 	bash scripts/zip_functions.sh -xe
 
 lint:
-	isort functions apps
-	black functions apps
-	flake8 functions apps
+	isort functions
+	black functions
+	flake8 functions
 
 .PHONY: update-deps install develop lint dist_functions

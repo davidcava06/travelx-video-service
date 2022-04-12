@@ -30,6 +30,12 @@ resource "google_project_iam_member" "api_storage" {
   member  = "serviceAccount:${google_service_account.tiktok_api.email}"
 }
 
+resource "google_project_iam_member" "transcoder_storage" {
+  project = local.project_name
+  role    = "roles/storage.object.admin"
+  member  = "serviceAccount:service-395975539014@gcp-sa-transcoder.iam.gserviceaccount.com"
+}
+
 resource "google_project_iam_member" "api_datastore" {
   project = local.project_name
   role    = "roles/datastore.user"

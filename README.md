@@ -1,17 +1,21 @@
 # Fiebel Video Service
+
 ![validate staging](https://github.com/davidcava06/travelx-video-service/actions/workflows/main-pr.yaml/badge.svg)
 ![deploy staging](https://github.com/davidcava06/travelx-video-service/actions/workflows/main-push.yaml/badge.svg?branch=main)
 
 ![Cloud infrastructure for the Fiebel Video Service](/static/infra_diagram.jpg)
 Infrastructure to:
-1. Slack bot to download media and metadata from Instagram
-2. Slack bot to download media and metadata from TikTok
-3. Trigger an encoding job to HSL
-4. Host the video service via CDN
+1. Slack bot to download media and metadata from Instagram &#x2611;
+2. Slack bot to download media and metadata from TikTok &#x2611;
+3. Trigger an encoding job to HSL &#x2611;
+4. Store media in IPFS via INFURA gateway
+5. Like that, it can be callable for free via the `cloudflare gateway`: https://cloudflare-ipfs.com/ipfs/CID
+
 
 ## Preparation
 The terraform state is saved in `terraform.io`. Credentials for GCP must set up as follows:
 1. Within the workspace create an environment variable `GOOGLE_CREDENTIALS`
+
 
 ### Set up Infrastructure and Functions
 1. git clone
@@ -19,6 +23,7 @@ The terraform state is saved in `terraform.io`. Credentials for GCP must set up 
 3. Activate a virtualenv (using `source .venv/bin/activate` or `pyenv activate fiebel`)
 4. `make develop` to install any dev dependencies
 5. #ship it
+
 
 ### Set up TikTok API
 1. git clone
@@ -31,6 +36,21 @@ The terraform state is saved in `terraform.io`. Credentials for GCP must set up 
 
 8. `docker build . -t tiktok`
 9. `docker run -it -p 8000:8080 tiktok`
+
+
+### [TMP] Call Transcoder Cloud Function
+To the Cloud Function endpoint, send a payload like this:
+```
+event = {
+    "attributes": {
+        "response_url": "https://hooks.slack.com/actions/T12345/12345/12345"
+    },
+    "data": {
+        "video_path": "tiktok/6977073002311650566/video.mp4",
+        "thumbnail_path": "tiktok/6977073002311650566/thumbnail.jpg",
+    },
+}
+```
 
 
 ## TikTokAPI
