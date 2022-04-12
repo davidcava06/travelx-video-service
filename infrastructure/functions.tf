@@ -95,10 +95,11 @@ resource "google_cloudfunctions_function" "transcoder" {
   service_account_email = google_service_account.cloud_function_invoker_account.email
 
   environment_variables = {
-    ENVIRONMENT  = var.workspace
-    PROJECT_ID  = local.project_name
-    LOCATION    = local.gcs_region
-    INPUT_BUCKET_NAME = google_storage_bucket.raw_media.name
+    ENVIRONMENT        = var.workspace
+    PROJECT_ID         = local.project_name
+    LOCATION           = local.gcs_region
+    INPUT_BUCKET_NAME  = google_storage_bucket.raw_media.name
     OUTPUT_BUCKET_NAME = google_storage_bucket.transcoded_media.name
   }
+  depends_on = [google_storage_bucket.raw_media, google_storage_bucket.transcoded_media, google_service_account.cloud_function_invoker_account]
 }
