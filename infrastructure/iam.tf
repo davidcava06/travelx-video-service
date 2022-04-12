@@ -24,10 +24,10 @@ resource "google_cloud_run_service_iam_member" "generate_invoker" {
   member   = "serviceAccount:${google_service_account.cloudrun_invoker_account.email}"
 }
 
-resource "google_project_iam_member" "transcoder_storage" {
+resource "google_project_iam_member" "api_storage" {
   project = local.project_name
-  role    = "roles/storage.object.admin"
-  member  = "serviceAccount:service-395975539014@gcp-sa-transcoder.iam.gserviceaccount.com"
+  role    = "roles/storage.admin"
+  member  = "serviceAccount:${google_service_account.tiktok_api.email}"
 }
 
 resource "google_project_iam_member" "api_datastore" {
