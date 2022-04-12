@@ -1,5 +1,4 @@
 from google.cloud.video import transcoder_v1
-from google.protobuf import duration_pb2 as duration
 
 
 def create_video_stream(
@@ -13,6 +12,13 @@ def create_video_stream(
                 width_pixels=width,
                 bitrate_bps=bitrate,
                 frame_rate=frame_rate,
+                pixel_format="yuv420p",
+                rate_control_mode="vbr",
+                crf_level=21,
+                b_frame_count=3,
+                profile="high",
+                preset="veryfast",
+                aq_strength=1.0,
             ),
         ),
     )
@@ -23,7 +29,10 @@ def create_audio_stream(
 ) -> transcoder_v1.types.ElementaryStream:
     return transcoder_v1.types.ElementaryStream(
         key=f"audio-{key}",
-        audio_stream=transcoder_v1.types.AudioStream(codec=codec, bitrate_bps=bitrate),
+        audio_stream=transcoder_v1.types.AudioStream(
+            codec=codec,
+            bitrate_bps=bitrate,
+        ),
     )
 
 
@@ -32,9 +41,6 @@ def create_mux_stream(key: str, streams: list) -> transcoder_v1.types.MuxStream:
         key=key,
         container="ts",
         elementary_streams=streams,
-        segment_settings=transcoder_v1.types.SegmentSettings(
-            individual_segments=True,
-        )
     )
 
 
@@ -47,22 +53,22 @@ def create_manifest(mux_streams: list) -> transcoder_v1.types.Manifest:
 
 elementary_streams = [
     create_video_stream(
-        key="sd", height=842, width=480, bitrate=1400000, frame_rate=60
+        key="sd", height=640, width=360, bitrate=550000, frame_rate=30.0
     ),
     create_audio_stream(key="sd", bitrate=128000, codec="aac"),
     create_video_stream(
-        key="hd", height=1280, width=720, bitrate=280000, frame_rate=60
+        key="hd", height=1280, width=720, bitrate=2500000, frame_rate=30.0
     ),
-    create_audio_stream(key="hd", bitrate=128000, codec="aac"),
+    create_audio_stream(key="hd", bitrate=64000, codec="aac"),
 ]
 mux_streams = [
-    create_mux_stream(key="sd", streams=["video-sd", "audio-sd"]),
-    create_mux_stream(key="hd", streams=["video-hd", "audio-hd"]),
+    create_mux_stream(key="media-sd", streams=["video-sd", "audio-sd"]),
+    create_mux_stream(key="media-hd", streams=["video-hd", "audio-hd"]),
 ]
-manifest = create_manifest(["sd", "hd"])
+manifest = create_manifest(["media-sd", "media-hd"])
 
 
-def create_standard_job_config(thumbnail_uri: str) -> transcoder_v1.types.JobConfig:
+def create_standard_job_config() -> transcoder_v1.types.JobConfig:
     return transcoder_v1.types.JobConfig(
         elementary_streams=elementary_streams,
         mux_streams=mux_streams,

@@ -15,7 +15,9 @@ from slack_sdk.webhook import WebhookClient
 
 PROJECT_ID = os.environ["PROJECT_ID"]
 LOCATION = os.environ["LOCATION"]
-BUCKET_NAME = os.environ["BUCKET_NAME"]
+INPUT_BUCKET_NAME = os.environ["INPUT_BUCKET_NAME"]
+OUTPUT_BUCKET_NAME = os.environ["OUTPUT_BUCKET_NAME"]
+ENVIRONMENT = os.environ["ENVIRONMENT"]
 
 logger = structlog.get_logger(__name__)
 root = os.path.dirname(os.path.abspath(__file__))
@@ -76,7 +78,7 @@ def notify_slack(
 
 
 def check_blob_exists(path: Any) -> str:
-    bucket = storage_client.get_bucket(BUCKET_NAME)
+    bucket = storage_client.get_bucket(INPUT_BUCKET_NAME)
     if not bucket.exists():
         logger.error("🤷 Failed upload: Bucket does not exist.")
         return None
@@ -84,7 +86,7 @@ def check_blob_exists(path: Any) -> str:
     if blob is None:
         logger.error("🤷 Failed upload: Blob does not exist.")
         return None
-    return "gs://{}/{}".format(BUCKET_NAME, path)
+    return "gs://{}/{}".format(INPUT_BUCKET_NAME, path)
 
 
 def create_job(
@@ -101,6 +103,7 @@ def create_job(
     job = transcoder_v1.types.Job()
     job.input_uri = video_uri
     job.output_uri = output_uri
+    job.ttl_after_completion_days = 1
     if config:
         logger.info("Creating job with custom config.")
         job.config = config
@@ -110,7 +113,6 @@ def create_job(
 
     response = transcoder_client.create_job(parent=parent, job=job)
     logger.info(f"Created job {response.name}.")
-    breakpoint()
     return response
 
 
@@ -131,55 +133,53 @@ def transcoder(event, context):
         logger.info(f"Responding at {response_url}...")
     video_path = media_data.get("video_path")
     thumbnail_path = media_data.get("thumbnail_path")
-    output_uri = media_data.get("output_uri")
     logger.info(f"Processing {video_path}...")
 
     # Validate input
     video_uri = check_blob_exists(video_path)
     thumbnail_uri = check_blob_exists(thumbnail_path)
+    output_uri = f"gs://{OUTPUT_BUCKET_NAME}/{video_path}"
     if not video_uri or not thumbnail_uri or not output_uri:
         msg = "🤷 Failed upload: No video, thumbnail input or output URI."
         status = Status.failed
         logger.error(msg)
-        # response = notify_slack(
-        #     msg,
-        #     status,
-        #     response_url,
-        #     title=title,
-        #     title_link=title_link,
-        #     thumb_url=thumb_url,
-        #     text=text,
-        # )
-        # return jsonify(response)
-        return jsonify({"status": msg})
+        response = notify_slack(
+            msg,
+            status,
+            response_url,
+            title=title,
+            title_link=title_link,
+            thumb_url=thumb_url,
+            text=text,
+        )
+        return jsonify(response)
 
     # Transcode video
     logger.info("Transcoding video...")
-    job = create_job(
-        video_uri, output_uri  #, config=create_standard_job_config(thumbnail_uri)
-    )
+    job = create_job(video_uri, output_uri, config=create_standard_job_config())
     logger.info(job)
 
     status = Status.success
     msg = f"🎉 Successfully started transcoding video {video_path}"
-    breakpoint()
     response = notify_slack(
         msg,
         status,
         response_url,
-        title=title,
-        title_link=title_link,
-        thumb_url=thumb_url,
+        title="Media Here",
+        title_link=output_uri + "/manifest.m3u8",
+        thumb_url=thumbnail_uri,
         text=text,
     )
     return jsonify(response)
 
-event = {
-    "attributes": {"response_url": "https://hooks.slack.com/actions/T12345/12345/12345"},
-    "data": {
-        "video_path": "tiktok/6977073002311650566/video.mp4",
-        "thumbnail_path": "tiktok/6977073002311650566/thumbnail.jpg",
-        "output_uri": f"gs://{BUCKET_NAME}/",
-    }
-}
+
+# event = {
+#     "attributes": {
+#         "response_url": "https://hooks.slack.com/actions/T12345/12345/12345"
+#     },
+#     "data": {
+#         "video_path": "tiktok/6977073002311650566/video.mp4",
+#         "thumbnail_path": "tiktok/6977073002311650566/thumbnail.jpg",
+#     },
+# }
 # transcoder(event, {})

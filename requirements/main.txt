@@ -663,7 +663,6 @@ protobuf==3.20.0 \
     --hash=sha256:fbcbb068ebe67c4ff6483d2e2aa87079c325f8470b24b098d6bf7d4d21d57a69 \
     --hash=sha256:fd7133b885e356fa4920ead8289bb45dc6f185a164e99e10279f33732ed5ce15
     # via
-    #   -r requirements/main.in
     #   google-api-core
     #   google-cloud-audit-log
     #   google-cloud-storage

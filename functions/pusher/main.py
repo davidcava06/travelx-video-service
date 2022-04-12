@@ -9,7 +9,12 @@ from slack_sdk.signature import SignatureVerifier
 PROJECT_ID = os.environ["PROJECT_ID"]
 INSTA_TOPIC_ID = os.environ["INSTA_TOPIC_ID"]
 TIKTOK_TOPIC_ID = os.environ["TIKTOK_TOPIC_ID"]
+TRANSCODER_TOPIC_ID = os.environ["TRANSCODER_TOPIC_ID"]
 SLACK_SECRET = os.environ["SLACK_SECRET"]
+TOPICS = {
+    "/ig": INSTA_TOPIC_ID,
+    "/tik": TIKTOK_TOPIC_ID,
+}
 
 logger = structlog.get_logger()
 
@@ -56,8 +61,7 @@ def pusher(request):
         msg = "🥺 Command not supported."
         status = Status.failed
     else:
-        # Trigger PubSub topic to download insta url contents as temp files
-        TOPIC_ID = INSTA_TOPIC_ID if command == "/ig" else TIKTOK_TOPIC_ID
+        TOPIC_ID = TOPICS[command]
         publisher = pubsub_v1.PublisherClient()
         topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
         publisher.publish(

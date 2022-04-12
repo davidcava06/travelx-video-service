@@ -13,3 +13,14 @@ resource "google_storage_bucket" "raw_media" {
     enabled = false
   }
 }
+
+resource "google_storage_bucket" "transcoded_media" {
+  name          = "${var.workspace}-transcoded-media"
+  location      = var.location
+  force_destroy = false
+  storage_class = "STANDARD"
+  project       = local.project_name
+  versioning {
+    enabled = false
+  }
+}

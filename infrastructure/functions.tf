@@ -86,15 +86,19 @@ resource "google_cloudfunctions_function" "transcoder" {
   runtime             = "python38"
   entry_point         = "transcoder"
   trigger_http        = true
-  available_memory_mb = 512
+  ingress_settings    = "ALLOW_ALL"
+  available_memory_mb = 256
   region              = local.gcs_region
 
   source_archive_bucket = google_storage_bucket.deployer.name
   source_archive_object = google_storage_bucket_object.transcoder.name
+  service_account_email = google_service_account.cloud_function_invoker_account.email
 
   environment_variables = {
+    ENVIRONMENT  = var.workspace
     PROJECT_ID  = local.project_name
     LOCATION    = local.gcs_region
-    BUCKET_NAME = google_storage_bucket.raw_media.name
+    INPUT_BUCKET_NAME = google_storage_bucket.raw_media.name
+    OUTPUT_BUCKET_NAME = google_storage_bucket.transcoded_media.name
   }
 }
