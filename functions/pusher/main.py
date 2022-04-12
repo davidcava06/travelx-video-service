@@ -9,7 +9,6 @@ from slack_sdk.signature import SignatureVerifier
 PROJECT_ID = os.environ["PROJECT_ID"]
 INSTA_TOPIC_ID = os.environ["INSTA_TOPIC_ID"]
 TIKTOK_TOPIC_ID = os.environ["TIKTOK_TOPIC_ID"]
-TRANSCODER_TOPIC_ID = os.environ["TRANSCODER_TOPIC_ID"]
 SLACK_SECRET = os.environ["SLACK_SECRET"]
 TOPICS = {
     "/ig": INSTA_TOPIC_ID,

@@ -163,3 +163,4 @@ override.tf.json
 .DS_Store
 functions/*.zip
 insta_test/
+*.m3u8
