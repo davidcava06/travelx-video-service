@@ -1,0 +1,147 @@
+config {
+    inputs {
+      key: "input0"
+      uri: "gs://nonprod-raw-media/tiktok/6977073002311650566/video.mp4"
+    }
+    edit_list {
+      key: "atom0"
+      inputs: "input0"
+      start_time_offset {
+      }
+    }
+    elementary_streams {
+      video_stream {
+        h264 {
+          width_pixels: 640
+          height_pixels: 360
+          frame_rate: 30.0
+          bitrate_bps: 550000
+          pixel_format: "yuv420p"
+          rate_control_mode: "vbr"
+          crf_level: 21
+          gop_duration {
+            seconds: 3
+          }
+          vbv_size_bits: 550000
+          vbv_fullness_bits: 495000
+          entropy_coder: "cabac"
+          b_frame_count: 3
+          aq_strength: 1.0
+          profile: "high"
+          preset: "veryfast"
+        }
+      }
+      key: "video-stream0"
+    }
+    elementary_streams {
+      video_stream {
+        h264 {
+          width_pixels: 1280
+          height_pixels: 720
+          frame_rate: 30.0
+          bitrate_bps: 2500000
+          pixel_format: "yuv420p"
+          rate_control_mode: "vbr"
+          crf_level: 21
+          gop_duration {
+            seconds: 3
+          }
+          vbv_size_bits: 2500000
+          vbv_fullness_bits: 2250000
+          entropy_coder: "cabac"
+          b_frame_count: 3
+          aq_strength: 1.0
+          profile: "high"
+          preset: "veryfast"
+        }
+      }
+      key: "video-stream1"
+    }
+    elementary_streams {
+      audio_stream {
+        codec: "aac"
+        bitrate_bps: 64000
+        channel_count: 2
+        channel_layout: "fl"
+        channel_layout: "fr"
+        sample_rate_hertz: 48000
+      }
+      key: "audio-stream0"
+    }
+    mux_streams {
+      key: "sd"
+      file_name: "sd.mp4"
+      container: "mp4"
+      elementary_streams: "video-stream0"
+      elementary_streams: "audio-stream0"
+    }
+    mux_streams {
+      key: "hd"
+      file_name: "hd.mp4"
+      container: "mp4"
+      elementary_streams: "video-stream1"
+      elementary_streams: "audio-stream0"
+    }
+    mux_streams {
+      key: "media-sd"
+      file_name: "media-sd.ts"
+      container: "ts"
+      elementary_streams: "video-stream0"
+      elementary_streams: "audio-stream0"
+    }
+    mux_streams {
+      key: "media-hd"
+      file_name: "media-hd.ts"
+      container: "ts"
+      elementary_streams: "video-stream1"
+      elementary_streams: "audio-stream0"
+    }
+    mux_streams {
+      key: "video-only-sd"
+      file_name: "video-only-sd.m4s"
+      container: "fmp4"
+      elementary_streams: "video-stream0"
+    }
+    mux_streams {
+      key: "video-only-hd"
+      file_name: "video-only-hd.m4s"
+      container: "fmp4"
+      elementary_streams: "video-stream1"
+    }
+    mux_streams {
+      key: "audio-only"
+      file_name: "audio-only.m4s"
+      container: "fmp4"
+      elementary_streams: "audio-stream0"
+    }
+    manifests {
+      file_name: "manifest.m3u8"
+      type_: HLS
+      mux_streams: "media-sd"
+      mux_streams: "media-hd"
+    }
+    manifests {
+      file_name: "manifest.mpd"
+      type_: DASH
+      mux_streams: "video-only-sd"
+      mux_streams: "video-only-hd"
+      mux_streams: "audio-only"
+    }
+    output {
+      uri: "gs://nonprod-raw-media/"
+    }
+  }
+  state: SUCCEEDED
+  create_time {
+    seconds: 1649791568
+    nanos: 253146358
+  }
+  start_time {
+    seconds: 1649791572
+    nanos: 588000000
+  }
+  end_time {
+    seconds: 1649791582
+    nanos: 812000000
+  }
+  ttl_after_completion_days: 30
