@@ -26,6 +26,7 @@ storage_client = storage.Client()
 transcoder_client = TranscoderServiceClient()
 parent = f"projects/{PROJECT_ID}/locations/{LOCATION}"
 
+
 class Status(Enum):
     success = "SUCCESS"
     failed = "FAILED"
@@ -114,7 +115,6 @@ def create_job(
 
     response = transcoder_client.create_job(parent=parent, job=job)
     logger.info(f"Created job {response.name}.")
-    return response
 
 
 def transcoder(request):
