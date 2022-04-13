@@ -113,23 +113,22 @@ def create_job(
     return job
 
 
-def transcoder(request):
-    # def transcoder(event, context):
+# def transcoder(request):
+def transcoder(event, context):
     # Initialise Slack Message
     title = None
     title_link = None
     thumb_url = None
     text = None
 
-    if request.method != "POST":
-        return "😒 Only POST requests are accepted", 405
-    event = request.get_json()
+    # if request.method != "POST":
+    #     return "😒 Only POST requests are accepted", 405
+    # event = request.get_json()
 
     # Parse event content
-    media_data = event["data"]
-    # if os.environ["ENVIRONMENT"] != "local":
-    #     if "data" in event:
-    #         media_data = base64.b64decode(event["data"]).decode("utf-8")
+    if os.environ["ENVIRONMENT"] != "local":
+        if "data" in event:
+            media_data = base64.b64decode(event["data"]).decode("utf-8")
     if "attributes" in event:
         response_url = event["attributes"]["response_url"]
         logger.info(f"Responding at {response_url}...")

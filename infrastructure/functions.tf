@@ -85,14 +85,16 @@ resource "google_cloudfunctions_function" "transcoder" {
   name                = "transcoder"
   runtime             = "python38"
   entry_point         = "transcoder"
-  trigger_http        = true
-  ingress_settings    = "ALLOW_ALL"
   available_memory_mb = 256
   region              = local.gcs_region
 
+  event_trigger {
+    event_type = "google.pubsub.topic.publish"
+    resource   = google_pubsub_topic.transcoder_jobs.name
+  }
+
   source_archive_bucket = google_storage_bucket.deployer.name
   source_archive_object = google_storage_bucket_object.transcoder.name
-  service_account_email = google_service_account.cloud_function_invoker_account.email
 
   environment_variables = {
     ENVIRONMENT        = var.workspace
