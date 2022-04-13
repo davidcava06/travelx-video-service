@@ -130,7 +130,7 @@ def transcoder(request):
     event = request.get_json()
 
     # Parse event content
-    media_data = request["data"]
+    media_data = event["data"]
     # if os.environ["ENVIRONMENT"] != "local":
     #     if "data" in event:
     #         media_data = base64.b64decode(event["data"]).decode("utf-8")
