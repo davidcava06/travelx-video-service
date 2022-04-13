@@ -26,7 +26,6 @@ storage_client = storage.Client()
 transcoder_client = TranscoderServiceClient()
 parent = f"projects/{PROJECT_ID}/locations/{LOCATION}"
 
-
 class Status(Enum):
     success = "SUCCESS"
     failed = "FAILED"
@@ -108,6 +107,7 @@ def create_job(
     if config:
         logger.info("Creating job with custom config.")
         job.config = config
+        logger.info(job.config)
     else:
         logger.info(f"Creating job with preset {preset}.")
         job.template_id = preset

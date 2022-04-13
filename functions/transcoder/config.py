@@ -1,9 +1,15 @@
+import structlog
+
 from google.cloud.video import transcoder_v1
+from google.protobuf import duration_pb2 as duration
+
+logger = structlog.get_logger(__name__)
 
 
 def create_video_stream(
     key: str, height: int, width: int, bitrate: int, frame_rate: float
 ) -> transcoder_v1.types.ElementaryStream:
+    logger.info(f"Creating video stream: video-{key}")
     return transcoder_v1.types.ElementaryStream(
         key=f"video-{key}",
         video_stream=transcoder_v1.types.VideoStream(
@@ -27,6 +33,7 @@ def create_video_stream(
 def create_audio_stream(
     key: str, codec: str, bitrate: int
 ) -> transcoder_v1.types.ElementaryStream:
+    logger.info(f"Creating audio stream: audio-{key}")
     return transcoder_v1.types.ElementaryStream(
         key=f"audio-{key}",
         audio_stream=transcoder_v1.types.AudioStream(
@@ -37,14 +44,20 @@ def create_audio_stream(
 
 
 def create_mux_stream(key: str, streams: list) -> transcoder_v1.types.MuxStream:
+    logger.info(f"Creating mux stream: {key}")
     return transcoder_v1.types.MuxStream(
         key=key,
         container="ts",
         elementary_streams=streams,
+        segment_settings=transcoder_v1.types.SegmentSettings(
+            segment_duration=duration.Duration(seconds=4),
+            individual_segments=True
+        ),
     )
 
 
 def create_manifest(mux_streams: list) -> transcoder_v1.types.Manifest:
+    logger.info(f"Creating manifest")
     return transcoder_v1.types.Manifest(
         type_="HLS",
         mux_streams=mux_streams,

@@ -9,6 +9,7 @@ fsspec
 gcsfs
 aiohttp
 instaloader
+protobuf
 slack_sdk
 flask
 Pillow
