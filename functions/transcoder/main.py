@@ -89,8 +89,6 @@ def check_blob_exists(path: Any) -> str:
 
 
 def create_job(
-    transcoder_client: TranscoderServiceClient,
-    parent: str,
     video_uri: str,
     output_uri: str,
     config: Optional[transcoder_v1.types.JobConfig] = None,
@@ -112,10 +110,7 @@ def create_job(
     else:
         logger.info(f"Creating job with preset {preset}.")
         job.template_id = preset
-
-    response = transcoder_client.create_job(parent=parent, job=job)
-    logger.info(f"Created job {response.name}.")
-    return response
+    return job
 
 
 def transcoder(request):
@@ -172,6 +167,8 @@ def transcoder(request):
         config=create_standard_job_config(),
     )
     logger.info(job)
+    job = transcoder_client.create_job(parent=parent, job=job)
+    logger.info(f"Created job {job.name}.")
 
     # Wait for job to finish
     logger.info("Waiting for job to finish...")
