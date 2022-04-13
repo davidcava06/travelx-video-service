@@ -81,6 +81,7 @@ def check_blob_exists(path: Any) -> str:
     if not bucket.exists():
         logger.error("🤷 Failed upload: Bucket does not exist.")
         return None
+    breakpoint()
     blob = bucket.get_blob(path)
     if blob is None:
         logger.error("🤷 Failed upload: Blob does not exist.")
@@ -126,9 +127,9 @@ def transcoder(event, context):
     # event = request.get_json()
 
     # Parse event content
-    if os.environ["ENVIRONMENT"] != "local":
-        if "data" in event:
-            video_path = base64.b64decode(event["data"]).decode("utf-8")
+    # if os.environ["ENVIRONMENT"] != "local":
+        # if "data" in event:
+    video_path = base64.b64decode(event["data"]).decode("utf-8")
     if "attributes" in event:
         response_url = event["attributes"]["response_url"]
         logger.info(f"Responding at {response_url}...")
@@ -158,8 +159,6 @@ def transcoder(event, context):
     transcoder_client = TranscoderServiceClient()
     parent = f"projects/{PROJECT_ID}/locations/{LOCATION}"
     job = create_job(
-        transcoder_client,
-        parent,
         video_uri,
         output_uri,
         config=create_standard_job_config(),
@@ -200,4 +199,10 @@ def transcoder(event, context):
 #         "video_path": "tiktok/7081723363546189061/video.mp4"
 #     }
 # }
-# transcoder(event)
+event = {
+    "attributes": {
+        "response_url": "https://hooks.slack.com/services/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"
+    },
+    "data": "dGlrdG9rLzcwODE3MjMzNjM1NDYxODkwNjEvdmlkZW8ubXA0Cg=="
+}
+transcoder(event, {})
