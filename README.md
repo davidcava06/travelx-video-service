@@ -24,6 +24,9 @@ The terraform state is saved in `terraform.io`. Credentials for GCP must set up 
 4. `make develop` to install any dev dependencies
 5. #ship it
 
+Call Pub/Sub event driven functions:
+`DATA=$(printf 'Hello!'|base64) && gcloud functions call hello_pubsub --data '{"data":"'$DATA'"}'`
+
 
 ### Set up TikTok API
 1. git clone

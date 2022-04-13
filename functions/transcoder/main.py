@@ -128,11 +128,10 @@ def transcoder(event, context):
     # Parse event content
     if os.environ["ENVIRONMENT"] != "local":
         if "data" in event:
-            media_data = base64.b64decode(event["data"]).decode("utf-8")
+            video_path = base64.b64decode(event["data"]).decode("utf-8")
     if "attributes" in event:
         response_url = event["attributes"]["response_url"]
         logger.info(f"Responding at {response_url}...")
-    video_path = media_data.get("video_path")
     logger.info(f"Processing {video_path}...")
 
     # Validate input
