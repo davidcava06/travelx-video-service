@@ -23,8 +23,6 @@ ENVIRONMENT = os.environ["ENVIRONMENT"]
 logger = structlog.get_logger(__name__)
 root = os.path.dirname(os.path.abspath(__file__))
 storage_client = storage.Client()
-transcoder_client = TranscoderServiceClient()
-parent = f"projects/{PROJECT_ID}/locations/{LOCATION}"
 
 
 class Status(Enum):
@@ -91,6 +89,8 @@ def check_blob_exists(path: Any) -> str:
 
 
 def create_job(
+    transcoder_client: TranscoderServiceClient,
+    parent: str,
     video_uri: str,
     output_uri: str,
     config: Optional[transcoder_v1.types.JobConfig] = None,
@@ -115,6 +115,7 @@ def create_job(
 
     response = transcoder_client.create_job(parent=parent, job=job)
     logger.info(f"Created job {response.name}.")
+    return response
 
 
 def transcoder(request):
@@ -161,7 +162,15 @@ def transcoder(request):
 
     # Transcode video
     logger.info("Transcoding video...")
-    job = create_job(video_uri, output_uri, config=create_standard_job_config())
+    transcoder_client = TranscoderServiceClient()
+    parent = f"projects/{PROJECT_ID}/locations/{LOCATION}"
+    job = create_job(
+        transcoder_client,
+        parent,
+        video_uri,
+        output_uri,
+        config=create_standard_job_config(),
+    )
     logger.info(job)
 
     # Wait for job to finish
@@ -186,3 +195,14 @@ def transcoder(request):
         text=text,
     )
     return jsonify(response)
+
+
+# event = {
+#     "attributes": {
+#         "response_url": "https://hooks.slack.com/services/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"
+#     },
+#     "data": {
+#         "video_path": "tiktok/7081723363546189061/video.mp4"
+#     }
+# }
+# transcoder(event)
