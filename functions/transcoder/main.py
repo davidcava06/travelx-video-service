@@ -130,9 +130,9 @@ def transcoder(request):
 
     # Parse event content
     media_data = event["data"]
-    if os.environ["ENVIRONMENT"] != "local":
-        if "data" in event:
-            media_data = base64.b64decode(event["data"]).decode("utf-8")
+    # if os.environ["ENVIRONMENT"] != "local":
+    #     if "data" in event:
+    #         media_data = base64.b64decode(event["data"]).decode("utf-8")
     if "attributes" in event:
         response_url = event["attributes"]["response_url"]
         logger.info(f"Responding at {response_url}...")
