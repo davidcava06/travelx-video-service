@@ -116,12 +116,17 @@ def create_job(
     return response
 
 
-def transcoder(event, context):
+def transcoder(request):
+    # def transcoder(event, context):
     # Initialise Slack Message
     title = None
     title_link = None
     thumb_url = None
     text = None
+
+    if request.method != "POST":
+        return "😒 Only POST requests are accepted", 405
+    event = request.get_json()
 
     # Parse event content
     media_data = event["data"]
