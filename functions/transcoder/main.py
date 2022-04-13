@@ -1,5 +1,6 @@
 import base64
 import os
+import time
 from enum import Enum
 from typing import Any, Optional
 
@@ -129,7 +130,7 @@ def transcoder(request):
     event = request.get_json()
 
     # Parse event content
-    media_data = event["data"]
+    media_data = request["data"]
     # if os.environ["ENVIRONMENT"] != "local":
     #     if "data" in event:
     #         media_data = base64.b64decode(event["data"]).decode("utf-8")
@@ -137,14 +138,13 @@ def transcoder(request):
         response_url = event["attributes"]["response_url"]
         logger.info(f"Responding at {response_url}...")
     video_path = media_data.get("video_path")
-    thumbnail_path = media_data.get("thumbnail_path")
     logger.info(f"Processing {video_path}...")
 
     # Validate input
     video_uri = check_blob_exists(video_path)
-    thumbnail_uri = check_blob_exists(thumbnail_path)
-    output_uri = f"gs://{OUTPUT_BUCKET_NAME}/{video_path}"
-    if not video_uri or not thumbnail_uri or not output_uri:
+    output_directory = video_path.replace("video.mp4", "")
+    output_uri = f"gs://{OUTPUT_BUCKET_NAME}/{output_directory}"
+    if not video_uri or not output_uri:
         msg = "🤷 Failed upload: No video, thumbnail input or output URI."
         status = Status.failed
         logger.error(msg)
@@ -164,27 +164,25 @@ def transcoder(request):
     job = create_job(video_uri, output_uri, config=create_standard_job_config())
     logger.info(job)
 
+    # Wait for job to finish
+    logger.info("Waiting for job to finish...")
+    job_name = job.name
+    job_state = transcoder_client.get_job(name=job_name).state
+    while job_state != transcoder_v1.types.Job.ProcessingState.SUCCEEDED:
+        time.sleep(2)
+        job_state = transcoder_client.get_job(name=job_name).state
+        logger.info(f"Job status: {job_state}")
+    logger.info("Job finished.")
+
     status = Status.success
-    msg = f"🎉 Successfully started transcoding video {video_path}"
+    msg = f"🎉 Successfully transcoded video to {output_uri}"
     response = notify_slack(
         msg,
         status,
         response_url,
         title="Media Here",
-        title_link=output_uri + "/manifest.m3u8",
-        thumb_url=thumbnail_uri,
+        title_link=output_uri + "manifest.m3u8",
+        thumb_url=thumb_url,
         text=text,
     )
     return jsonify(response)
-
-
-# event = {
-#     "attributes": {
-#         "response_url": "https://hooks.slack.com/actions/T12345/12345/12345"
-#     },
-#     "data": {
-#         "video_path": "tiktok/6977073002311650566/video.mp4",
-#         "thumbnail_path": "tiktok/6977073002311650566/thumbnail.jpg",
-#     },
-# }
-# transcoder(event, {})
