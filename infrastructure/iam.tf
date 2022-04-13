@@ -45,3 +45,9 @@ resource "google_project_iam_member" "api_datastore" {
   role    = "roles/datastore.user"
   member  = "serviceAccount:${google_service_account.tiktok_api.email}"
 }
+
+resource "google_project_iam_member" "transcoder_invoker" {
+  project = local.project_name
+  role    = "roles/transcoder.admin"
+  member  = "serviceAccount:${google_service_account.cloud_function_invoker_account.email}"
+}
