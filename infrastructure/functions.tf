@@ -95,6 +95,7 @@ resource "google_cloudfunctions_function" "transcoder" {
 
   source_archive_bucket = google_storage_bucket.deployer.name
   source_archive_object = google_storage_bucket_object.transcoder.name
+  service_account_email = google_service_account.cloud_function_invoker_account.email
 
   environment_variables = {
     ENVIRONMENT        = var.workspace

@@ -139,7 +139,7 @@ def transcoder(event, context):
     output_directory = video_path.replace("video.mp4", "")
     output_uri = f"gs://{OUTPUT_BUCKET_NAME}/{output_directory}"
     if not video_uri or not output_uri:
-        msg = "🤷 Failed upload: No video, thumbnail input or output URI."
+        msg = "🤷 Failed upload: No video or output URI."
         status = Status.failed
         logger.error(msg)
         response = notify_slack(
