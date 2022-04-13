@@ -7,7 +7,7 @@ from typing import Any, Optional
 import structlog
 from config import create_standard_job_config
 from flask import jsonify
-from google.cloud import storage
+from google.cloud import pubsub_v1, storage
 from google.cloud.video import transcoder_v1
 from google.cloud.video.transcoder_v1.services.transcoder_service import (
     TranscoderServiceClient,
@@ -18,6 +18,7 @@ PROJECT_ID = os.environ["PROJECT_ID"]
 LOCATION = os.environ["LOCATION"]
 INPUT_BUCKET_NAME = os.environ["INPUT_BUCKET_NAME"]
 OUTPUT_BUCKET_NAME = os.environ["OUTPUT_BUCKET_NAME"]
+TOPIC_ID = os.environ["TOPIC_ID"]
 ENVIRONMENT = os.environ["ENVIRONMENT"]
 
 logger = structlog.get_logger(__name__)
@@ -127,7 +128,7 @@ def transcoder(event, context):
 
     # Parse event content
     # if os.environ["ENVIRONMENT"] != "local":
-        # if "data" in event:
+    # if "data" in event:
     video_path = base64.b64decode(event["data"]).decode("utf-8")
     if "attributes" in event:
         response_url = event["attributes"]["response_url"]
@@ -198,10 +199,10 @@ def transcoder(event, context):
 #         "video_path": "tiktok/7081723363546189061/video.mp4"
 #     }
 # }
-event = {
-    "attributes": {
-        "response_url": "https://hooks.slack.com/services/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"
-    },
-    "data": "dGlrdG9rLzcwODE3MjMzNjM1NDYxODkwNjEvdmlkZW8ubXA0Cg=="
-}
-transcoder(event, {})
+# event = {
+#     "attributes": {
+#         "response_url": "https://hooks.slack.com/services/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"
+#     },
+#     "data": "dGlrdG9rLzcwODE3MjMzNjM1NDYxODkwNjEvdmlkZW8ubXA0Cg==",
+# }
+# transcoder(event, {})

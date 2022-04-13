@@ -103,6 +103,7 @@ resource "google_cloudfunctions_function" "transcoder" {
     LOCATION           = local.gcs_region
     INPUT_BUCKET_NAME  = google_storage_bucket.raw_media.name
     OUTPUT_BUCKET_NAME = google_storage_bucket.transcoded_media.name
+    TOPIC_ID           = google_pubsub_topic.transcoder_done.name
   }
   depends_on = [google_storage_bucket.raw_media, google_storage_bucket.transcoded_media, google_service_account.cloud_function_invoker_account]
 }
