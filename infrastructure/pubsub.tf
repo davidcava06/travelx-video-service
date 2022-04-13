@@ -8,6 +8,11 @@ resource "google_pubsub_topic" "transcoder_jobs" {
   name    = "${var.workspace}-transcoder-jobs"
 }
 
+resource "google_pubsub_topic" "transcoder_done" {
+  project = local.project_name
+  name    = "${var.workspace}-transcoder-done"
+}
+
 resource "google_pubsub_topic" "insta_download_jobs" {
   project = local.project_name
   name    = "${var.workspace}-insta-jobs"

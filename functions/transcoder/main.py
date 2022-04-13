@@ -81,7 +81,6 @@ def check_blob_exists(path: Any) -> str:
     if not bucket.exists():
         logger.error("🤷 Failed upload: Bucket does not exist.")
         return None
-    breakpoint()
     blob = bucket.get_blob(path)
     if blob is None:
         logger.error("🤷 Failed upload: Blob does not exist.")
