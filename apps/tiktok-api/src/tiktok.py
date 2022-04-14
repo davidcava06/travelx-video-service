@@ -18,10 +18,10 @@ def get_video_from_url(api: TikTokApi, url: str) -> dict:
 
     # Get video
     video_bytes = video.bytes()
-    download_video(video_data, video_bytes)
+    video_path = download_video(video_data, video_bytes)
     download_thumbnail(video_data)
 
-    return video_data
+    return video_data, video_path
 
 
 def download_thumbnail(video_data: dict):
@@ -54,3 +54,4 @@ def download_video(video_data: dict, video_bytes: bytes) -> dict:
     file_name = f"tiktok/{video_id}/video.mp4"
     if storage_client._upload_sync(tmp_path_f, file_name):
         storage_client._upload_document_to_firestore(video_data, video_id)
+        return file_name

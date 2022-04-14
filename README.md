@@ -46,12 +46,9 @@ To the Cloud Function endpoint, send a payload like this:
 ```
 event = {
     "attributes": {
-        "response_url": "https://hooks.slack.com/actions/T12345/12345/12345"
+        "response_url": "https://hooks.slack.com/services/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"
     },
-    "data": {
-        "video_path": "tiktok/6977073002311650566/video.mp4",
-        "thumbnail_path": "tiktok/6977073002311650566/thumbnail.jpg",
-    },
+    "data": "dGlrdG9rLzcwODE3MjMzNjM1NDYxODkwNjEvdmlkZW8ubXA0,
 }
 ```
 

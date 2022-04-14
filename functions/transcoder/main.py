@@ -7,7 +7,7 @@ from typing import Any, Optional
 import structlog
 from config import create_standard_job_config
 from flask import jsonify
-from google.cloud import pubsub_v1, storage
+from google.cloud import storage  # pubsub_v1,
 from google.cloud.video import transcoder_v1
 from google.cloud.video.transcoder_v1.services.transcoder_service import (
     TranscoderServiceClient,
@@ -114,7 +114,6 @@ def create_job(
     return job
 
 
-# def transcoder(request):
 def transcoder(event, context):
     # Initialise Slack Message
     title = None
@@ -122,13 +121,6 @@ def transcoder(event, context):
     thumb_url = None
     text = None
 
-    # if request.method != "POST":
-    #     return "😒 Only POST requests are accepted", 405
-    # event = request.get_json()
-
-    # Parse event content
-    # if os.environ["ENVIRONMENT"] != "local":
-    # if "data" in event:
     video_path = base64.b64decode(event["data"]).decode("utf-8")
     if "attributes" in event:
         response_url = event["attributes"]["response_url"]
@@ -177,6 +169,16 @@ def transcoder(event, context):
         logger.info(f"Job status: {job_state}")
     logger.info("Job finished.")
 
+    # Publish CDN File Rename
+    # publisher = pubsub_v1.PublisherClient()
+    # topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+    # publisher.publish(
+    #     topic_path,
+    #     output_uri.encode("utf-8"),
+    #     response_url=response_url,
+    # )
+
+    # Notify Slack
     status = Status.success
     msg = f"🎉 Successfully transcoded video to {output_uri}"
     response = notify_slack(
@@ -189,20 +191,3 @@ def transcoder(event, context):
         text=text,
     )
     return jsonify(response)
-
-
-# event = {
-#     "attributes": {
-#         "response_url": "https://hooks.slack.com/services/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"
-#     },
-#     "data": {
-#         "video_path": "tiktok/7081723363546189061/video.mp4"
-#     }
-# }
-# event = {
-#     "attributes": {
-#         "response_url": "https://hooks.slack.com/services/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"
-#     },
-#     "data": "dGlrdG9rLzcwODE3MjMzNjM1NDYxODkwNjEvdmlkZW8ubXA0Cg==",
-# }
-# transcoder(event, {})
