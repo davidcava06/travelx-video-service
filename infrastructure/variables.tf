@@ -41,6 +41,14 @@ variable "datalama_key" {
   type = string
 }
 
+variable "infura_project_id" {
+  type = string
+}
+
+variable "infura_project_secret" {
+  type = string
+}
+
 locals {
   project_name = lookup(var.project_names, var.workspace)
   gcs_region   = lookup(var.gcs_regions, var.workspace)
