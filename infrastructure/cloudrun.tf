@@ -20,6 +20,10 @@ resource "google_cloud_run_service" "api" {
           name  = "ENVIRONMENT"
           value = var.workspace
         }
+        env {
+          name  = "TOPIC_ID"
+          value = google_pubsub_topic.transcoder_jobs.name
+        }
       }
       timeout_seconds      = "30"
       service_account_name = google_service_account.tiktok_api.email
