@@ -1,6 +1,7 @@
 google-cloud-core==2.2.3
 google-cloud-error-reporting==1.5.1
 google-cloud-storage==2.2.1
+google-cloud-pubsub
 firebase-admin
 fsspec
 gcsfs

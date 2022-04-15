@@ -17,10 +17,12 @@ class DevelopmentConfig(Config):
 
 class NonProductionConfig(Config):
     DEBUG: str = True
+    TOPIC_ID: str = "nonprod-transcoder-jobs"
 
 
 class ProductionConfig(Config):
     DEBUG: str = False
+    TOPIC_ID: str = "prod-transcoder-jobs"
 
 
 config = {

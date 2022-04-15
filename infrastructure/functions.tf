@@ -31,6 +31,7 @@ resource "google_cloudfunctions_function" "insta_downloader" {
     SLACK_URL    = var.slack_insta_url
     PROJECT_ID   = local.project_name
     DATALAMA_KEY = var.datalama_key
+    TOPIC_ID     = google_pubsub_topic.transcoder_jobs.name
   }
 
   depends_on = [google_storage_bucket.raw_media, google_service_account.cloud_function_invoker_account]

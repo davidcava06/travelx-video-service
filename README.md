@@ -46,14 +46,14 @@ To the Cloud Function endpoint, send a payload like this:
 ```
 event = {
     "attributes": {
-        "response_url": "https://hooks.slack.com/actions/T12345/12345/12345"
+        "response_url": "https://hooks.slack.com/services/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"
     },
-    "data": {
-        "video_path": "tiktok/6977073002311650566/video.mp4",
-        "thumbnail_path": "tiktok/6977073002311650566/thumbnail.jpg",
-    },
+    "data": "dGlrdG9rLzcwODE3MjMzNjM1NDYxODkwNjEvdmlkZW8ubXA0,
 }
 ```
+
+You can get the `base64` encoded string doing this:
+`echo -n 'tiktok/7082326632828062982/video.mp4' | base64`
 
 
 ## TikTokAPI

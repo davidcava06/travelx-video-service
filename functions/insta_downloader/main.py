@@ -8,13 +8,14 @@ import firebase_admin
 import structlog
 from firebase_admin import credentials, firestore
 from flask import jsonify
-from google.cloud import storage
+from google.cloud import pubsub_v1, storage
 from providers import InstaClient, Provider, Status
 from slack_sdk.webhook import WebhookClient
 
 PROJECT_ID = os.environ["PROJECT_ID"]
 BUCKET_NAME = os.environ["BUCKET_NAME"]
 INSTA_PROVIDER = Provider.datalama
+TOPIC_ID = os.environ["TOPIC_ID"]
 
 logger = structlog.get_logger(__name__)
 root = os.path.dirname(os.path.abspath(__file__))
@@ -151,6 +152,16 @@ def insta_downloader(event, context):
                     tmp_video_path,
                     f"{insta_id}/video.mp4",
                     content_type="video/mp4",
+                )
+                video_path = f"{media_type}/{insta_id}/video.mp4"
+
+                # Publish Transcoding Job
+                publisher = pubsub_v1.PublisherClient()
+                topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+                publisher.publish(
+                    topic_path,
+                    video_path.encode("utf-8"),
+                    response_url=response_url,  # NOQA
                 )
 
             # Send message to Slack
