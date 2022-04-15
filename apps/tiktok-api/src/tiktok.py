@@ -35,11 +35,10 @@ def download_thumbnail(video_data: dict):
     tmp_path_f = os.path.join(root, tmp_path)
     try:
         wget.download(thumb_url, tmp_path_f)
+        file_name = f"tiktok/{video_id}/thumbnail.jpg"
+        storage_client._upload_sync(tmp_path_f, file_name)
     except Exception as e:
         logger.error(e)
-
-    file_name = f"tiktok/{video_id}/thumbnail.jpg"
-    storage_client._upload_sync(tmp_path_f, file_name)
 
 
 def download_video(video_data: dict, video_bytes: bytes) -> dict:

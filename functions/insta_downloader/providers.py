@@ -82,5 +82,5 @@ class InstaClient:
                 wget.download(video_url, tmp_video_path_f)
         except Exception as e:
             logger.error(f"🤷 Error downloading {insta_id}: {e}.")
-            return None, None, Status.failed
+            raise e
         return tmp_thumbnail_path_f, tmp_video_path_f, Status.success
