@@ -87,15 +87,12 @@ def get_blobs_by_content_type(
 
 def download_blobs(blobs: List[storage.Blob]) -> List[Tuple[str, str]]:
     """Download blobs from bucket."""
-    root = os.path.dirname(os.path.abspath(__file__))
     files_list = []
-    if not os.path.exists(f"{root}/tmp"):
-        os.makedirs(f"{root}/tmp")
 
     for blob in blobs:
         tmp_file_name = "-".join(blob.name.split("/")[1:])
         file_name = blob.name.split("/")[-1]
-        tmp_file_path = f"{root}/tmp/{tmp_file_name}"
+        tmp_file_path = f"/tmp/{tmp_file_name}"
         blob.download_to_filename(tmp_file_path)
         files_list.append((file_name, tmp_file_path))
     return files_list
