@@ -137,12 +137,12 @@ resource "google_cloudfunctions_function" "cdn_uploader" {
   service_account_email = google_service_account.cloud_function_invoker_account.email
 
   environment_variables = {
-    ENVIRONMENT           = var.workspace
-    PROJECT_ID            = local.project_name
-    LOCATION              = local.gcs_region
-    BUCKET_NAME           = google_storage_bucket.transcoded_media.name
-    INFURA_PROJECT_ID     = var.infura_project_id
-    INFURA_PROJECT_SECRET = var.infura_project_secret
+    ENVIRONMENT            = var.workspace
+    PROJECT_ID             = local.project_name
+    LOCATION               = local.gcs_region
+    TRANSCODED_BUCKET_NAME = google_storage_bucket.transcoded_media.name
+    INFURA_PROJECT_ID      = var.infura_project_id
+    INFURA_PROJECT_SECRET  = var.infura_project_secret
   }
   depends_on = [google_storage_bucket.transcoded_media, google_service_account.cloud_function_invoker_account]
 }
