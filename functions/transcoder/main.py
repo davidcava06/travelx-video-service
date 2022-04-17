@@ -7,7 +7,7 @@ from typing import Any, Optional
 import structlog
 from config import create_standard_job_config
 from flask import jsonify
-from google.cloud import storage  # pubsub_v1,
+from google.cloud import pubsub_v1, storage
 from google.cloud.video import transcoder_v1
 from google.cloud.video.transcoder_v1.services.transcoder_service import (
     TranscoderServiceClient,
