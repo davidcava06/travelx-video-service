@@ -170,13 +170,13 @@ def transcoder(event, context):
     logger.info("Job finished.")
 
     # Publish CDN File Rename
-    # publisher = pubsub_v1.PublisherClient()
-    # topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
-    # publisher.publish(
-    #     topic_path,
-    #     output_uri.encode("utf-8"),
-    #     response_url=response_url,
-    # )
+    publisher = pubsub_v1.PublisherClient()
+    topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+    publisher.publish(
+        topic_path,
+        output_directory.encode("utf-8"),
+        response_url=response_url,
+    )
 
     # Notify Slack
     status = Status.success

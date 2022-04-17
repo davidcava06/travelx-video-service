@@ -8,8 +8,8 @@ Infrastructure to:
 1. Slack bot to download media and metadata from Instagram &#x2611;
 2. Slack bot to download media and metadata from TikTok &#x2611;
 3. Trigger an encoding job to HSL &#x2611;
-4. Store media in IPFS via INFURA gateway
-5. Like that, it can be callable for free via the `cloudflare gateway`: https://cloudflare-ipfs.com/ipfs/CID
+4. Store media in IPFS via INFURA gateway &#x2611;
+5. Like that, it can be callable for free via the `infura gateway`: https://PROJECT-ID.infura-ipfs.com/ipfs/CID &#x2611;
 
 
 ## Preparation
@@ -58,3 +58,6 @@ You can get the `base64` encoded string doing this:
 
 ## TikTokAPI
 This library needs `playwright` to work. In order to install it the Docker Image has been taken from [here](https://github.com/danofun/docker-playwright-python/blob/main/Dockerfile).
+
+## Infura
+Infrastructure provider for the Ethereum network and IPFS [here](https://infura.io).

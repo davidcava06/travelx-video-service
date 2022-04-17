@@ -108,3 +108,41 @@ resource "google_cloudfunctions_function" "transcoder" {
   }
   depends_on = [google_storage_bucket.raw_media, google_storage_bucket.transcoded_media, google_service_account.cloud_function_invoker_account]
 }
+
+# Function: Formats the output of the transcoder and uploads to CDN
+#
+data "local_file" "cdn_uploader" {
+  filename = "functions/cdn_uploader.zip"
+}
+
+resource "google_storage_bucket_object" "cdn_uploader" {
+  name   = format("cdn_uploader.zip#%s", md5(data.local_file.cdn_uploader.content))
+  bucket = google_storage_bucket.deployer.name
+  source = data.local_file.cdn_uploader.filename
+}
+resource "google_cloudfunctions_function" "cdn_uploader" {
+  name                = "cdn_uploader"
+  runtime             = "python38"
+  entry_point         = "cdn_uploader"
+  available_memory_mb = 256
+  region              = local.gcs_region
+
+  event_trigger {
+    event_type = "google.pubsub.topic.publish"
+    resource   = google_pubsub_topic.transcoder_done.name
+  }
+
+  source_archive_bucket = google_storage_bucket.deployer.name
+  source_archive_object = google_storage_bucket_object.cdn_uploader.name
+  service_account_email = google_service_account.cloud_function_invoker_account.email
+
+  environment_variables = {
+    ENVIRONMENT            = var.workspace
+    PROJECT_ID             = local.project_name
+    LOCATION               = local.gcs_region
+    TRANSCODED_BUCKET_NAME = google_storage_bucket.transcoded_media.name
+    INFURA_PROJECT_ID      = var.infura_project_id
+    INFURA_PROJECT_SECRET  = var.infura_project_secret
+  }
+  depends_on = [google_storage_bucket.transcoded_media, google_service_account.cloud_function_invoker_account]
+}
