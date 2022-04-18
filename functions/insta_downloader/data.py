@@ -1,5 +1,4 @@
 from dataclasses import asdict, dataclass
-from datetime import datetime
 from typing import Optional
 from uuid import uuid4
 
@@ -32,21 +31,20 @@ class VideoMeta:
     dash: Optional[str] = None
     size: Optional[int] = None
     thumbnail: Optional[str] = None
-    created_at: Optional[datetime] = None
-    uploaded_at: Optional[datetime] = None
+    created_at: Optional[str] = None
+    uploaded_at: Optional[str] = None
 
 
 @dataclass
 class ExperienceMeta:
     uid: str
     video: dict
-    origin: str
     location: Optional[LocationMeta] = None
     author: Optional[AuthorMeta] = None
 
 
 def create_data_object(
-    insta_object: dict, video_object: dict, origin: str = "instagram"
+    insta_object: dict, video_object: dict, origin: Optional[str] = "instagram"
 ) -> dict:
     location_meta = None
     if insta_object["location"] is not None:
@@ -66,8 +64,6 @@ def create_data_object(
         provider=origin,
     )
 
-    created_at = datetime.strptime(video_object["created"], "%Y-%m-%dT%H:%M:%S%z")
-    uploaded_at = datetime.strptime(video_object["updated"], "%Y-%m-%dT%H:%M:%S%z")
     video_meta = VideoMeta(
         storage=video_object["storage"],
         uid=video_object["uid"],
@@ -76,9 +72,10 @@ def create_data_object(
         dash=video_object["playback"].get("hls"),
         size=video_object["size"],
         thumbnail=video_object["thumbnail"],
-        created_at=created_at,
-        uploaded_at=uploaded_at,
+        created_at=video_object["created"],
+        uploaded_at=video_object["uploaded"],
     )
+
     return asdict(
         ExperienceMeta(
             uid=str(uuid4()),
