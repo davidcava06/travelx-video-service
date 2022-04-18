@@ -6,15 +6,15 @@ from uuid import uuid4
 
 @dataclass
 class LocationMeta:
-    address: str
-    category: dict
-    city: str
-    lat: float
-    lng: float
-    name: str
-    phone: str
-    website: str
-    zip: str
+    address: Optional[str] = None
+    category: Optional[str] = None
+    city: Optional[str] = None
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    website: Optional[str] = None
+    zip: Optional[str] = None
 
 
 @dataclass
@@ -48,17 +48,18 @@ class ExperienceMeta:
 def create_data_object(
     insta_object: dict, video_object: dict, origin: str = "instagram"
 ) -> dict:
-    location_meta = LocationMeta(
-        address=insta_object["location"].get("address"),
-        category=insta_object["location"].get("category"),
-        city=insta_object["location"].get("city"),
-        lat=insta_object["location"].get("lat"),
-        lng=insta_object["location"].get("lng"),
-        name=insta_object["location"].get("name"),
-        phone=insta_object["location"].get("phone"),
-        website=insta_object["location"].get("website"),
-        zip=insta_object["location"].get("zip"),
-    )
+    if insta_object["location"] is not None:
+        location_meta = LocationMeta(
+            address=insta_object["location"].get("address"),
+            category=insta_object["location"].get("category"),
+            city=insta_object["location"].get("city"),
+            lat=insta_object["location"].get("lat"),
+            lng=insta_object["location"].get("lng"),
+            name=insta_object["location"].get("name"),
+            phone=insta_object["location"].get("phone"),
+            website=insta_object["location"].get("website"),
+            zip=insta_object["location"].get("zip"),
+        )
     author_meta = AuthorMeta(
         username=insta_object["user"].get("username"),
         provider=origin,
