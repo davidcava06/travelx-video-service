@@ -110,11 +110,11 @@ class CFClient:
             headers=headers,
         )
         results = response.json()
-        return results
+        return results["result"]
 
     def get_video_by_name(self, file_name: str) -> dict:
         """Get Video from CloudFlare Stream"""
-        logger.info(f"Uploading to {self.base_url}...")
+        logger.info(f"Fetching from {self.base_url}...")
 
         headers = CaseInsensitiveDict()
         headers["Authorization"] = f"Bearer {self.token}"
@@ -125,4 +125,4 @@ class CFClient:
             headers=headers,
         )
         results = response.json()
-        return results
+        return results["result"]

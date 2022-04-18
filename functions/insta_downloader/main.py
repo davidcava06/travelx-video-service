@@ -161,16 +161,18 @@ def insta_downloader(event, context):
                 # Upload to CloudFlare
                 logger.info(f"Uploading to CloudFlare for {insta_id}...")
                 response = cdn_client.upload_files(tmp_video_path, insta_id)
-                while response["readyToStream"] is not True:
+                ready_to_stream = response["readyToStream"]
+                while ready_to_stream is not True:
                     time.sleep(2)
                     response = cdn_client.get_video_by_name(insta_id)
-                    ready_to_stream = response["readyToStream"]
+                    ready_to_stream = response[0]["readyToStream"]
                     logger.info(f"Job status: {ready_to_stream}")
 
                 logger.info(f"Formatting data object for {insta_id}...")
-                response["storage"] = "cloudflare"
-                response["uid"] = str(uuid4())
-                data_object = create_data_object(insta_object, response)
+                video_object = response[0]
+                video_object["storage"] = "cloudflare"
+                video_object["uid"] = str(uuid4())
+                data_object = create_data_object(insta_object, video_object)
 
                 logger.info(f"Storing data object for {insta_id}...")
                 upload_document_to_firestore(
