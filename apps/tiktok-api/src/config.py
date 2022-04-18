@@ -9,7 +9,8 @@ class Config:
     GCP_PROJECT: str = os.environ.get("GCP_PROJECT", "fiebel-video-nonprod")
     GCP_REGION: str = os.environ.get("GCP_REGION", "europe-west2")
     GCP_BUCKET: str = os.environ.get("GCP_BUCKET", "nonprod-raw-media")
-
+    CF_ACCOUNT: str = os.environ.get("CF_ACCOUNT", "")
+    CF_TOKEN: str = os.environ.get("CF_TOKEN", "")
 
 class DevelopmentConfig(Config):
     DEBUG: str = True

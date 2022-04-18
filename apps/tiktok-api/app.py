@@ -27,6 +27,8 @@ app = Flask(__name__)
 app.config.from_object(config[ENVIRONMENT])
 PROJECT_ID = app.config.get("GCP_PROJECT")
 TOPIC_ID = app.config.get("TOPIC_ID")
+CF_ACCOUNT = app.config.get("CF_ACCOUNT")
+CF_TOKEN = app.config.get("CF_TOKEN")
 
 # logging
 logging.setup(app)
@@ -104,15 +106,16 @@ async def video():
         tiktok_object, video_path = get_video_from_url(api, video_url)
         status = Status.success
 
+        # Not required with CloudFlare Stream
         # Publish Transcoder Job
-        if ENVIRONMENT != "local":
-            publisher = pubsub_v1.PublisherClient()
-            topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
-            publisher.publish(
-                topic_path,
-                video_path.encode("utf-8"),
-                response_url=response_url,
-            )
+        # if ENVIRONMENT != "local":
+        #     publisher = pubsub_v1.PublisherClient()
+        #     topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+        #     publisher.publish(
+        #         topic_path,
+        #         video_path.encode("utf-8"),
+        #         response_url=response_url,
+        #     )
 
     except Exception as e:
         msg = f"🤷 Storage error: {e}"
@@ -122,7 +125,6 @@ async def video():
     # Notify Slack
     logger.info(f"Notifying Slack at {response_url}...")
     slack_message.get_message_from_video(status, tiktok_object, msg)
-    print(slack_message.message)
     slack_message.webhook_send(response_url)
     return jsonify({"content": tiktok_object, "status": 200})
 
