@@ -6,7 +6,7 @@ from uuid import uuid4
 import nest_asyncio
 import structlog
 from flask import Flask, jsonify, request
-from google.cloud import pubsub_v1
+# from google.cloud import pubsub_v1
 
 from src import errors, logging
 from src.config import ENVIRONMENT, config
