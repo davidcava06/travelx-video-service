@@ -4,6 +4,7 @@ import structlog
 import wget
 from TikTokApi import TikTokApi
 
+from src.extensions import cdn as cdn_client
 from src.extensions import storage as storage_client
 
 logger = structlog.get_logger(__name__)

@@ -7,10 +7,14 @@ logger = structlog.get_logger(__name__)
 
 
 class CFClient:
-    def __init__(self, cf_account: str, cf_token: str):
+    def __init__(self, app=None):
+        if app:
+            self.init_app(app)
+
+    def init_app(self, app, *args, **kwargs) -> None:
         self.base_url = "https://api.cloudflare.com/client/v4/accounts"
-        self.account = cf_account
-        self.token = cf_token
+        self.account = app.config.get("CF_ACCOUNT")
+        self.token = app.config.get("CF_TOKEN")
 
     def upload_files(self, file_path: str, file_name: str) -> dict:
         """Upload a file to CloudFlare Stream"""
@@ -26,7 +30,8 @@ class CFClient:
             files=files,
             headers=headers,
         )
-        return response
+        results = response.json()
+        return results
 
     def get_video_by_name(self, file_name: str) -> dict:
         """Get Video from CloudFlare Stream"""
@@ -40,4 +45,5 @@ class CFClient:
             f"{self.base_url}/{self.account}/stream?search={file_name}",
             headers=headers,
         )
-        return response
+        results = response.json()
+        return results

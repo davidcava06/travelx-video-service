@@ -10,7 +10,7 @@ from google.cloud import pubsub_v1
 
 from src import errors, logging
 from src.config import ENVIRONMENT, config
-from src.extensions import storage
+from src.extensions import storage, cdn
 from src.slack import SlackMessage
 from src.status import Status
 from src.tiktok import get_video_from_url
@@ -21,14 +21,13 @@ logger = structlog.get_logger()
 
 def init_extensions(app):
     storage.init_app(app)
+    cdn.init_app(app)
 
 
 app = Flask(__name__)
 app.config.from_object(config[ENVIRONMENT])
 PROJECT_ID = app.config.get("GCP_PROJECT")
 TOPIC_ID = app.config.get("TOPIC_ID")
-CF_ACCOUNT = app.config.get("CF_ACCOUNT")
-CF_TOKEN = app.config.get("CF_TOKEN")
 
 # logging
 logging.setup(app)
