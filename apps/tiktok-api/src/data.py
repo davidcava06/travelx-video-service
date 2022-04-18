@@ -29,6 +29,7 @@ class VideoMeta:
     name: str
     hls: str
     dash: Optional[str] = None
+    storage_id: Optional[str] = None
     size: Optional[int] = None
     thumbnail: Optional[str] = None
     created_at: Optional[str] = None
@@ -67,6 +68,7 @@ def create_data_object(
 
     video_meta = VideoMeta(
         storage=video_object["storage"],
+        storage_id=video_object["uid"],
         uid=video_object["uid"],
         name=video_object["meta"].get("name"),
         hls=video_object["playback"].get("hls"),
