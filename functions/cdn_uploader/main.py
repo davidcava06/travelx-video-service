@@ -164,7 +164,7 @@ def cdn_uploader(event, context):
         )
 
         title = f"{video_path} Here"
-        title_link = cdn_client.base_url + manifest_pair[0][1] + "?filename=manifest.m3u8"
+        title_link = manifest_cdn_url
         status = Status.success
         msg = f"🎉 Successfully uploaded video to {manifest_cdn_url}"
     except Exception as e:
