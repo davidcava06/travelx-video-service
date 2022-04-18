@@ -109,7 +109,8 @@ class CFClient:
             files=files,
             headers=headers,
         )
-        return response
+        results = response.json()
+        return results
 
     def get_video_by_name(self, file_name: str) -> dict:
         """Get Video from CloudFlare Stream"""
@@ -123,4 +124,5 @@ class CFClient:
             f"{self.base_url}/{self.account}/stream?search={file_name}",
             headers=headers,
         )
-        return response
+        results = response.json()
+        return results
