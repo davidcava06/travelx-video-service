@@ -160,7 +160,7 @@ def insta_downloader(event, context):
 
                 # Upload to CloudFlare
                 logger.info(f"Uploading to CloudFlare for {insta_id}...")
-                response = cdn_client.upload_to_cdn(tmp_video_path, insta_id)
+                response = cdn_client.upload_files(tmp_video_path, insta_id)
                 while response["readyToStream"] is not True:
                     time.sleep(2)
                     response = cdn_client.get_video_by_name(insta_id)
