@@ -59,5 +59,55 @@ You can get the `base64` encoded string doing this:
 ## TikTokAPI
 This library needs `playwright` to work. In order to install it the Docker Image has been taken from [here](https://github.com/danofun/docker-playwright-python/blob/main/Dockerfile).
 
+
+## CloudFlare Stream
+This is a cheap CDN service provided by CloudFlare specifically for streamiing, information can be found [here](https://developers.cloudflare.com/stream/)
+
+It is the service selected for MVP to host the media of the webapp due to the low cost and the functionalities such as:
+- The Player API
+- The Direct Creators Upload Link
+- Security Features
+
+
+### Player API
+Code example:
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+<!-- You can use styles and CSS on this iframe element where the video player will appear -->
+<iframe
+  src="https://iframe.videodelivery.net/21677bf7c76b4a53a5a11556b0beece6?preload=true&poster=https%3A%2F%2Fvideodelivery.net%2F21677bf7c76b4a53a5a11556b0beece6%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600"
+  style="border: none"
+  width="340"
+  height="720"
+  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+  allowfullscreen="true"
+  id="stream-player"
+></iframe>
+
+<script src="https://embed.videodelivery.net/embed/sdk.latest.js"></script>
+
+<!-- Your JavaScript code below-->
+<script>
+  const player = Stream(document.getElementById('stream-player'));
+  player.addEventListener('play', () => {
+    console.log('playing!');
+  });
+  player.play().catch(() => {
+    console.log('playback failed, muting to try again');
+    player.muted = true;
+    player.play();
+  });
+</script>
+  </body>
+</html>
+```
+
+
 ## Infura
 Infrastructure provider for the Ethereum network and IPFS [here](https://infura.io).
