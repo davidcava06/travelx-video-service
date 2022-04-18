@@ -78,6 +78,7 @@ def upload_to_cdn(tmp_video_path: str, tiktok_object: dict) -> dict:
     logger.info(f"Formatting data object for {tiktok_id}...")
     video_object = response[0]
     video_object["storage"] = "cloudflare"
+    video_object["storage_id"] = video_object["uid"]
     video_object["uid"] = str(uuid4())
     data_object = create_data_object(tiktok_object, video_object)
 

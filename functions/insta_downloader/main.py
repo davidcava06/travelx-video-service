@@ -171,6 +171,7 @@ def insta_downloader(event, context):
                 logger.info(f"Formatting data object for {insta_id}...")
                 video_object = response[0]
                 video_object["storage"] = "cloudflare"
+                video_object["storage_id"] = video_object["uid"]
                 video_object["uid"] = str(uuid4())
                 data_object = create_data_object(insta_object, video_object)
 
