@@ -45,23 +45,24 @@ class ExperienceMeta:
 
 
 def create_data_object(
-    insta_object: dict, video_object: dict, origin: Optional[str] = "instagram"
+    tiktok_object: dict, video_object: dict, origin: Optional[str] = "tiktok"
 ) -> dict:
     location_meta = None
-    if insta_object["location"] is not None:
+    tiktok_object = tiktok_object["itemInfo"]["itemStruct"]
+    if "location" in tiktok_object:
         location_meta = LocationMeta(
-            address=insta_object["location"].get("address"),
-            category=insta_object["location"].get("category"),
-            city=insta_object["location"].get("city"),
-            lat=insta_object["location"].get("lat"),
-            lng=insta_object["location"].get("lng"),
-            name=insta_object["location"].get("name"),
-            phone=insta_object["location"].get("phone"),
-            website=insta_object["location"].get("website"),
-            zip=insta_object["location"].get("zip"),
+            address=tiktok_object["location"].get("address"),
+            category=tiktok_object["location"].get("category"),
+            city=tiktok_object["location"].get("city"),
+            lat=tiktok_object["location"].get("lat"),
+            lng=tiktok_object["location"].get("lng"),
+            name=tiktok_object["location"].get("name"),
+            phone=tiktok_object["location"].get("phone"),
+            website=tiktok_object["location"].get("website"),
+            zip=tiktok_object["location"].get("zip"),
         )
     author_meta = AuthorMeta(
-        username=insta_object["user"].get("username"),
+        username=tiktok_object["author"].get("nickname"),
         provider=origin,
     )
 

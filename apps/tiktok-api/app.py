@@ -6,11 +6,11 @@ from uuid import uuid4
 import nest_asyncio
 import structlog
 from flask import Flask, jsonify, request
-from google.cloud import pubsub_v1
+# from google.cloud import pubsub_v1
 
 from src import errors, logging
 from src.config import ENVIRONMENT, config
-from src.extensions import storage
+from src.extensions import storage, cdn
 from src.slack import SlackMessage
 from src.status import Status
 from src.tiktok import get_video_from_url
@@ -21,6 +21,7 @@ logger = structlog.get_logger()
 
 def init_extensions(app):
     storage.init_app(app)
+    cdn.init_app(app)
 
 
 app = Flask(__name__)
@@ -101,18 +102,19 @@ async def video():
         asyncio.new_event_loop()
         api = TikTokApi()
 
-        tiktok_object, video_path = get_video_from_url(api, video_url)
+        tiktok_object, _ = get_video_from_url(api, video_url)
         status = Status.success
 
+        # Not required with CloudFlare Stream
         # Publish Transcoder Job
-        if ENVIRONMENT != "local":
-            publisher = pubsub_v1.PublisherClient()
-            topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
-            publisher.publish(
-                topic_path,
-                video_path.encode("utf-8"),
-                response_url=response_url,
-            )
+        # if ENVIRONMENT != "local":
+        #     publisher = pubsub_v1.PublisherClient()
+        #     topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+        #     publisher.publish(
+        #         topic_path,
+        #         video_path.encode("utf-8"),
+        #         response_url=response_url,
+        #     )
 
     except Exception as e:
         msg = f"🤷 Storage error: {e}"
@@ -122,7 +124,6 @@ async def video():
     # Notify Slack
     logger.info(f"Notifying Slack at {response_url}...")
     slack_message.get_message_from_video(status, tiktok_object, msg)
-    print(slack_message.message)
     slack_message.webhook_send(response_url)
     return jsonify({"content": tiktok_object, "status": 200})
 

@@ -66,6 +66,8 @@ class GoogleStorageProcessor:
 
         logger.info("Blob {} deleted.".format(blob_name))
 
-    def _upload_document_to_firestore(self, object: dict, tiktok_id: str):
-        doc_ref = self.db.collection("tiktok").document(tiktok_id)
+    def _upload_document_to_firestore(
+        self, object: dict, id: str, collection: str = "tiktok"
+    ):
+        doc_ref = self.db.collection(collection).document(id)
         doc_ref.set(object)

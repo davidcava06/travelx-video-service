@@ -5,7 +5,7 @@ resource "google_cloud_run_service" "api" {
   template {
     spec {
       containers {
-        image = "europe-west2-docker.pkg.dev/${google_artifact_registry_repository.app_registry.project}/${google_artifact_registry_repository.app_registry.repository_id}/tiktok-api:2022-04-15_84_8ec49c3"
+        image = "europe-west2-docker.pkg.dev/${google_artifact_registry_repository.app_registry.project}/${google_artifact_registry_repository.app_registry.repository_id}/tiktok-api:2022-04-18_88_b6153a1"
         resources {
           limits = {
             "cpu"    = "1000m"  //explicit
@@ -23,6 +23,14 @@ resource "google_cloud_run_service" "api" {
         env {
           name  = "TOPIC_ID"
           value = google_pubsub_topic.transcoder_jobs.name
+        }
+        env {
+          name  = "CF_ACCOUNT"
+          value = var.cf_account
+        }
+        env {
+          name  = "CF_TOKEN"
+          value = var.cf_token
         }
       }
       timeout_seconds      = "30"
