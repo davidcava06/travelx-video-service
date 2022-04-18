@@ -68,7 +68,7 @@ def create_data_object(
 
     video_meta = VideoMeta(
         storage=video_object["storage"],
-        storage_id=video_object["uid"],
+        storage_id=video_object["storage_id"],
         uid=video_object["uid"],
         name=video_object["meta"].get("name"),
         hls=video_object["playback"].get("hls"),
