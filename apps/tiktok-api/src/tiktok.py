@@ -1,9 +1,12 @@
 import os
+import time
+from uuid import uuid4
 
 import structlog
 import wget
 from TikTokApi import TikTokApi
 
+from src.data import create_data_object
 from src.extensions import cdn as cdn_client
 from src.extensions import storage as storage_client
 
@@ -19,10 +22,13 @@ def get_video_from_url(api: TikTokApi, url: str) -> dict:
 
     # Get video
     video_bytes = video.bytes()
-    video_path = download_video(video_data, video_bytes)
+    tmp_video_path = download_video(video_data, video_bytes)
     download_thumbnail(video_data)
 
-    return video_data, video_path
+    # Store in CDN
+    data_object = upload_to_cdn(tmp_video_path, video_data)
+
+    return video_data, data_object
 
 
 def download_thumbnail(video_data: dict):
@@ -54,4 +60,29 @@ def download_video(video_data: dict, video_bytes: bytes) -> dict:
     file_name = f"tiktok/{video_id}/video.mp4"
     if storage_client._upload_sync(tmp_path_f, file_name):
         storage_client._upload_document_to_firestore(video_data, video_id)
-        return file_name
+        return tmp_path_f
+
+
+def upload_to_cdn(tmp_video_path: str, tiktok_object: dict) -> dict:
+    """Upload to CloudFlare"""
+    tiktok_id = tiktok_object["itemInfo"]["itemStruct"]["id"]
+    logger.info(f"Uploading to CloudFlare for {tiktok_id}...")
+    response = cdn_client.upload_files(tmp_video_path, tiktok_id)
+    ready_to_stream = response["readyToStream"]
+    while ready_to_stream is not True:
+        time.sleep(2)
+        response = cdn_client.get_video_by_name(tiktok_id)
+        ready_to_stream = response[0]["readyToStream"]
+        logger.info(f"Job status: {ready_to_stream}")
+
+    logger.info(f"Formatting data object for {tiktok_id}...")
+    video_object = response[0]
+    video_object["storage"] = "cloudflare"
+    video_object["uid"] = str(uuid4())
+    data_object = create_data_object(tiktok_object, video_object)
+
+    logger.info(f"Storing data object for {tiktok_id}...")
+    storage_client._upload_document_to_firestore(
+        data_object, data_object["uid"], "experiences"
+    )
+    return data_object

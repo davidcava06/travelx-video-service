@@ -102,7 +102,7 @@ async def video():
         asyncio.new_event_loop()
         api = TikTokApi()
 
-        tiktok_object, video_path = get_video_from_url(api, video_url)
+        tiktok_object, _ = get_video_from_url(api, video_url)
         status = Status.success
 
         # Not required with CloudFlare Stream

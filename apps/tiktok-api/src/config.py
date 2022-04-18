@@ -12,6 +12,7 @@ class Config:
     CF_ACCOUNT: str = os.environ.get("CF_ACCOUNT", "")
     CF_TOKEN: str = os.environ.get("CF_TOKEN", "")
 
+
 class DevelopmentConfig(Config):
     DEBUG: str = True
 
