@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from typing import Optional
 from uuid import uuid4
@@ -79,9 +79,11 @@ def create_data_object(
         created_at=created_at,
         uploaded_at=uploaded_at,
     )
-    return ExperienceMeta(
-        uid=str(uuid4()),
-        location=location_meta,
-        author=author_meta,
-        video=video_meta,
-    ).to_dict()
+    return asdict(
+        ExperienceMeta(
+            uid=str(uuid4()),
+            location=location_meta,
+            author=author_meta,
+            video=video_meta,
+        )
+    )
