@@ -41,6 +41,16 @@ variable "datalama_key" {
   type = string
 }
 
+variable "cf_account" {
+  type        = string
+  description = "Cloudflare account"
+}
+
+variable "cf_token" {
+  type        = string
+  description = "Cloudflare API Token for Stream"
+}
+
 variable "infura_project_id" {
   type = string
 }

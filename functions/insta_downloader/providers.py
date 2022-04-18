@@ -7,9 +7,12 @@ import structlog
 import wget
 from instagrapi import Client
 from instaloader import Instaloader
+from requests.structures import CaseInsensitiveDict
 
 logger = structlog.get_logger(__name__)
 DATALAMA_KEY = os.environ["DATALAMA_KEY"]
+CF_ACCOUNT = os.environ["CF_ACCOUNT"]
+CF_TOKEN = os.environ["CF_TOKEN"]
 
 
 class Status(Enum):
@@ -84,3 +87,40 @@ class InstaClient:
             logger.error(f"🤷 Error downloading {insta_id}: {e}.")
             raise e
         return tmp_thumbnail_path_f, tmp_video_path_f, Status.success
+
+
+class CFClient:
+    def __init__(self, cf_account: str = CF_ACCOUNT, cf_token: str = CF_TOKEN):
+        self.base_url = "https://api.cloudflare.com/client/v4/accounts"
+        self.account = cf_account
+        self.token = cf_token
+
+    def upload_files(self, file_path: str, file_name: str) -> dict:
+        """Upload a file to CloudFlare Stream"""
+        logger.info(f"Uploading to {self.base_url}...")
+
+        headers = {"Authorization": f"Bearer {self.token}"}
+        files = [
+            ("file", (file_name, open(file_path, "rb"), "application/octet-stream"))
+        ]
+
+        response = requests.post(
+            f"{self.base_url}/{self.account}/stream",
+            files=files,
+            headers=headers,
+        )
+        return response
+
+    def get_video_by_name(self, file_name: str) -> dict:
+        """Get Video from CloudFlare Stream"""
+        logger.info(f"Uploading to {self.base_url}...")
+
+        headers = CaseInsensitiveDict()
+        headers["Authorization"] = f"Bearer {self.token}"
+        headers["Content-Type"] = "application/json"
+
+        response = requests.get(
+            f"{self.base_url}/{self.account}/stream?search={file_name}",
+            headers=headers,
+        )
+        return response

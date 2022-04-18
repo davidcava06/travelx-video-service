@@ -2,14 +2,17 @@ import base64
 import fnmatch
 import os
 import re
+import time
 from typing import Optional, Tuple
+from uuid import uuid4
 
 import firebase_admin
 import structlog
+from data import create_data_object
 from firebase_admin import credentials, firestore
 from flask import jsonify
-from google.cloud import pubsub_v1, storage
-from providers import InstaClient, Provider, Status
+from google.cloud import storage  # pubsub_v1,
+from providers import CFClient, InstaClient, Provider, Status
 from slack_sdk.webhook import WebhookClient
 
 PROJECT_ID = os.environ["PROJECT_ID"]
@@ -20,6 +23,7 @@ TOPIC_ID = os.environ["TOPIC_ID"]
 logger = structlog.get_logger(__name__)
 root = os.path.dirname(os.path.abspath(__file__))
 storage_client = storage.Client()
+cdn_client = CFClient()
 
 cred = credentials.ApplicationDefault()
 firebase_admin.initialize_app(
@@ -62,8 +66,8 @@ def upload_file_to_cloudstorage(prefix, temp_file_name, file_name, content_type=
     return blob.upload_from_filename(file_path, content_type=content_type)
 
 
-def upload_document_to_firestore(object: dict, insta_id: str):
-    doc_ref = db.collection("instaposts").document(insta_id)
+def upload_document_to_firestore(object: dict, id: str, collection: str = "instaposts"):
+    doc_ref = db.collection(collection).document(id)
     doc_ref.set(object)
 
 
@@ -126,7 +130,7 @@ def insta_downloader(event, context):
     if status == Status.success:
         # Store payload
         try:
-            logger.info(f"Storing data for {insta_id}...")
+            logger.info(f"Storing raw data for {insta_id}...")
             upload_document_to_firestore(insta_object, insta_id)
 
             logger.info(f"Downloading media for {insta_id}...")
@@ -153,16 +157,36 @@ def insta_downloader(event, context):
                     f"{insta_id}/video.mp4",
                     content_type="video/mp4",
                 )
-                video_path = f"{media_type}/{insta_id}/video.mp4"
 
-                # Publish Transcoding Job
-                publisher = pubsub_v1.PublisherClient()
-                topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
-                publisher.publish(
-                    topic_path,
-                    video_path.encode("utf-8"),
-                    response_url=response_url,  # NOQA
+                # Upload to CloudFlare
+                logger.info(f"Uploading to CloudFlare for {insta_id}...")
+                response = cdn_client.upload_to_cdn(tmp_video_path, insta_id)
+                while response["readyToStream"] is not True:
+                    time.sleep(2)
+                    response = cdn_client.get_video_by_name(insta_id)
+                    ready_to_stream = response["readyToStream"]
+                    logger.info(f"Job status: {ready_to_stream}")
+
+                logger.info(f"Formatting data object for {insta_id}...")
+                response["storage"] = "cloudflare"
+                response["uid"] = str(uuid4())
+                data_object = create_data_object(insta_object, response)
+
+                logger.info(f"Storing data object for {insta_id}...")
+                upload_document_to_firestore(
+                    data_object, data_object["uid"], "experiences"
                 )
+
+                # Not required with CloudFlare Stream
+                # Publish Transcoding Job
+                # video_path = f"{media_type}/{insta_id}/video.mp4"
+                # publisher = pubsub_v1.PublisherClient()
+                # topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+                # publisher.publish(
+                #     topic_path,
+                #     video_path.encode("utf-8"),
+                #     response_url=response_url,  # NOQA
+                # )
 
             # Send message to Slack
             msg = f"🔫 {insta_id}: Ready pa fusilarlo"
