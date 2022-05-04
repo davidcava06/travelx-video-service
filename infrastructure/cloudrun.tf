@@ -33,7 +33,7 @@ resource "google_cloud_run_service" "api" {
           value = var.cf_token
         }
       }
-      timeout_seconds      = "30"
+      timeout_seconds      = "60"
       service_account_name = google_service_account.tiktok_api.email
     }
 
