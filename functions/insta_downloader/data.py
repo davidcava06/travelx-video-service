@@ -254,7 +254,7 @@ class ExperienceMeta:
 def create_data_objects(
     insta_object: dict, video_object: dict, origin: Optional[str] = "instagram"
 ) -> dict:
-    location_meta = None
+    location_meta = LocationMeta()
     if insta_object["location"] is not None:
         location_meta = LocationMeta(
             address=insta_object["location"].get("address"),
