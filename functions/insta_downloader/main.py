@@ -199,10 +199,10 @@ def insta_downloader(event, context):
 
             # Send message to Slack
             msg = f"🔫 {insta_id}: Ready pa fusilarlo"
-            title = insta_id
+            title = "Experience: " + experience_instance["uid"]
             title_link = insta_url
             thumb_url = insta_object["thumbnail_url"]
-            text = insta_object["caption_text"]
+            text = "Media: " + media_instance["uid"]
             status = Status.success
         except Exception as e:
             msg = f"🤷 Storage error: {e}"
