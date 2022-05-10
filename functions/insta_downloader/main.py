@@ -8,7 +8,7 @@ from uuid import uuid4
 
 import firebase_admin
 import structlog
-from data import create_data_object
+from data import create_data_objects
 from firebase_admin import credentials, firestore
 from flask import jsonify
 from google.cloud import storage  # pubsub_v1,
@@ -173,11 +173,17 @@ def insta_downloader(event, context):
                 video_object["storage"] = "cloudflare"
                 video_object["storage_id"] = video_object["uid"]
                 video_object["uid"] = str(uuid4())
-                data_object = create_data_object(insta_object, video_object)
+                experience_instance, media_instance = create_data_objects(
+                    insta_object, video_object
+                )
 
                 logger.info(f"Storing data object for {insta_id}...")
                 upload_document_to_firestore(
-                    data_object, data_object["uid"], "experiences"
+                    experience_instance, experience_instance["uid"], "experiences"
+                )
+
+                upload_document_to_firestore(
+                    media_instance, media_instance["uid"], "media"
                 )
 
                 # Not required with CloudFlare Stream
@@ -193,10 +199,10 @@ def insta_downloader(event, context):
 
             # Send message to Slack
             msg = f"🔫 {insta_id}: Ready pa fusilarlo"
-            title = insta_id
+            title = "Experience: " + experience_instance["uid"]
             title_link = insta_url
             thumb_url = insta_object["thumbnail_url"]
-            text = insta_object["caption_text"]
+            text = "Media: " + media_instance["uid"]
             status = Status.success
         except Exception as e:
             msg = f"🤷 Storage error: {e}"
