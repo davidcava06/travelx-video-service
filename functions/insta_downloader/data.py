@@ -172,7 +172,7 @@ class BookingSettingsMeta:
     default_confirmed_booking_lead_hours: Optional[int] = None
     default_booking_lead_hours: Optional[int] = None
     max_hours: Optional[int] = None
-    restricted_start_days: Optional[str] = None
+    restricted_start_days: Optional[List[int]] = None
     default_private_booking_ind: Optional[bool] = False
     cancellation_policy: Optional[str] = CancellationType.forbidden.name
     rules: Optional[str] = None
@@ -243,7 +243,7 @@ class ExperienceMeta:
     is_free: Optional[bool] = True
     is_eco: Optional[bool] = False
     eco_features: Optional[List[str]] = None
-    duration_hours: Optional[int] = None
+    duration_hours: Optional[float] = None
     group_size: Optional[GroupSizeMeta] = GroupSizeMeta()
     guest_requirements: Optional[GuestRequirementsMeta] = GuestRequirementsMeta()
     pricing: Optional[PricingMeta] = PricingMeta()
