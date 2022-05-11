@@ -34,6 +34,7 @@ resource "google_cloudfunctions_function" "insta_downloader" {
     CF_ACCOUNT   = var.cf_account
     CF_TOKEN     = var.cf_token
     TOPIC_ID     = google_pubsub_topic.transcoder_jobs.name
+    SHEET_ID     = var.experience_update_sheet_id
   }
 
   depends_on = [google_storage_bucket.raw_media, google_service_account.cloud_function_invoker_account]
