@@ -384,21 +384,33 @@ def experience_object_to_row(experience_object: dict) -> List[Any]:
 
     # Accepting 2 level dict objects
     for element in element_tuples_list:
+        field_name = element[0]
         if type(element[1]) is dict:
             sub_element_tuples_list = [
                 sub_element for sub_element in element[1].items()
             ]
             for sub_element in sub_element_tuples_list:
-                field_name = element[0] + "__" + sub_element[0]
-                # Filtering for elements in the Google Sheet
-                if field_name in ExperienceRow.__members__:
-                    order = ExperienceRow[field_name].value
-                    final_tuple = (field_name, sub_element[1], order)
-                    final_tuple_list.append(final_tuple)
+                field_name = field_name + "__" + sub_element[0]
+                if type(sub_element[1]) is dict:
+                    sub_sub_element_tuples_list = [
+                        sub_sub_element for sub_sub_element in sub_element[1].items()
+                    ]
+                    for sub_sub_element in sub_sub_element_tuples_list:
+                        field_name = field_name + sub_sub_element[0]
+                        # Filtering for elements in the Google Sheet
+                        if field_name in ExperienceRow.__members__:
+                            order = ExperienceRow[field_name].value
+                            final_tuple = (field_name, sub_sub_element[1], order)
+                            final_tuple_list.append(final_tuple)
+                else:
+                    if field_name in ExperienceRow.__members__:
+                        order = ExperienceRow[field_name].value
+                        final_tuple = (field_name, sub_element[1], order)
+                        final_tuple_list.append(final_tuple)
         else:
-            if element[0] in ExperienceRow.__members__:
-                order = ExperienceRow[element[0]].value
-                final_tuple = (element[0], element[1], order)
+            if field_name in ExperienceRow.__members__:
+                order = ExperienceRow[field_name].value
+                final_tuple = (field_name, element[1], order)
                 final_tuple_list.append(final_tuple)
 
     # Sorting and cleaning the list
