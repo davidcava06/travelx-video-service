@@ -184,5 +184,5 @@ resource "google_cloudfunctions_function" "experience_updater" {
     LOCATION    = local.gcs_region
     SHEET_ID    = var.experience_update_sheet_id
   }
-  depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.experience_update_jobs.name]
+  depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.experience_update_jobs]
 }
