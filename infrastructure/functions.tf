@@ -67,13 +67,14 @@ resource "google_cloudfunctions_function" "pusher" {
   service_account_email = google_service_account.cloud_function_invoker_account.email
 
   environment_variables = {
-    SLACK_SECRET    = var.slack_secret
-    PROJECT_ID      = local.project_name
-    INSTA_TOPIC_ID  = google_pubsub_topic.insta_download_jobs.name
-    TIKTOK_TOPIC_ID = google_pubsub_topic.tiktok_download_jobs.name
-    UPDATE_TOPIC_ID = google_pubsub_topic.experience_update_jobs.name
+    SLACK_SECRET      = var.slack_secret
+    PROJECT_ID        = local.project_name
+    INSTA_TOPIC_ID    = google_pubsub_topic.insta_download_jobs.name
+    TIKTOK_TOPIC_ID   = google_pubsub_topic.tiktok_download_jobs.name
+    UPDATE_TOPIC_ID   = google_pubsub_topic.experience_update_jobs.name
+    MEDIA_TX_TOPIC_ID = google_pubsub_topic.media_transfer_jobs.name
   }
-  depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.insta_download_jobs, google_pubsub_topic.tiktok_download_jobs, google_pubsub_topic.experience_update_jobs]
+  depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.insta_download_jobs, google_pubsub_topic.tiktok_download_jobs, google_pubsub_topic.experience_update_jobs, google_pubsub_topic.media_transfer_jobs]
 }
 
 # Function: Create transcode Jobs
@@ -186,4 +187,40 @@ resource "google_cloudfunctions_function" "experience_updater" {
     SHEET_ID    = var.experience_update_sheet_id
   }
   depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.experience_update_jobs]
+}
+
+# Function: Takes the rows of a Google Sheet and update Experiences and Media Experience Summaries
+#
+data "local_file" "media_transfer" {
+  filename = "functions/media_transfer.zip"
+}
+
+resource "google_storage_bucket_object" "media_transfer" {
+  name   = format("media_transfer.zip#%s", md5(data.local_file.media_transfer.content))
+  bucket = google_storage_bucket.deployer.name
+  source = data.local_file.media_transfer.filename
+}
+resource "google_cloudfunctions_function" "media_transfer" {
+  name                = "media_transfer"
+  runtime             = "python38"
+  entry_point         = "media_transfer"
+  available_memory_mb = 256
+  region              = local.gcs_region
+
+  event_trigger {
+    event_type = "google.pubsub.topic.publish"
+    resource   = google_pubsub_topic.media_transfer_jobs.name
+  }
+
+  source_archive_bucket = google_storage_bucket.deployer.name
+  source_archive_object = google_storage_bucket_object.media_transfer.name
+  service_account_email = google_service_account.cloud_function_invoker_account.email
+
+  environment_variables = {
+    ENVIRONMENT = var.workspace
+    PROJECT_ID  = local.project_name
+    LOCATION    = local.gcs_region
+    SHEET_ID    = var.media_transfer_sheet_id
+  }
+  depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.media_transfer_jobs]
 }

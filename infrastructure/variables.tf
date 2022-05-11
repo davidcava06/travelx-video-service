@@ -65,6 +65,12 @@ variable "experience_update_sheet_id" {
   default     = "1O36Ha4FjCGpbKr1rxPE7xi6sDztKPyy3CWllR691Fzg"
 }
 
+variable "media_transfer_sheet_id" {
+  type        = string
+  description = "ID for Google Sheet to transfer media"
+  default     = "1O36Ha4FjCGpbKr1rxPE7xi6sDztKPyy3CWllR691Fzg"
+}
+
 locals {
   project_name = lookup(var.project_names, var.workspace)
   gcs_region   = lookup(var.gcs_regions, var.workspace)

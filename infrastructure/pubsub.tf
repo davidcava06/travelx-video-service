@@ -28,6 +28,11 @@ resource "google_pubsub_topic" "experience_update_jobs" {
   name    = "${var.workspace}-experience-update-jobs"
 }
 
+resource "google_pubsub_topic" "media_transfer_jobs" {
+  project = local.project_name
+  name    = "${var.workspace}-media-tx-jobs"
+}
+
 resource "google_pubsub_subscription" "tiktok_subscription" {
   name  = "${var.workspace}-tiktok-subscription"
   topic = google_pubsub_topic.tiktok_download_jobs.name
