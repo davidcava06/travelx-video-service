@@ -10,12 +10,15 @@ PROJECT_ID = os.environ["PROJECT_ID"]
 INSTA_TOPIC_ID = os.environ["INSTA_TOPIC_ID"]
 TIKTOK_TOPIC_ID = os.environ["TIKTOK_TOPIC_ID"]
 UPDATE_TOPIC_ID = os.environ["UPDATE_TOPIC_ID"]
+MEDIA_TX_TOPIC_ID = os.environ["MEDIA_TX_TOPIC_ID"]
 SLACK_SECRET = os.environ["SLACK_SECRET"]
 TOPICS = {
     "/ig": INSTA_TOPIC_ID,
     "/tik": TIKTOK_TOPIC_ID,
     "/update": UPDATE_TOPIC_ID,
+    "/tx": MEDIA_TX_TOPIC_ID,
 }
+COMMANDS = [key for key in TOPICS.keys()]
 
 logger = structlog.get_logger()
 
@@ -58,7 +61,7 @@ def pusher(request):
     text = request.form["text"]
     response_url = request.form["response_url"]
 
-    if command not in ["/ig", "/tik", "/update"]:
+    if command not in COMMANDS:
         msg = "🥺 Command not supported."
         status = Status.failed
     else:
