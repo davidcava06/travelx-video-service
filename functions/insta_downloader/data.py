@@ -396,7 +396,7 @@ def experience_object_to_row(experience_object: dict) -> List[Any]:
                         sub_sub_element for sub_sub_element in sub_element[1].items()
                     ]
                     for sub_sub_element in sub_sub_element_tuples_list:
-                        field_name = field_name + sub_sub_element[0]
+                        field_name = field_name + "__" + sub_sub_element[0]
                         # Filtering for elements in the Google Sheet
                         if field_name in ExperienceRow.__members__:
                             order = ExperienceRow[field_name].value
