@@ -14,7 +14,7 @@ PROJECT_ID = os.environ["PROJECT_ID"]
 SHEET_ID = os.environ["SHEET_ID"]
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 RANGE_NAME = "Experiences!A3:BD100"
-ARRAY_COLUMNS = [2, 9, 12]
+ARRAY_COLUMNS = [2, 9, 12, 32]
 
 logger = structlog.get_logger(__name__)
 root = os.path.dirname(os.path.abspath(__file__))
