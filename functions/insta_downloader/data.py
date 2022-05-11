@@ -357,6 +357,7 @@ def create_data_objects(
         location=location_meta,
         author=author_meta,
         media=[video_meta],
+        description=insta_object.get("caption_text"),
     )
     experience_instance = asdict(experience_meta)
 

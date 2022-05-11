@@ -66,13 +66,16 @@ def find_document_in_firestore(key: str, id: str, collection: str):
 
 
 def add_parent_media(experience: dict) -> dict:
-    if experience.get("parent") is not None or experience.get("parent") != "":
+    if experience.get("parent") is None or experience.get("parent") != "":
         logger.info("Finding relevant parent media...")
         parent_experience = find_document_in_firestore(
             "uid", experience["parent"], "experiences"
         )
+        if parent_experience is None or len(parent_experience) == 0:
+            return experience
+
         logger.info("Adding parent media...")
-        parent_object = parent_experience.to_dict()
+        parent_object = parent_experience[0].to_dict()  # only 1 parent
         parent_media = parent_object.get("media")
         if parent_media is not None:
             extra_media = []
