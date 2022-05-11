@@ -3,7 +3,7 @@ import os
 import firebase_admin
 import google.auth
 import structlog
-from data import ExperienceRow
+from data import ExperienceRow, from_experience_to_summary
 from firebase_admin import credentials, firestore
 from flask import jsonify
 from googleapiclient.discovery import build
@@ -14,6 +14,7 @@ PROJECT_ID = os.environ["PROJECT_ID"]
 SHEET_ID = os.environ["SHEET_ID"]
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 RANGE_NAME = "Experiences!A3:BD100"
+ARRAY_COLUMNS = [2, 9, 12]
 
 logger = structlog.get_logger(__name__)
 root = os.path.dirname(os.path.abspath(__file__))
@@ -43,6 +44,13 @@ def read_spreadsheet(spreadsheet_id: str = SHEET_ID, range: str = RANGE_NAME):
     for row in values:
         element = {}
         for idx, x in enumerate(row):
+            if idx in ARRAY_COLUMNS:
+                x_list = x.split(",")
+                x = firestore.ArrayUnion(
+                    [element.strip().lower() for element in x_list]
+                )
+            if type(x) is str:
+                x = x.strip().lower()
             element[str(ExperienceRow(idx))] = x
         elements.append(element)
     return elements
@@ -54,7 +62,7 @@ def update_document_to_firestore(object: dict, id: str, collection: str):
 
 
 def find_document_in_firestore(key: str, id: str, collection: str):
-    return db.collection(collection).where(key, "==", id)
+    return db.collection(collection).where(key, "==", id).get()
 
 
 def format_slack_message(
@@ -97,7 +105,8 @@ def experience_updater(event, context):
         # Update data in Firestore
         try:
             for experience in experiences:
-                logger.info(f"Updating Experience: {experience.uid}...")
+                experience_uid = experience["uid"]
+                logger.info(f"Updating Experience: {experience_uid}...")
                 update_document_to_firestore(
                     experience, experience["uid"], "experiences"
                 )
@@ -105,11 +114,13 @@ def experience_updater(event, context):
                 # Find relevant media
                 logger.info("Finding relevant Media...")
                 medias = find_document_in_firestore(
-                    "experience_summary", experience["uid"], "media"
+                    "experience_summary.uid", experience["uid"], "media"
                 )
                 for media in medias:
                     logger.info("Updating Media Experience Summaries...")
-                    update_document_to_firestore(media, media["uid"], "media")
+                    media_object = media.to_dict()
+                    summary = from_experience_to_summary(experience)
+                    update_document_to_firestore(summary, media_object["uid"], "media")
 
             # Send message to Slack
             msg = "🆕 Experiences Updated"
