@@ -46,7 +46,7 @@ runs:
       shell: bash
     # - name: Distribute Functions
     #   run: make dist_functions
-      shell: bash
+    #   shell: bash
     - name: Terraform Select Workspace
       working-directory: ${{ inputs.working-directory }}
       env:
