@@ -9,8 +9,7 @@ install:
 	pip install --upgrade -r requirements/main.txt
 
 setup:
-	python -m pip install --upgrade pip --force-reinstall pip
-	pip install --upgrade pip-tools pip setuptools
+	pip install --upgrade pip-tools pip setuptools --force-reinstall pip-tools
 
 develop: setup update-deps install
 
