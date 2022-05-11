@@ -189,7 +189,7 @@ resource "google_cloudfunctions_function" "experience_updater" {
   depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.experience_update_jobs]
 }
 
-# Function: Takes the rows of a Google Sheet and update Experiences and Media Experience Summaries
+# Function: Takes the rows of a Google Sheet and transfer media between experiences
 #
 data "local_file" "media_transfer" {
   filename = "functions/media_transfer.zip"

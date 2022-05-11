@@ -118,7 +118,7 @@ def media_transfer(event, context):
 
                 logger.info("Transferring Media...")
                 extra_media = [x for x in media_from if x not in media_to]
-                if extra_media is not None or len(extra_media) > 0:
+                if extra_media is not None and len(extra_media) > 0:
                     add_media_object = dict(media=firestore.ArrayUnion(extra_media))
                     update_document_to_firestore(
                         add_media_object, experience_to_uid, "experiences"
