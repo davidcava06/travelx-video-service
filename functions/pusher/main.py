@@ -9,10 +9,12 @@ from slack_sdk.signature import SignatureVerifier
 PROJECT_ID = os.environ["PROJECT_ID"]
 INSTA_TOPIC_ID = os.environ["INSTA_TOPIC_ID"]
 TIKTOK_TOPIC_ID = os.environ["TIKTOK_TOPIC_ID"]
+UPDATE_TOPIC_ID = os.environ["UPDATE_TOPIC_ID"]
 SLACK_SECRET = os.environ["SLACK_SECRET"]
 TOPICS = {
     "/ig": INSTA_TOPIC_ID,
     "/tik": TIKTOK_TOPIC_ID,
+    "/update": UPDATE_TOPIC_ID,
 }
 
 logger = structlog.get_logger()
@@ -56,7 +58,7 @@ def pusher(request):
     text = request.form["text"]
     response_url = request.form["response_url"]
 
-    if command not in ["/ig", "/tik"]:
+    if command not in ["/ig", "/tik", "/update"]:
         msg = "🥺 Command not supported."
         status = Status.failed
     else:

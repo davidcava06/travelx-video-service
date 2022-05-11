@@ -216,7 +216,9 @@ google-api-core[grpc]==2.7.1 \
 google-api-python-client==2.42.0 \
     --hash=sha256:303f5e7005b26e5ca4d2f04489545cdc482ca558e8932e528217e11127c17cd8 \
     --hash=sha256:7bf58b665b635d06adb47797a9a4f73482e739e02ed036cd960dc7c183361f67
-    # via firebase-admin
+    # via
+    #   -r requirements/main.in
+    #   firebase-admin
 google-auth==2.6.2 \
     --hash=sha256:3ba4d63cb29c1e6d5ffcc1c0623c03cf02ede6240a072f213084749574e691ab \
     --hash=sha256:60d449f8142c742db760f4c0be39121bc8d9be855555d784c252deaca1ced3f5
@@ -235,7 +237,9 @@ google-auth-httplib2==0.1.0 \
 google-auth-oauthlib==0.5.1 \
     --hash=sha256:24f67735513c4c7134dbde2f1dee5a1deb6acc8dfcb577d7bff30d213a28e7b0 \
     --hash=sha256:30596b824fc6808fdaca2f048e4998cc40fb4b3599eaea66d28dc7085b36c5b8
-    # via gcsfs
+    # via
+    #   -r requirements/main.in
+    #   gcsfs
 google-cloud-appengine-logging==1.1.1 \
     --hash=sha256:361450ed7d7bfd8efd0ef253e21680aeb6f6df3cf057e5e8253f5851f8cbbca7 \
     --hash=sha256:cc94f3ce12131091fc478cfc5a6e7e93261b43440c71294b3a0aa894ef1e90f5
