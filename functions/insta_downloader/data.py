@@ -396,7 +396,7 @@ def experience_object_to_row(experience_object: dict) -> List[Any]:
                     final_tuple = (field_name, sub_element[1], order)
                     final_tuple_list.append(final_tuple)
         else:
-            if field_name in ExperienceRow.__members__:
+            if element[0] in ExperienceRow.__members__:
                 order = ExperienceRow[element[0]].value
                 final_tuple = (element[0], element[1], order)
                 final_tuple_list.append(final_tuple)
