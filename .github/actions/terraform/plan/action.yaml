@@ -27,7 +27,7 @@ runs:
         cli_config_credentials_token: ${{ inputs.tf-api-token }}
         terraform_wrapper: false
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: 3.8
     - name: Set Up Dependencies
@@ -44,9 +44,9 @@ runs:
         TF_WORKSPACE: ${{ inputs.environment }}
       run: terraform init
       shell: bash
-    - name: Distribute Functions
-      run: make dist_functions
-      shell: bash
+    # - name: Distribute Functions
+    #   run: make dist_functions
+    #   shell: bash
     - name: Terraform Select Workspace
       working-directory: ${{ inputs.working-directory }}
       env:

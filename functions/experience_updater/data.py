@@ -65,7 +65,7 @@ class ExperienceRow(Enum):
 
 
 def from_experience_to_summary(experience: dict) -> dict:
-    """Create experience summary"""
+    """Create experience object summary"""
     return {
         "experience_summary.uid": experience.get("uid"),
         "experience_summary.title": experience.get("title"),
