@@ -40,6 +40,7 @@ resource "google_project_service" "service" {
     "containerregistry.googleapis.com",
     "pubsub.googleapis.com",
     "run.googleapis.com",
+    "sheets.googleapis.com",
   ])
 
   service = each.key

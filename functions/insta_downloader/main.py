@@ -3,15 +3,17 @@ import fnmatch
 import os
 import re
 import time
-from typing import Optional, Tuple
+from typing import Any, List, Optional, Tuple
 from uuid import uuid4
 
 import firebase_admin
+import google.auth
 import structlog
-from data import create_data_objects
+from data import create_data_objects, experience_object_to_row
 from firebase_admin import credentials, firestore
 from flask import jsonify
 from google.cloud import storage  # pubsub_v1,
+from googleapiclient.discovery import build
 from providers import CFClient, InstaClient, Provider, Status
 from slack_sdk.webhook import WebhookClient
 
@@ -19,6 +21,9 @@ PROJECT_ID = os.environ["PROJECT_ID"]
 BUCKET_NAME = os.environ["BUCKET_NAME"]
 INSTA_PROVIDER = Provider.datalama
 TOPIC_ID = os.environ["TOPIC_ID"]
+SHEET_ID = os.environ["SHEET_ID"]
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+RANGE_NAME = "Experiences!A3:BD100"
 
 logger = structlog.get_logger(__name__)
 root = os.path.dirname(os.path.abspath(__file__))
@@ -33,6 +38,32 @@ firebase_admin.initialize_app(
     },
 )
 db = firestore.client()
+
+sheet_creds, _ = google.auth.default(scopes=SCOPES)
+sheet_client = build("sheets", "v4", credentials=sheet_creds)
+
+
+def update_spreadsheet(
+    values: List[List[Any]], spreadsheet_id: str = SHEET_ID, range: str = RANGE_NAME
+):
+    sheet = sheet_client.spreadsheets()
+    result = (
+        sheet.values()
+        .append(
+            spreadsheetId=spreadsheet_id,
+            range=range,
+            body=dict(
+                values=values,
+                majorDimension="ROWS",
+            ),
+            valueInputOption="USER_ENTERED",
+        )
+        .execute()
+    )
+
+    updates = result.get("updates", {})
+    if updates.get("updatedRows") != len(values):
+        raise Exception("Writing to Google Sheets Error")
 
 
 def validate_insta_url(url: str) -> Optional[str]:
@@ -176,6 +207,7 @@ def insta_downloader(event, context):
                 experience_instance, media_instance = create_data_objects(
                     insta_object, video_object
                 )
+                experience_uid = experience_instance["uid"]
 
                 logger.info(f"Storing data object for {insta_id}...")
                 upload_document_to_firestore(
@@ -185,6 +217,12 @@ def insta_downloader(event, context):
                 upload_document_to_firestore(
                     media_instance, media_instance["uid"], "media"
                 )
+
+                logger.info(f"Adding Experience {experience_uid} to Sheet...")
+                # Create array from experience instance
+                experience_row = experience_object_to_row(experience_instance)
+                # Update spreadsheet
+                update_spreadsheet([experience_row])
 
                 # Not required with CloudFlare Stream
                 # Publish Transcoding Job
