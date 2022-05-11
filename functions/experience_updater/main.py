@@ -65,6 +65,26 @@ def find_document_in_firestore(key: str, id: str, collection: str):
     return db.collection(collection).where(key, "==", id).get()
 
 
+def add_parent_media(experience: dict) -> dict:
+    if experience.get("parent") is not None or experience.get("parent") != "":
+        logger.info("Finding relevant parent media...")
+        parent_experience = find_document_in_firestore(
+            "uid", experience["parent"], "experiences"
+        )
+        logger.info("Adding parent media...")
+        parent_object = parent_experience.to_dict()
+        parent_media = parent_object.get("media")
+        if parent_media is not None:
+            extra_media = []
+            current_media = experience.get("media")
+            if current_media is None:
+                current_media = []
+            extra_media = [x for x in parent_media if x not in current_media]
+            current_media.extend(extra_media)
+            experience["media"] = current_media
+    return experience
+
+
 def format_slack_message(
     msg: str,
     status: Status,
@@ -106,6 +126,8 @@ def experience_updater(event, context):
         try:
             for experience in experiences:
                 experience_uid = experience["uid"]
+                experience = add_parent_media(experience)
+
                 logger.info(f"Updating Experience: {experience_uid}...")
                 update_document_to_firestore(
                     experience, experience["uid"], "experiences"
