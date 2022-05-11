@@ -407,6 +407,7 @@ def experience_object_to_row(experience_object: dict) -> List[Any]:
     sorted_list = ["" if value is None else value for value in sorted_list]
     sorted_list = [1 if value is True else value for value in sorted_list]
     sorted_list = [0 if value is False else value for value in sorted_list]
+    print(sorted_list)
     if len(sorted_list) == DEFAULT_RANGE:
         return sorted_list
     else:
