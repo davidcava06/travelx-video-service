@@ -15,6 +15,7 @@ SHEET_ID = os.environ["SHEET_ID"]
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 RANGE_NAME = "Experiences!A3:BD100"
 ARRAY_COLUMNS = [2, 9, 12, 19, 32, 49]
+BOOL_COLUMNS = [1, 7, 8, 20, 28, 44]
 
 logger = structlog.get_logger(__name__)
 root = os.path.dirname(os.path.abspath(__file__))
@@ -51,6 +52,8 @@ def read_spreadsheet(spreadsheet_id: str = SHEET_ID, range: str = RANGE_NAME):
                 )
             if type(x) is str:
                 x = x.strip().lower()
+            if idx in BOOL_COLUMNS:
+                x = bool(int(x))
             element[str(ExperienceRow(idx))] = x
         elements.append(element)
     return elements
