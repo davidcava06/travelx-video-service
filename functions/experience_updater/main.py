@@ -83,9 +83,8 @@ def add_parent_media(experience: dict) -> dict:
             if current_media is None:
                 current_media = []
             extra_media = [x for x in parent_media if x not in current_media]
-            current_media.extend(extra_media)
-            experience["media"] = current_media
-    return experience
+            media_update = firestore.ArrayUnion(extra_media)
+            update_document_to_firestore(media_update, experience["uid"], "experiences")
 
 
 def format_slack_message(
@@ -129,7 +128,7 @@ def experience_updater(event, context):
         try:
             for experience in experiences:
                 experience_uid = experience["uid"]
-                experience = add_parent_media(experience)
+                add_parent_media(experience)
 
                 logger.info(f"Updating Experience: {experience_uid}...")
                 update_document_to_firestore(
