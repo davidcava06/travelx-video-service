@@ -138,14 +138,14 @@ def experience_updater(event, context):
 
                 # Find relevant media
                 logger.info("Finding relevant Media...")
-                medias = find_document_in_firestore(
-                    "experience_summary.uid", experience["uid"], "media"
+                posts = find_document_in_firestore(
+                    "experience_summary.uid", experience["uid"], "posts"
                 )
-                for media in medias:
-                    logger.info("Updating Media Experience Summaries...")
-                    media_object = media.to_dict()
+                for post in posts:
+                    logger.info("Updating Post Experience Summaries...")
+                    post_object = post.to_dict()
                     summary = from_experience_to_summary(experience)
-                    update_document_to_firestore(summary, media_object["uid"], "media")
+                    update_document_to_firestore(summary, post_object["uid"], "posts")
 
             # Send message to Slack
             msg = "🆕 Experiences Updated"

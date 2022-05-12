@@ -126,7 +126,13 @@ def media_transfer(event, context):
                     logger.info("Updating Experience Summaries...")
                     summary = from_experience_to_summary(experience_to_object)
                     for media in extra_media:
-                        update_document_to_firestore(summary, media["uid"], "media")
+                        posts = find_document_in_firestore(
+                            "media.uid", media["uid"], "posts"
+                        )
+                        post_object = posts[0].to_dict()
+                        update_document_to_firestore(
+                            summary, post_object["uid"], "posts"
+                        )
 
                 logger.info(f"Deleting Experience {experience_from_uid}...")
                 update_document_to_firestore(

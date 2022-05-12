@@ -278,7 +278,7 @@ class ExperienceSummary:
 
 
 @dataclass
-class MediaMeta:
+class PostMeta:
     uid: str
     media_type: str = "video"
     media: Optional[VideoMeta] = None
@@ -368,15 +368,15 @@ def create_data_objects(
         location=experience_meta.location,
     )
 
-    media_meta = MediaMeta(
+    post_meta = PostMeta(
         uid=str(uuid4()),
         media=video_meta,
         author=author_meta,
         experience_summary=experience_summary,
     )
-    media_instance = asdict(media_meta)
+    post_instance = asdict(post_meta)
 
-    return experience_instance, media_instance
+    return experience_instance, post_instance
 
 
 def experience_object_to_row(experience_object: dict) -> List[Any]:

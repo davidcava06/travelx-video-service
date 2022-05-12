@@ -204,7 +204,7 @@ def insta_downloader(event, context):
                 video_object["storage"] = "cloudflare"
                 video_object["storage_id"] = video_object["uid"]
                 video_object["uid"] = str(uuid4())
-                experience_instance, media_instance = create_data_objects(
+                experience_instance, post_instance = create_data_objects(
                     insta_object, video_object
                 )
                 experience_uid = experience_instance["uid"]
@@ -215,7 +215,7 @@ def insta_downloader(event, context):
                 )
 
                 upload_document_to_firestore(
-                    media_instance, media_instance["uid"], "media"
+                    post_instance, post_instance["uid"], "posts"
                 )
 
                 logger.info(f"Adding Experience {experience_uid} to Sheet...")
@@ -240,7 +240,7 @@ def insta_downloader(event, context):
             title = "Experience: " + experience_instance["uid"]
             title_link = insta_url
             thumb_url = insta_object["thumbnail_url"]
-            text = "Media: " + media_instance["uid"]
+            text = "Post: " + post_instance["uid"]
             status = Status.success
         except Exception as e:
             msg = f"🤷 Storage error: {e}"

@@ -6,6 +6,10 @@ class MediaTxRow(Enum):
     media_uid = 1
     experience_to_uid = 2
 
+    def __str__(self):
+        """So we can pass str(EnumInstance)"""
+        return self.name.replace("__", ".")
+
 
 def from_experience_to_summary(experience: dict) -> dict:
     """Create experience summary object"""
