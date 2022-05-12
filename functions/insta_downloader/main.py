@@ -204,12 +204,18 @@ def insta_downloader(event, context):
                 video_object["storage"] = "cloudflare"
                 video_object["storage_id"] = video_object["uid"]
                 video_object["uid"] = str(uuid4())
-                experience_instance, post_instance = create_data_objects(
-                    insta_object, video_object
-                )
+                (
+                    experience_instance,
+                    post_instance,
+                    video_instance,
+                ) = create_data_objects(insta_object, video_object)
                 experience_uid = experience_instance["uid"]
 
                 logger.info(f"Storing data object for {insta_id}...")
+                upload_document_to_firestore(
+                    video_instance, video_instance["uid"], "media"
+                )
+
                 upload_document_to_firestore(
                     experience_instance, experience_instance["uid"], "experiences"
                 )

@@ -83,7 +83,7 @@ def add_parent_media(experience: dict) -> dict:
             if current_media is None:
                 current_media = []
             extra_media = [x for x in parent_media if x not in current_media]
-            media_update = firestore.ArrayUnion(extra_media)
+            media_update = dict(media=firestore.ArrayUnion(extra_media))
             update_document_to_firestore(media_update, experience["uid"], "experiences")
 
 

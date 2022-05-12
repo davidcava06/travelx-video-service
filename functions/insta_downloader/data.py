@@ -351,6 +351,7 @@ def create_data_objects(
         created_at=video_object["created"],
         uploaded_at=video_object["uploaded"],
     )
+    video_instance = asdict(video_meta)
 
     experience_meta = ExperienceMeta(
         uid=str(uuid4()),
@@ -376,7 +377,7 @@ def create_data_objects(
     )
     post_instance = asdict(post_meta)
 
-    return experience_instance, post_instance
+    return experience_instance, post_instance, video_instance
 
 
 def experience_object_to_row(experience_object: dict) -> List[Any]:
