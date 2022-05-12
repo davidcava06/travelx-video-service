@@ -47,9 +47,10 @@ def read_spreadsheet(spreadsheet_id: str = SHEET_ID, range: str = RANGE_NAME):
         for idx, x in enumerate(row):
             if idx in ARRAY_COLUMNS:
                 x_list = x.split(",")
-                x = firestore.ArrayUnion(
-                    [element.strip().lower() for element in x_list]
-                )
+                clean_list = [
+                    element.strip().lower() for element in x_list if element != ""
+                ]
+                x = firestore.ArrayUnion(clean_list) if len(clean_list) > 0 else None
             if type(x) is str:
                 x = x.strip().lower()
                 x = x if x != "" else None
