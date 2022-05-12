@@ -248,9 +248,9 @@ google-cloud-audit-log==0.2.0 \
     --hash=sha256:d0852f525ad65705f9fbff6288be4493e1449a7906fb5e01bd71c8d1e424d1fc \
     --hash=sha256:ecc7f5f2168ad4014331d6397fcea3750b2d41900f0ef6d1081cd78b3a6420e9
     # via google-cloud-logging
-google-cloud-core==2.2.3 \
-    --hash=sha256:89d2f7189bc6dc74de128d423ea52cc8719f0a5dbccd9ca80433f6504a20255c \
-    --hash=sha256:a423852f4c36622376c8f0be509b67533690e061062368b763b92694c4ee06a7
+google-cloud-core==2.3.0 \
+    --hash=sha256:35900f614045a33d5208e1d50f0d7945df98ce088388ce7237e7a2db12d5656e \
+    --hash=sha256:fdaa629e6174b4177c2d56eb8ab1ddd87661064d0a3e9bb06b62e4d7e2344669
     # via
     #   -r requirements/main.in
     #   google-cloud-firestore
