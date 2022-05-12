@@ -1,8 +1,8 @@
 SHELL = /bin/bash
 
 update-deps:
-	pip-compile --allow-unsafe --build-isolation --generate-hashes --output-file requirements/main.txt requirements/main.in
-	pip-compile --allow-unsafe --build-isolation --generate-hashes --output-file requirements/dev.txt requirements/dev.in
+	pip-compile --allow-unsafe --build-isolation --output-file requirements/main.txt requirements/main.in
+	pip-compile --allow-unsafe --build-isolation --output-file requirements/dev.txt requirements/dev.in
 
 install:
 	pip install --upgrade -r requirements/dev.txt
