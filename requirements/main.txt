@@ -199,10 +199,11 @@ gcsfs==2022.2.0 \
     --hash=sha256:b45284e85b232efd53ca9038d952ffde704e83475ad666362f77a55c01b32ef7 \
     --hash=sha256:d8cdd5db902f1656d4effd0ca3282584bc5a03f4c87e676294d401fbf256efdf
     # via -r requirements/main.in
-google-api-core[grpc]==2.7.1 \
-    --hash=sha256:6be1fc59e2a7ba9f66808bbc22f976f81e4c3e7ab20fa0620ce42686288787d0 \
-    --hash=sha256:b0fa577e512f0c8e063386b974718b8614586a798c5894ed34bedf256d9dae24
+google-api-core[grpc]==2.7.3 \
+    --hash=sha256:17957f0704cbe95bd2ce25019efd2046423978594d181d4263e5dcffd2dbbc79 \
+    --hash=sha256:bb40d2d6412c77c367943b88d08323091d724deaea96892fff4a1ebd06f6e5be
     # via
+    #   -r requirements/main.in
     #   firebase-admin
     #   google-api-python-client
     #   google-cloud-appengine-logging
