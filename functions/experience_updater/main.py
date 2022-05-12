@@ -52,6 +52,7 @@ def read_spreadsheet(spreadsheet_id: str = SHEET_ID, range: str = RANGE_NAME):
                 )
             if type(x) is str:
                 x = x.strip().lower()
+                x = x if x != "" else None
             if idx in BOOL_COLUMNS:
                 x = bool(int(x))
             element[str(ExperienceRow(idx))] = x
