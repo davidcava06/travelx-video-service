@@ -83,7 +83,9 @@ def download_video(api: TikTokApi, url: Optional[str] = None) -> Tuple[str, dict
 
 def upload_to_cdn(tmp_video_path: str, tiktok_object: dict) -> dict:
     """Upload to CloudFlare"""
-    tiktok_id = tiktok_object["itemInfo"]["itemStruct"]["id"]
+    if "id" not in tiktok_object.keys():
+        tiktok_id = tiktok_object["itemInfo"]["itemStruct"]["id"]
+    tiktok_id = tiktok_object["id"]
     logger.info(f"Uploading to CloudFlare for {tiktok_id}...")
     response = cdn_client.upload_files(tmp_video_path, tiktok_id)
     ready_to_stream = response["readyToStream"]

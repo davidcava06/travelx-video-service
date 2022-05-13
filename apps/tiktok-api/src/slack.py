@@ -22,15 +22,24 @@ class SlackMessage:
             self.msg = msg
             return self.format_slack_message(status)
         else:
-            video_id = tiktok_object["itemInfo"]["itemStruct"]["id"]
+            video_id = tiktok_object.get("id")
+            if video_id is None:
+                video_id = tiktok_object["itemInfo"]["itemStruct"]["id"]
+                title_link = tiktok_object["itemInfo"]["itemStruct"]["video"][
+                    "playAddr"
+                ]
+                thumb_url = tiktok_object["itemInfo"]["itemStruct"]["video"]["cover"]
+                text = tiktok_object["itemInfo"]["itemStruct"]["video"]["desc"]
+            else:
+                title_link = tiktok_object["play"]
+                thumb_url = tiktok_object["cover"]
+                text = tiktok_object["title"]
 
             self.msg = f"🔫 {video_id}: Ready pa fusilarlo"
             self.title = video_id
-            self.title_link = tiktok_object["itemInfo"]["itemStruct"]["video"][
-                "playAddr"
-            ]
-            self.thumb_url = tiktok_object["itemInfo"]["itemStruct"]["video"]["cover"]
-            self.text = tiktok_object["itemInfo"]["itemStruct"]["desc"]
+            self.title_link = title_link
+            self.thumb_url = thumb_url
+            self.text = text
         return self.format_slack_message(status)
 
     def format_slack_message(

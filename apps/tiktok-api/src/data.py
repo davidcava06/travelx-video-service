@@ -320,7 +320,8 @@ def create_data_objects(
     tiktok_object: dict, video_object: dict, origin: Optional[str] = "tiktok"
 ) -> dict:
     location_meta = None
-    tiktok_object = tiktok_object["itemInfo"]["itemStruct"]
+    if "itemInfo" in tiktok_object.keys():
+        tiktok_object = tiktok_object["itemInfo"]["itemStruct"]
     if "location" in tiktok_object:
         location_meta = LocationMeta(
             address=tiktok_object["location"].get("address"),
@@ -333,6 +334,8 @@ def create_data_objects(
             website=tiktok_object["location"].get("website"),
             zip=tiktok_object["location"].get("zip"),
         )
+    else:
+        location_meta = LocationMeta()
     author_meta = AuthorMeta(
         username=tiktok_object["author"].get("uniqueId"),
         display_name=tiktok_object["author"].get("nickname"),
@@ -345,7 +348,7 @@ def create_data_objects(
         uid=video_object["uid"],
         name=video_object["meta"].get("name"),
         hls=video_object["playback"].get("hls"),
-        dash=video_object["playback"].get("hls"),
+        dash=video_object["playback"].get("dash"),
         size=video_object["size"],
         thumbnail=video_object["thumbnail"],
         created_at=video_object["created"],
@@ -358,7 +361,7 @@ def create_data_objects(
         location=location_meta,
         author=author_meta,
         media=[video_meta],
-        description=tiktok_object.get("desc"),
+        description=tiktok_object.get("desc") or tiktok_object.get("title"),
     )
     experience_instance = asdict(experience_meta)
 
