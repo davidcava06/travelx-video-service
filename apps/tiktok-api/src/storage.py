@@ -1,7 +1,11 @@
+from typing import Any, List
+
 import firebase_admin
+import google.auth
 import structlog
 from firebase_admin import credentials, firestore
 from google.cloud import storage
+from googleapiclient.discovery import build
 
 logger = structlog.get_logger(__name__)
 
@@ -18,6 +22,9 @@ class GoogleStorageProcessor:
         self.project = app.config.get("GCP_PROJECT")
         self.location = app.config.get("GCP_REGION")
         self.bucket = app.config.get("GCP_BUCKET")
+        self._sheet = None
+        self.sheet_id = app.config.get("SHEET_ID")
+        self.scopes = ["https://www.googleapis.com/auth/spreadsheets"]
 
     @property
     def client(self):
@@ -39,6 +46,14 @@ class GoogleStorageProcessor:
             )
             self._db = firestore.client()
         return self._db
+
+    @property
+    def sheet(self):
+        if self._sheet is None:
+            logger.info("Initializing Sheet Client")
+            creds, _ = google.auth.default(scopes=self.scopes)
+            self._sheet = build("sheets", "v4", credentials=creds)
+        return self._sheet
 
     def _upload_sync(self, filename, key):
         bucket = self.client.get_bucket(self.bucket)
@@ -71,3 +86,25 @@ class GoogleStorageProcessor:
     ):
         doc_ref = self.db.collection(collection).document(id)
         doc_ref.set(object)
+
+    def _update_spreadsheet(
+        self, values: List[List[Any]], range: str = "Experiences!A3:BD100"
+    ):
+        sheet = self._sheet.spreadsheets()
+        result = (
+            sheet.values()
+            .append(
+                spreadsheetId=self.sheet_id,
+                range=range,
+                body=dict(
+                    values=values,
+                    majorDimension="ROWS",
+                ),
+                valueInputOption="USER_ENTERED",
+            )
+            .execute()
+        )
+
+        updates = result.get("updates", {})
+        if updates.get("updatedRows") != len(values):
+            raise Exception("Writing to Google Sheets Error")

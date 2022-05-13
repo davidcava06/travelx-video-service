@@ -11,6 +11,9 @@ class Config:
     GCP_BUCKET: str = os.environ.get("GCP_BUCKET", "nonprod-raw-media")
     CF_ACCOUNT: str = os.environ.get("CF_ACCOUNT", "")
     CF_TOKEN: str = os.environ.get("CF_TOKEN", "")
+    SHEET_ID = os.environ.get(
+        "SHEET_ID", "1O36Ha4FjCGpbKr1rxPE7xi6sDztKPyy3CWllR691Fzg"
+    )
 
 
 class DevelopmentConfig(Config):
