@@ -95,7 +95,7 @@ async def video():
             response_url = pubsub_message["attributes"]["response_url"]
             logger.info(f"Responding at {response_url}...")
 
-        logger.info("get_video", video_url=video_url)
+        logger.info(f"get_video {video_url}")
 
         # Initialise TikTokApi
         nest_asyncio.apply()

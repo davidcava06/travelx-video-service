@@ -1,6 +1,6 @@
 import os
 import time
-from typing import Optional
+from typing import Optional, Tuple
 from uuid import uuid4
 
 import requests
@@ -18,11 +18,8 @@ NO_WATERMARK_BASE_URL = "https://www.tikwm.com"
 
 def get_video_from_url(api: TikTokApi, url: str) -> dict:
     """Get Video from TikTok"""
-    video = api.video(url=url)
-    video_data = video.info_full()
-
     # Get video
-    tmp_video_path = download_video(video_data, video, url)
+    tmp_video_path, video_data = download_video(api, url)
     download_thumbnail(video_data)
 
     # Store in CDN
@@ -32,14 +29,19 @@ def get_video_from_url(api: TikTokApi, url: str) -> dict:
 
 
 def download_thumbnail(video_data: dict):
+    logger.info("Gone into thumbnail...")
     tmp_path_f = None
-    video_id = video_data["itemInfo"]["itemStruct"]["id"]
-    logger.info(f"Gone into thumbnail: {video_id}")
-    thumb_url = video_data["itemInfo"]["itemStruct"]["video"]["cover"]
+    if "cover" in video_data.keys():
+        video_id = video_data["id"]
+        thumb_url = video_data["cover"]
+    else:
+        video_id = video_data["itemInfo"]["itemStruct"]["id"]
+        thumb_url = video_data["itemInfo"]["itemStruct"]["video"]["cover"]
     logger.info(f"Downloading {thumb_url}...")
     root = os.path.dirname(os.path.abspath(__file__))
     tmp_path = "/tmp/" + f"{video_id}.jpg"
     tmp_path_f = os.path.join(root, tmp_path)
+
     try:
         wget.download(thumb_url, tmp_path_f)
         file_name = f"tiktok/{video_id}/thumbnail.jpg"
@@ -48,31 +50,42 @@ def download_thumbnail(video_data: dict):
         logger.error(e)
 
 
-def download_video(video_data: dict, video, url: Optional[str] = None) -> dict:
-    video_id = video_data["itemInfo"]["itemStruct"]["id"]
-
+def download_video(api: TikTokApi, url: Optional[str] = None) -> Tuple[str, dict]:
     root = os.path.dirname(os.path.abspath(__file__))
-    temp_file_name = f"/tmp/{video_id}.mp4"
-    tmp_path_f = os.path.join(root, temp_file_name)
-
     try:
-        video_url = fetch_download_url(url)
+        # No Watermark
+        video_data = fetch_video_data(url)
+        video_id = video_data["id"]
+        hdplay = video_data.get("hdplay")
+        video_url = hdplay if hdplay is not None else video_data.get("play")
+
+        temp_file_name = f"/tmp/{video_id}.mp4"
+        tmp_path_f = os.path.join(root, temp_file_name)
         wget.download(video_url, tmp_path_f)
     except Exception as e:
+        # With Watermark
         logger.error(e)
+        video = api.video(url=url)
+        video_data = video.info_full()
         video_bytes = video.bytes()
+
+        video_id = video_data["itemInfo"]["itemStruct"]["id"]
+        temp_file_name = f"/tmp/{video_id}.mp4"
+        tmp_path_f = os.path.join(root, temp_file_name)
         with open(tmp_path_f, "wb") as out_file:
             out_file.write(video_bytes)
 
     file_name = f"tiktok/{video_id}/video.mp4"
     if storage_client._upload_sync(tmp_path_f, file_name):
         storage_client._upload_document_to_firestore(video_data, video_id)
-        return tmp_path_f
+    return tmp_path_f, video_data
 
 
 def upload_to_cdn(tmp_video_path: str, tiktok_object: dict) -> dict:
     """Upload to CloudFlare"""
-    tiktok_id = tiktok_object["itemInfo"]["itemStruct"]["id"]
+    if "id" not in tiktok_object.keys():
+        tiktok_id = tiktok_object["itemInfo"]["itemStruct"]["id"]
+    tiktok_id = tiktok_object["id"]
     logger.info(f"Uploading to CloudFlare for {tiktok_id}...")
     response = cdn_client.upload_files(tmp_video_path, tiktok_id)
     ready_to_stream = response["readyToStream"]
@@ -114,16 +127,11 @@ def upload_to_cdn(tmp_video_path: str, tiktok_object: dict) -> dict:
     return experience_instance
 
 
-def fetch_download_url(url: str):
+def fetch_video_data(url: str) -> dict:
     params = dict(hd=1, url=url)
     response = requests.get(f"{NO_WATERMARK_BASE_URL}/api", params=params)
     if response.status_code != 200:
         raise Exception(f"Failed request to {NO_WATERMARK_BASE_URL} for {url}")
     response = response.json()
     data = response.get("data")
-
-    hdplay = data.get("hdplay")
-    # hdplay = None
-    play = data.get("play")
-    video_url = hdplay if hdplay is not None else play
-    return video_url
+    return data
