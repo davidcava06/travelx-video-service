@@ -90,7 +90,7 @@ class GoogleStorageProcessor:
     def _update_spreadsheet(
         self, values: List[List[Any]], range: str = "Experiences!A3:BD100"
     ):
-        sheet = self._sheet.spreadsheets()
+        sheet = self.sheet.spreadsheets()
         result = (
             sheet.values()
             .append(
