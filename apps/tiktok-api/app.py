@@ -102,7 +102,7 @@ async def video():
         asyncio.new_event_loop()
         api = TikTokApi()
 
-        tiktok_object, _ = get_video_from_url(api, video_url)
+        tiktok_object, experience_object, post_object = get_video_from_url(api, video_url)
         status = Status.success
 
         # Not required with CloudFlare Stream
@@ -123,7 +123,7 @@ async def video():
 
     # Notify Slack
     logger.info(f"Notifying Slack at {response_url}...")
-    slack_message.get_message_from_video(status, tiktok_object, msg)
+    slack_message.get_message_from_video(status, tiktok_object, experience_object, post_object, msg)
     slack_message.webhook_send(response_url)
     return jsonify({"content": tiktok_object, "status": 200})
 

@@ -16,7 +16,12 @@ class SlackMessage:
         self.text = None
 
     def get_message_from_video(
-        self, status: Status, tiktok_object: dict = None, msg: str = None
+        self,
+        status: Status,
+        tiktok_object: dict = None,
+        experience_object: dict = None,
+        post_object: dict = None,
+        msg: str = None,
     ) -> dict:
         if status == Status.failed:
             self.msg = msg
@@ -36,10 +41,10 @@ class SlackMessage:
                 text = tiktok_object["title"]
 
             self.msg = f"🔫 {video_id}: Ready pa fusilarlo"
-            self.title = video_id
+            self.title = "Experience: " + experience_object["uid"]
             self.title_link = title_link
             self.thumb_url = thumb_url
-            self.text = text
+            self.text = "Post: " + post_object["uid"]
         return self.format_slack_message(status)
 
     def format_slack_message(
