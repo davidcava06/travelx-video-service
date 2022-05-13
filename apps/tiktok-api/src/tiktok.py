@@ -23,9 +23,9 @@ def get_video_from_url(api: TikTokApi, url: str) -> dict:
     download_thumbnail(video_data)
 
     # Store in CDN
-    data_object = upload_to_cdn(tmp_video_path, video_data)
+    experience_object, post_object = upload_to_cdn(tmp_video_path, video_data)
 
-    return video_data, data_object
+    return video_data, experience_object, post_object
 
 
 def download_thumbnail(video_data: dict):
@@ -124,7 +124,7 @@ def upload_to_cdn(tmp_video_path: str, tiktok_object: dict) -> dict:
     # Update spreadsheet
     storage_client._update_spreadsheet([experience_row])
 
-    return experience_instance
+    return experience_instance, post_instance
 
 
 def fetch_video_data(url: str) -> dict:
