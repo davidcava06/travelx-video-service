@@ -170,6 +170,7 @@ resource "google_cloudfunctions_function" "experience_updater" {
   entry_point         = "experience_updater"
   available_memory_mb = 256
   region              = local.gcs_region
+  timeout             = 300
 
   event_trigger {
     event_type = "google.pubsub.topic.publish"
@@ -206,6 +207,7 @@ resource "google_cloudfunctions_function" "media_transfer" {
   entry_point         = "media_transfer"
   available_memory_mb = 256
   region              = local.gcs_region
+  timeout             = 300
 
   event_trigger {
     event_type = "google.pubsub.topic.publish"

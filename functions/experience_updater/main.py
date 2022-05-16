@@ -13,7 +13,7 @@ from slack_sdk.webhook import WebhookClient
 PROJECT_ID = os.environ["PROJECT_ID"]
 SHEET_ID = os.environ["SHEET_ID"]
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
-RANGE_NAME = "Experiences!A3:BD100"
+RANGE_NAME = "Experiences!A3:BD300"
 ARRAY_COLUMNS = [2, 9, 12, 19, 32, 49]
 BOOL_COLUMNS = [1, 7, 8, 20, 28, 44]
 
