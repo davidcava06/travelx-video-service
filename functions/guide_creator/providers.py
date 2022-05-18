@@ -1,0 +1,89 @@
+import os
+from enum import Enum
+
+import structlog
+from data import GuideRow
+from firebase_admin import firestore
+
+logger = structlog.get_logger(__name__)
+root = os.path.dirname(os.path.abspath(__file__))
+
+SHEET_ID = os.environ["SHEET_ID"]
+CREATE_RANGE_NAME = "CreateGuides!A2:F50"
+ARRAY_COLUMNS = [5]
+BOOL_COLUMNS = [2, 3]
+BUCKET_NAME = os.environ["GUIDES_BUCKET_NAME"]
+
+
+class Status(Enum):
+    success = "SUCCESS"
+    failed = "FAILED"
+
+
+class SheetClient:
+    def __init__(self, sheet_client):
+        self.sheet_client = sheet_client
+
+    def read_spreadsheet(
+        self, spreadsheet_id: str = SHEET_ID, range: str = CREATE_RANGE_NAME
+    ):
+        logger.info(f"Reading data from {spreadsheet_id}...")
+        sheet = self.sheet_client.spreadsheets()
+        result = sheet.values().get(spreadsheetId=spreadsheet_id, range=range).execute()
+        values = result.get("values", [])
+        if not values:
+            logger.info("No data found...")
+            return None
+
+        elements = []
+        for row in values:
+            element = {}
+            for idx, x in enumerate(row):
+                if idx in ARRAY_COLUMNS:
+                    x_list = x.split(",")
+                    clean_list = [
+                        element.strip().lower() for element in x_list if element != ""
+                    ]
+                    x = (
+                        firestore.ArrayUnion(clean_list)
+                        if len(clean_list) > 0
+                        else None
+                    )
+                if type(x) is str:
+                    x = x.strip().lower()
+                    x = x if x != "" else None
+                if idx in BOOL_COLUMNS:
+                    x = bool(int(x))
+                element[str(GuideRow(idx))] = x
+            elements.append(element)
+        return elements
+
+
+class StorageClient:
+    def __init__(self, document_db, bucket_name=BUCKET_NAME):
+        self.document_db = document_db
+        self.bucket_name = bucket_name
+
+    def upload_document_to_firestore(
+        self, object: dict, id: str, collection: str = "instaposts"
+    ):
+        logger.info(f"Uploading {id} to {collection}...")
+        doc_ref = self.document_db.collection(collection).document(id)
+        doc_ref.set(object)
+
+    def update_document_to_firestore(self, object: dict, id: str, collection: str):
+        doc_ref = self.document_db.collection(collection).document(id)
+        doc_ref.update(object)
+
+    def find_document_in_firestore(self, key: str, id: str, collection: str):
+        return self.document_db.collection(collection).where(key, "==", id).get()
+
+    def upload_file_to_cloudstorage(
+        self, prefix, temp_file_name, file_name, content_type=None
+    ):
+        bucket = self.storage_client.get_bucket(self.bucket_name)
+        file_path = os.path.join(root, temp_file_name)
+        if not bucket.exists():
+            logger.error("🤷 Failed upload: Bucket does not exist.")
+        blob = bucket.blob(f"{prefix}/{file_name}")
+        return blob.upload_from_filename(file_path, content_type=content_type)

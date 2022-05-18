@@ -31,6 +31,9 @@ class ExperienceAudience(Enum):
     non_drinkers = "non drinkers"
     seniors = "seniors"
     students = "students"
+    luxury = "luxury"
+    adults = "adults"
+    vegan = "vegan"
 
 
 class ActivityLevel(Enum):

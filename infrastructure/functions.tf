@@ -73,8 +73,9 @@ resource "google_cloudfunctions_function" "pusher" {
     TIKTOK_TOPIC_ID   = google_pubsub_topic.tiktok_download_jobs.name
     UPDATE_TOPIC_ID   = google_pubsub_topic.experience_update_jobs.name
     MEDIA_TX_TOPIC_ID = google_pubsub_topic.media_transfer_jobs.name
+    GUIDE_C_TOPIC_ID  = google_pubsub_topic.guide_creator_jobs.name
   }
-  depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.insta_download_jobs, google_pubsub_topic.tiktok_download_jobs, google_pubsub_topic.experience_update_jobs, google_pubsub_topic.media_transfer_jobs]
+  depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.insta_download_jobs, google_pubsub_topic.tiktok_download_jobs, google_pubsub_topic.experience_update_jobs, google_pubsub_topic.media_transfer_jobs, google_pubsub_topic.guide_creator_jobs]
 }
 
 # Function: Create transcode Jobs
@@ -225,4 +226,43 @@ resource "google_cloudfunctions_function" "media_transfer" {
     SHEET_ID    = var.media_transfer_sheet_id
   }
   depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.media_transfer_jobs]
+}
+
+
+# Function: Takes the rows of a Google Sheet and transfer media between experiences
+#
+data "local_file" "guide_creator" {
+  filename = "functions/guide_creator.zip"
+}
+
+resource "google_storage_bucket_object" "guide_creator" {
+  name   = format("guide_creator.zip#%s", md5(data.local_file.guide_creator.content))
+  bucket = google_storage_bucket.deployer.name
+  source = data.local_file.guide_creator.filename
+}
+resource "google_cloudfunctions_function" "guide_creator" {
+  name                = "guide_creator"
+  runtime             = "python38"
+  entry_point         = "guide_creator"
+  available_memory_mb = 256
+  region              = local.gcs_region
+  timeout             = 90
+
+  event_trigger {
+    event_type = "google.pubsub.topic.publish"
+    resource   = google_pubsub_topic.guide_creator_jobs.name
+  }
+
+  source_archive_bucket = google_storage_bucket.deployer.name
+  source_archive_object = google_storage_bucket_object.guide_creator.name
+  service_account_email = google_service_account.cloud_function_invoker_account.email
+
+  environment_variables = {
+    ENVIRONMENT        = var.workspace
+    PROJECT_ID         = local.project_name
+    LOCATION           = local.gcs_region
+    SHEET_ID           = var.guides_sheet_id
+    GUIDES_BUCKET_NAME = google_storage_bucket.guides_media.name
+  }
+  depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.guide_creator_jobs, google_storage_bucket.guides_media]
 }
