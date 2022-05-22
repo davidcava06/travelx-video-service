@@ -1,8 +1,10 @@
+import json
 import os
 from enum import Enum
 
+import requests
 import structlog
-from data import GuideRow
+from data import GuideRow, Image
 from firebase_admin import firestore
 
 logger = structlog.get_logger(__name__)
@@ -12,7 +14,9 @@ SHEET_ID = os.environ["SHEET_ID"]
 CREATE_RANGE_NAME = "CreateGuides!A2:F50"
 ARRAY_COLUMNS = [5]
 BOOL_COLUMNS = [2, 3]
-BUCKET_NAME = os.environ["GUIDES_BUCKET_NAME"]
+BUCKET_NAME = ""  # os.environ["GUIDES_BUCKET_NAME"]
+CF_ACCOUNT = os.environ["CF_ACCOUNT"]
+CF_TOKEN = os.environ["CF_TOKEN"]
 
 
 class Status(Enum):
@@ -35,6 +39,7 @@ class SheetClient:
             logger.info("No data found...")
             return None
 
+        arrays = []
         elements = []
         for row in values:
             element = {}
@@ -49,6 +54,7 @@ class SheetClient:
                         if len(clean_list) > 0
                         else None
                     )
+                    arrays.append({str(GuideRow(idx)): clean_list})
                 if type(x) is str:
                     x = x.strip().lower()
                     x = x if x != "" else None
@@ -56,7 +62,7 @@ class SheetClient:
                     x = bool(int(x))
                 element[str(GuideRow(idx))] = x
             elements.append(element)
-        return elements
+        return elements, arrays
 
 
 class StorageClient:
@@ -87,3 +93,42 @@ class StorageClient:
             logger.error("🤷 Failed upload: Bucket does not exist.")
         blob = bucket.blob(f"{prefix}/{file_name}")
         return blob.upload_from_filename(file_path, content_type=content_type)
+
+
+class CFClient:
+    def __init__(self, cf_account: str = CF_ACCOUNT, cf_token: str = CF_TOKEN):
+        self.base_url = "https://api.cloudflare.com/client/v4/accounts"
+        self.account = cf_account
+        self.token = cf_token
+
+    def upload_image_from_url(self, image_origin_url: str, guide_name: str) -> dict:
+        """Upload a file to CloudFlare Images"""
+        logger.info(f"Uploading to {self.base_url}...")
+
+        headers = {
+            "Authorization": f"Bearer {self.token}",
+        }
+        data = {
+            "url": image_origin_url,
+            "requireSignedURLs": json.dumps("false"),
+            "metadata": json.dumps({"type": "guide", "name": guide_name}),
+        }
+        response = requests.post(
+            f"{self.base_url}/{self.account}/images/v1",
+            files=data,
+            headers=headers,
+        )
+        results = response.json()
+        image_variants = results["result"]["variants"]
+        image_list = []
+        for image_variant in image_variants:
+            # Guides are always squares
+            height = (
+                600
+                if "guidebig" in image_variant
+                else (300 if "guidemedium" in image_variant else 64)
+            )
+            width = height
+            image = Image(url=image_variant, height=height, width=width)
+            image_list.append(image)
+        return image_list

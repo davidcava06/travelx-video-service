@@ -263,6 +263,8 @@ resource "google_cloudfunctions_function" "guide_creator" {
     LOCATION           = local.gcs_region
     SHEET_ID           = var.guides_sheet_id
     GUIDES_BUCKET_NAME = google_storage_bucket.guides_media.name
+    CF_ACCOUNT   = var.cf_account
+    CF_TOKEN     = var.cf_token
   }
   depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.guide_creator_jobs, google_storage_bucket.guides_media]
 }

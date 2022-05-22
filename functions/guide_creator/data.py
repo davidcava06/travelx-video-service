@@ -1,4 +1,5 @@
 from dataclasses import asdict, dataclass
+from datetime import datetime
 from enum import Enum
 from typing import List, Optional
 from uuid import uuid4
@@ -69,15 +70,15 @@ class Guide:
     is_public: Optional[bool] = False
     is_collaborative: Optional[bool] = False
     status: Optional[str] = GuideStatus.pending.name
-    images: Optional[Image] = []
-    experience_summaries: Optional[Image] = []
-    created_at: Optional[float] = None
+    images: Optional[List[Image]] = None
+    experience_summaries: Optional[List[dict]] = None
+    created_at: Optional[float] = datetime.utcnow()
     updated_at: Optional[str] = None
     deleted_at: Optional[str] = None
 
 
 def create_guide_object(
-    guide_input: dict, images: List[dict], experience_summaries: List[dict]
+    guide_input: dict, images: List[Image], experience_summaries: List[dict]
 ) -> dict:
     guide = Guide(
         guide_uid=str(uuid4()),
@@ -99,17 +100,17 @@ def from_experience_to_summary_v2(experience: dict) -> dict:
     all_media = experience.get("media")
     media = [all_media[0]] if len(all_media) > 0 else None  # Just 1 for MVP
     return {
-        "experience_summary.uid": experience.get("uid"),
-        "experience_summary.title": experience.get("title"),
-        "experience_summary.description": experience.get("description"),
-        "experience_summary.external_url": experience.get("external_url"),
-        "experience_summary.status": experience.get("status"),
-        "experience_summary.category": experience.get("category"),
-        "experience_summary.audience": experience.get("audience"),
-        "experience_summary.location": experience.get("location"),
-        "experience_summary.is_free": experience.get("is_free"),
-        "experience_summary.is_eco": experience.get("is_eco"),
-        "experience_summary.eco_features": experience.get("eco_features"),
-        "experience_summary.hashtags": experience.get("hashtags"),
-        "experience_summary.media": media,
+        "uid": experience.get("uid"),
+        "title": experience.get("title"),
+        "description": experience.get("description"),
+        "external_url": experience.get("external_url"),
+        "status": experience.get("status"),
+        "category": experience.get("category"),
+        "audience": experience.get("audience"),
+        "location": experience.get("location"),
+        "is_free": experience.get("is_free"),
+        "is_eco": experience.get("is_eco"),
+        "eco_features": experience.get("eco_features"),
+        "hashtags": experience.get("hashtags"),
+        "media": media,
     }
