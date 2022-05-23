@@ -11,12 +11,14 @@ INSTA_TOPIC_ID = os.environ["INSTA_TOPIC_ID"]
 TIKTOK_TOPIC_ID = os.environ["TIKTOK_TOPIC_ID"]
 UPDATE_TOPIC_ID = os.environ["UPDATE_TOPIC_ID"]
 MEDIA_TX_TOPIC_ID = os.environ["MEDIA_TX_TOPIC_ID"]
+GUIDE_C_TOPIC_ID = os.environ["GUIDE_C_TOPIC_ID"]
 SLACK_SECRET = os.environ["SLACK_SECRET"]
 TOPICS = {
     "/ig": INSTA_TOPIC_ID,
     "/tik": TIKTOK_TOPIC_ID,
     "/update": UPDATE_TOPIC_ID,
     "/tx": MEDIA_TX_TOPIC_ID,
+    "/guidec": MEDIA_TX_TOPIC_ID,
 }
 COMMANDS = [key for key in TOPICS.keys()]
 
