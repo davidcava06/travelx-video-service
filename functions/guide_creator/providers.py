@@ -14,7 +14,6 @@ SHEET_ID = os.environ["SHEET_ID"]
 CREATE_RANGE_NAME = "CreateGuides!A2:F50"
 ARRAY_COLUMNS = [5]
 BOOL_COLUMNS = [2, 3]
-BUCKET_NAME = ""  # os.environ["GUIDES_BUCKET_NAME"]
 CF_ACCOUNT = os.environ["CF_ACCOUNT"]
 CF_TOKEN = os.environ["CF_TOKEN"]
 
@@ -66,9 +65,8 @@ class SheetClient:
 
 
 class StorageClient:
-    def __init__(self, document_db, bucket_name=BUCKET_NAME):
+    def __init__(self, document_db):
         self.document_db = document_db
-        self.bucket_name = bucket_name
 
     def upload_document_to_firestore(
         self, object: dict, id: str, collection: str = "instaposts"
@@ -83,16 +81,6 @@ class StorageClient:
 
     def find_document_in_firestore(self, key: str, id: str, collection: str):
         return self.document_db.collection(collection).where(key, "==", id).get()
-
-    def upload_file_to_cloudstorage(
-        self, prefix, temp_file_name, file_name, content_type=None
-    ):
-        bucket = self.storage_client.get_bucket(self.bucket_name)
-        file_path = os.path.join(root, temp_file_name)
-        if not bucket.exists():
-            logger.error("🤷 Failed upload: Bucket does not exist.")
-        blob = bucket.blob(f"{prefix}/{file_name}")
-        return blob.upload_from_filename(file_path, content_type=content_type)
 
 
 class CFClient:
