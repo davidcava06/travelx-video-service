@@ -258,12 +258,12 @@ resource "google_cloudfunctions_function" "guide_creator" {
   service_account_email = google_service_account.cloud_function_invoker_account.email
 
   environment_variables = {
-    ENVIRONMENT        = var.workspace
-    PROJECT_ID         = local.project_name
-    LOCATION           = local.gcs_region
-    SHEET_ID           = var.guides_sheet_id
-    CF_ACCOUNT   = var.cf_account
-    CF_TOKEN     = var.cf_token
+    ENVIRONMENT = var.workspace
+    PROJECT_ID  = local.project_name
+    LOCATION    = local.gcs_region
+    SHEET_ID    = var.guides_sheet_id
+    CF_ACCOUNT  = var.cf_account
+    CF_TOKEN    = var.cf_token
   }
   depends_on = [google_service_account.cloud_function_invoker_account, google_pubsub_topic.guide_creator_jobs]
 }
