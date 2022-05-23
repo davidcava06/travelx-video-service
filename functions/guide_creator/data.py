@@ -89,7 +89,6 @@ def create_guide_object(
         is_collaborative=guide_input.get(GuideRow.is_collaborative.name),
         images=images,
         experience_summaries=experience_summaries,
-        # TODO: Timestamps
     )
     guide_instance = asdict(guide)
     return guide_instance
