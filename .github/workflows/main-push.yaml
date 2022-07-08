@@ -20,7 +20,7 @@ jobs:
     outputs:
       terraform-changes: ${{ steps.info.outputs.terraform-changes }}
 
-  terragrunt-apply-nonprod:
+  terraform-apply-nonprod:
     name: Terraform Apply NONPROD
     runs-on: ubuntu-20.04
     needs:

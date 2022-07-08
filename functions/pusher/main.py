@@ -18,7 +18,7 @@ TOPICS = {
     "/tik": TIKTOK_TOPIC_ID,
     "/update": UPDATE_TOPIC_ID,
     "/tx": MEDIA_TX_TOPIC_ID,
-    "/guidec": MEDIA_TX_TOPIC_ID,
+    "/guidec": GUIDE_C_TOPIC_ID,
 }
 COMMANDS = [key for key in TOPICS.keys()]
 

@@ -112,9 +112,9 @@ class CFClient:
         for image_variant in image_variants:
             # Guides are always squares
             height = (
-                600
+                640
                 if "guidebig" in image_variant
-                else (300 if "guidemedium" in image_variant else 64)
+                else (300 if "guidemedium" in image_variant else 60)
             )
             width = height
             image = Image(url=image_variant, height=height, width=width)
