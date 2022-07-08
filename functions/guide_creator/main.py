@@ -12,7 +12,6 @@ from slack_sdk.webhook import WebhookClient
 
 PROJECT_ID = os.environ["PROJECT_ID"]
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
-UPDATE_RANGE_NAME = "UpdateGuides!A2:F50"
 
 logger = structlog.get_logger(__name__)
 

@@ -46,7 +46,7 @@ class SheetClient:
                 if idx in ARRAY_COLUMNS:
                     x_list = x.split(",")
                     clean_list = [
-                        element.strip().lower() for element in x_list if element != ""
+                        element.strip() for element in x_list if element != ""
                     ]
                     x = (
                         firestore.ArrayUnion(clean_list)
@@ -55,7 +55,7 @@ class SheetClient:
                     )
                     arrays.append({str(GuideRow(idx)): clean_list})
                 if type(x) is str:
-                    x = x.strip().lower()
+                    x = x.strip()
                     x = x if x != "" else None
                 if idx in BOOL_COLUMNS:
                     x = bool(int(x))
