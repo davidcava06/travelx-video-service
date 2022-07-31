@@ -57,7 +57,8 @@ def read_spreadsheet(spreadsheet_id: str = SHEET_ID, range: str = RANGE_NAME):
             if idx in BOOL_COLUMNS:
                 x = bool(int(x))
             element[str(ExperienceRow(idx))] = x
-        elements.append(element)
+        clean_element = {k: v for k, v in element.items() if v is not None}
+        elements.append(clean_element)
     return elements
 
 
@@ -71,7 +72,7 @@ def find_document_in_firestore(key: str, id: str, collection: str):
 
 
 def add_parent_media(experience: dict) -> dict:
-    if experience.get("parent") is None or experience.get("parent") != "":
+    if experience.get("parent") is not None and experience.get("parent") != "":
         logger.info("Finding relevant parent media...")
         parent_experience = find_document_in_firestore(
             "uid", experience["parent"], "experiences"
