@@ -323,7 +323,7 @@ def create_data_objects(
     insta_object: dict, video_object: dict, origin: Optional[str] = "instagram"
 ) -> dict:
     location_meta = LocationMeta()
-    if insta_object["location"] is not None:
+    if insta_object.get("location") is not None:
         location_meta = LocationMeta(
             address=insta_object["location"].get("address"),
             category=insta_object["location"].get("category"),
@@ -337,8 +337,8 @@ def create_data_objects(
         )
 
     author_meta = AuthorMeta(
-        username=insta_object["user"].get("username"),
-        display_name=insta_object["user"].get("full_name"),
+        username=insta_object["owner"].get("username"),
+        display_name=insta_object["owner"].get("full_name"),
         provider=origin,
     )
 
@@ -361,7 +361,7 @@ def create_data_objects(
         location=location_meta,
         author=author_meta,
         media=[video_meta],
-        description=insta_object.get("caption_text"),
+        description=insta_object.get("caption")["text"],
     )
     experience_instance = asdict(experience_meta)
 

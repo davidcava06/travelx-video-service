@@ -19,7 +19,7 @@ from slack_sdk.webhook import WebhookClient
 
 PROJECT_ID = os.environ["PROJECT_ID"]
 BUCKET_NAME = os.environ["BUCKET_NAME"]
-INSTA_PROVIDER = Provider.datalama
+INSTA_PROVIDER = Provider.rapidapi
 TOPIC_ID = os.environ["TOPIC_ID"]
 SHEET_ID = os.environ["SHEET_ID"]
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
@@ -139,7 +139,6 @@ def format_slack_message(
 
 
 def insta_downloader(event, context):
-    # def insta_downloader(insta_id):
     # Initialise Slack Message
     title = None
     title_link = None
@@ -262,10 +261,3 @@ def insta_downloader(event, context):
     )
     webhook.send(**response)
     return jsonify(response)
-
-
-# from instaloader import Instaloader, Post
-# Get instance
-# L = Instaloader()
-# post = Post.from_shortcode(L.context, "CTeml0dIfhb")
-# breakpoint()
