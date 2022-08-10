@@ -245,7 +245,11 @@ def insta_downloader(event, context):
             msg = f"🔫 {insta_id}: Ready pa fusilarlo"
             title = "Experience: " + experience_instance["uid"]
             title_link = insta_url
-            thumb_url = insta_object["thumbnail_url"]
+            thumb_url = (
+                insta_object.get("thumbnail_url")
+                if insta_object.get("thumbnail_url") is not None
+                else insta_object.get("image_versions2")["candidates"][0]["url"]
+            )
             text = "Post: " + post_instance["uid"]
             status = Status.success
         except Exception as e:
