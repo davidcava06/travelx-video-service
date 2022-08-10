@@ -41,6 +41,10 @@ variable "datalama_key" {
   type = string
 }
 
+variable "rapidapi_key" {
+  type = string
+}
+
 variable "cf_account" {
   type        = string
   description = "Cloudflare account"
